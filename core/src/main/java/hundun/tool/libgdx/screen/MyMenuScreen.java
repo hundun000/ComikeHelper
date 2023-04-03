@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import de.eskalon.commons.screen.transition.impl.BlendingTransition;
 import hundun.gdxgame.corelib.base.util.TextureFactory;
@@ -21,7 +22,7 @@ public class MyMenuScreen extends StarterMenuScreen<ComikeHelperGame, RootSaveDa
         super(game, game.getSharedViewport());
         
         StarterMenuScreen.Factory.simpleFill(this, game, "ComikeHelper", 
-                new AtlasRegion(new TextureRegion(new TextureRegion(TextureFactory.getSimpleBoardBackground()))), 
+                new TextureRegionDrawable(new TextureRegion(TextureFactory.getSimpleBoardBackground())), 
                 new InputListener(){
                     @Override
                     public void touchUp (InputEvent event, float x, float y, int pointer, int button) {

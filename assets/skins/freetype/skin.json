@@ -39,7 +39,7 @@
 "com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator": {
 	"freeTypeNormal": {
 		"font": "MiSans-Bold.ttf",
-		"size": 16,
+		"size": 42,
 		"mono": false,
 		"color": "black",
 		"gamma": 1.8,

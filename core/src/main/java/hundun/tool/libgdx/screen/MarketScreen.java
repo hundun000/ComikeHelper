@@ -26,9 +26,9 @@ import hundun.gdxgame.corelib.base.BaseHundunScreen;
 import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.tool.ComikeHelperGame;
 import hundun.tool.libgdx.screen.market.CameraControlBoardVM;
+import hundun.tool.libgdx.screen.market.CartBoardVM;
 import hundun.tool.libgdx.screen.market.DeskAreaVM;
 import hundun.tool.libgdx.screen.market.DeskVM;
-import hundun.tool.libgdx.screen.market.PlayScreenLayoutConst;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.RootSaveData;
@@ -40,10 +40,6 @@ import lombok.Setter;
  * Created on 2023/05/09
  */
 public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData> {
-
-    @Getter
-    protected final PlayScreenLayoutConst layoutConst;
-    
 
     @Getter
     @Setter
@@ -58,9 +54,10 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
     private DeskAreaVM deskAreaVM;
     private CameraControlBoardVM cameraControlBoardVM;
     
-    public MarketScreen(ComikeHelperGame game, PlayScreenLayoutConst layoutConst) {
+    private CartBoardVM cartBoardVM;
+    
+    public MarketScreen(ComikeHelperGame game) {
         super(game, game.getSharedViewport());
-        this.layoutConst = layoutConst;
         
         this.deskCamera = new OrthographicCamera();
         this.deskStage = new Stage(new ScreenViewport(deskCamera), game.getBatch());
@@ -79,7 +76,12 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         deskAreaVM = new DeskAreaVM(this);
         deskStage.addActor(deskAreaVM);
         
-        
+        // ------ UI layer ------
+        cartBoardVM = new CartBoardVM(this);
+        uiRootTable.add(cartBoardVM)
+                .growY()
+                .expand()
+                .right();
     }
 
     @Override
@@ -111,6 +113,7 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
 
         deskAreaVM.upodateData(game.getManagerContext().getCrossScreenDataPackage().getCurrentRoomData().getDeskDatas());
         
+        cartBoardVM.updateData(game.getManagerContext().getCrossScreenDataPackage().getCartGoods());
     }
 
     
@@ -133,13 +136,14 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
     public static final TextureRegion RED_POINT = new TextureRegion(TextureFactory.createAlphaBoard(3, 3, Color.RED, 1.0f));
     
     @Override
-    protected void gameObjectDraw(float delta) {
+    protected void belowUiStageDraw(float delta) {
         deskStage.act();
         deskStage.getViewport().getCamera().position.set(
                 game.getManagerContext().getCrossScreenDataPackage().getCurrentCameraX(), 
                 game.getManagerContext().getCrossScreenDataPackage().getCurrentCameraY(), 
                 0);
         if (currentCameraZoomDirty) {
+            currentCameraZoomDirty = false;
             deskCamera.zoom = (float) Math.pow(2, game.getManagerContext().getCrossScreenDataPackage().getCurrentCameraZoomPower());
         }
         deskStage.getViewport().apply();

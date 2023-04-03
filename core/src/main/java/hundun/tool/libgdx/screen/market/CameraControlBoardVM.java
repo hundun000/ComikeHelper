@@ -13,7 +13,7 @@ import hundun.tool.libgdx.screen.MarketScreen;
  * Created on 2023/05/09
  */
 public class CameraControlBoardVM extends Table {
-    static float STEP = 50.0f;
+    static float STEP = 200.0f;
     MarketScreen parent;
     
     public CameraControlBoardVM(MarketScreen parent) {

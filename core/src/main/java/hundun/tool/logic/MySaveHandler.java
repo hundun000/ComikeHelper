@@ -14,6 +14,7 @@ import hundun.gdxgame.gamelib.starter.save.PairChildrenSaveHandler;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.RootSaveData;
 import hundun.tool.logic.data.RootSaveData.DeskSaveData;
+import hundun.tool.logic.data.RootSaveData.GoodSaveData;
 import hundun.tool.logic.data.RootSaveData.MyGameplaySaveData;
 import hundun.tool.logic.data.RootSaveData.MySystemSettingSaveData;
 import hundun.tool.logic.data.RootSaveData.RoomSaveData;
@@ -33,10 +34,31 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
     protected RootSaveData genereateStarterRootSaveData() {
         
         List<DeskSaveData> deskSaveDatas = new ArrayList<>();
-        IntStream.range(1, 10).forEach(it -> deskSaveDatas.add(DeskSaveData.builder().name("社团FOO" + it).posDataLine("A;" + it).build()));
-        IntStream.range(1, 10).forEach(it -> deskSaveDatas.add(DeskSaveData.builder().name("社团BAR" + it).posDataLine("B;" + it).build()));
         
+        DeskRuntimeData.AREA_LIST.forEach(area -> {
+            
+            IntStream.range(1, 10).forEach(it -> deskSaveDatas.add(
+                    DeskSaveData.builder()
+                            .name("name")
+                            .posDataLine(area + ";" + it)
+                            .goodSaveDatas(JavaFeatureForGwt.listOf(
+                                    GoodSaveData.builder().name(area + "_" + it + "_" + "本子1").build(),
+                                    GoodSaveData.builder().name(area + "_" + it + "_" + "本子2").build()
+                                    ))
+                            .build())
+                    );
+            
+        });
+
         MyGameplaySaveData saveData = new MyGameplaySaveData();
+        saveData.setCartGoodIds(JavaFeatureForGwt.listOf(
+                "A_1_本子1",
+                "B_1_本子1",
+                "C_1_本子1",
+                "A_2_本子1",
+                "B_2_本子1",
+                "C_2_本子1"
+                ));
         saveData.setRoomSaveDatas(JavaFeatureForGwt.arraysAsList(
                 RoomSaveData.builder()
                         .name("1号馆")

@@ -35,7 +35,7 @@ subprojects {
 
     gdxFreeTypeGwtVersion = '1.9.10.1'
     screenmanagerVersion = '0.6.8'
-    hundunLibVersion = '236a579777'
+    hundunLibVersion = '3b60d2bffa'
     raeleusStripeVersion = '1.4.1'
   }
   repositories {

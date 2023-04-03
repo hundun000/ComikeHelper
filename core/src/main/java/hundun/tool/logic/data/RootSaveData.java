@@ -30,6 +30,15 @@ public class RootSaveData {
     public static class MyGameplaySaveData {
         
         List<RoomSaveData> roomSaveDatas;
+        List<String> cartGoodIds;
+    }
+    
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class GoodSaveData {
+        String name;
     }
     
     @Data
@@ -39,6 +48,7 @@ public class RootSaveData {
     public static class DeskSaveData {
         String name;
         String posDataLine;
+        List<GoodSaveData> goodSaveDatas;
     }
     
     @Data

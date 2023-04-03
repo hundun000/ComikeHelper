@@ -2,7 +2,6 @@ package hundun.tool.libgdx.screen;
 
 import de.eskalon.commons.screen.transition.impl.BlendingTransition;
 import hundun.tool.ComikeHelperGame;
-import hundun.tool.libgdx.screen.market.PlayScreenLayoutConst;
 import lombok.Getter;
 
 /**
@@ -13,13 +12,24 @@ import lombok.Getter;
 public class ScreenContext {
     MarketScreen mainScreen;
     MyMenuScreen menuScreen;
+    LayoutConst layoutConst;
+    
+    public static class LayoutConst {
+        public int GOOD_IMAGE_SIZE = 200;
+        public int GOOD_NODE_HEIGHT = 250;
+        public int GOOD_NODE_WIDTH = 500;
 
+        public int CART_BOARD_WIDTH = 600;
+        
+    }
+    
     public ScreenContext(ComikeHelperGame game) {
         
     }
     
     public void lazyInit(ComikeHelperGame game) {
-        this.mainScreen = new MarketScreen(game, new PlayScreenLayoutConst());
+        this.layoutConst = new LayoutConst();
+        this.mainScreen = new MarketScreen(game);
         this.menuScreen = new MyMenuScreen(game);
         
         game.getScreenManager().addScreen(mainScreen.getClass().getSimpleName(), mainScreen);

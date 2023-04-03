@@ -23,8 +23,7 @@ import lombok.Getter;
  */
 public class DeskVM extends Table {
 
-    public static final int WIDTH = 120;
-    public static final int HEIGHT = 50;
+    
     
     DeskAreaVM deskAreaVM;
     @Getter
@@ -36,7 +35,7 @@ public class DeskVM extends Table {
         this.deskData = deskData;
 
         
-        this.setBackground(new TextureRegionDrawable(new TextureRegion(TextureFactory.getSimpleBoardBackground(WIDTH, HEIGHT))));
+        this.setBackground(new TextureRegionDrawable(new TextureRegion(TextureFactory.getSimpleBoardBackground(DeskRuntimeData.WIDTH, DeskRuntimeData.HEIGHT))));
         this.add(new Label(
                 deskData.getName() + " " + deskData.getLocation().getArea() + deskData.getLocation().getAreaIndex(), 
                 deskAreaVM.parent.getGame().getMainSkin()));
