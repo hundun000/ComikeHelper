@@ -1,4 +1,4 @@
-package hundun.tool.libgdx.screen.mainscreen;
+package hundun.tool.libgdx.screen.market;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.corelib.base.util.TextureFactory;
-import hundun.tool.logic.data.DeskData;
+import hundun.tool.logic.data.DeskRuntimeData;
 import lombok.Getter;
 
 /**
@@ -23,21 +23,23 @@ import lombok.Getter;
  */
 public class DeskVM extends Table {
 
-    public static final int WIDTH = 100;
+    public static final int WIDTH = 120;
     public static final int HEIGHT = 50;
     
     DeskAreaVM deskAreaVM;
     @Getter
-    DeskData deskData;
+    DeskRuntimeData deskData;
 
     
-    public DeskVM(DeskAreaVM deskAreaVM, DeskData deskData) {
+    public DeskVM(DeskAreaVM deskAreaVM, DeskRuntimeData deskData) {
         this.deskAreaVM = deskAreaVM;
         this.deskData = deskData;
 
         
         this.setBackground(new TextureRegionDrawable(new TextureRegion(TextureFactory.getSimpleBoardBackground(WIDTH, HEIGHT))));
-        this.add(new Label(deskData.getName(), deskAreaVM.parent.getGame().getMainSkin()));
+        this.add(new Label(
+                deskData.getName() + " " + deskData.getLocation().getArea() + deskData.getLocation().getAreaIndex(), 
+                deskAreaVM.parent.getGame().getMainSkin()));
         
        
 

@@ -1,4 +1,4 @@
-package hundun.tool.libgdx.screen.mainscreen;
+package hundun.tool.libgdx.screen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -24,7 +25,12 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import hundun.gdxgame.corelib.base.BaseHundunScreen;
 import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.tool.ComikeHelperGame;
-import hundun.tool.logic.data.DeskData;
+import hundun.tool.libgdx.screen.market.CameraControlBoardVM;
+import hundun.tool.libgdx.screen.market.DeskAreaVM;
+import hundun.tool.libgdx.screen.market.DeskVM;
+import hundun.tool.libgdx.screen.market.PlayScreenLayoutConst;
+import hundun.tool.logic.data.DeskRuntimeData;
+import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.RootSaveData;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,33 +39,45 @@ import lombok.Setter;
  * @author hundun
  * Created on 2023/05/09
  */
-public class MainScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData> {
+public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData> {
 
     @Getter
     protected final PlayScreenLayoutConst layoutConst;
     
-    @Getter
-    @Setter
-    private float currentCameraX;
-    @Getter
-    @Setter
-    private float currentCameraY;
 
+    @Getter
+    @Setter
+    private boolean currentCameraZoomDirty;
+    
+    
+    
+    private final OrthographicCamera deskCamera;
     private final Stage deskStage;
     
     
     private DeskAreaVM deskAreaVM;
     private CameraControlBoardVM cameraControlBoardVM;
     
-    public MainScreen(ComikeHelperGame game, PlayScreenLayoutConst layoutConst) {
+    public MarketScreen(ComikeHelperGame game, PlayScreenLayoutConst layoutConst) {
         super(game, game.getSharedViewport());
         this.layoutConst = layoutConst;
         
-        this.deskStage = new Stage(new ScreenViewport(), game.getBatch());
+        this.deskCamera = new OrthographicCamera();
+        this.deskStage = new Stage(new ScreenViewport(deskCamera), game.getBatch());
     }
 
     @Override
     protected void create() {
+        // ------ popup layer ------
+        cameraControlBoardVM = new CameraControlBoardVM(this);
+        popupRootTable.add(cameraControlBoardVM)
+                .expand()
+                .bottom()
+                ;
+        
+        // ------ desk layer ------
+        deskAreaVM = new DeskAreaVM(this);
+        deskStage.addActor(deskAreaVM);
         
         
     }
@@ -83,26 +101,18 @@ public class MainScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData>
         //Gdx.input.setInputProcessor(uiStage);
         //game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
 
-        backUiStage.clear();
-        popupRootTable.clear();
-        lazyInitBackUiAndPopupUiContent();
+        updateUIForShow();
 
-        uiRootTable.clear();
-        lazyInitUiRootContext();
-        
-        deskStage.clear();
-        lazyInitDeskContext();
-        
-        lazyInitLogicContext();
 
         Gdx.app.log(this.getClass().getSimpleName(), "show done");
     }
+    
+    private void updateUIForShow() {
 
-    private void lazyInitBackUiAndPopupUiContent() {
-        // TODO Auto-generated method stub
-        cameraControlBoardVM = new CameraControlBoardVM(this);
-        popupRootTable.add(cameraControlBoardVM).left();
+        deskAreaVM.upodateData(game.getManagerContext().getCrossScreenDataPackage().getCurrentRoomData().getDeskDatas());
+        
     }
+
     
     public static class TiledMapClickListener extends ClickListener {
         ComikeHelperGame game;
@@ -119,38 +129,19 @@ public class MainScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData>
         }
     }
 
-    private void lazyInitLogicContext() {
-
-        
-        
-        DeskVM centerEntity = deskAreaVM.nodes.values().iterator().next();
-        currentCameraX = centerEntity.getX();
-        currentCameraY = centerEntity.getY();
-    }
-
-    private void lazyInitDeskContext() {
-        List<DeskData> deskDatas = IntStream.range(0, 100)
-                .mapToObj(it -> DeskData.builder()
-                            .name("A" + it)
-                            .roomIndex(it)
-                            .build()
-                            )
-                .collect(Collectors.toList());
-        
-        deskAreaVM = new DeskAreaVM(this, deskDatas);
-        deskStage.addActor(deskAreaVM);
-    }
-    
-    private void lazyInitUiRootContext() {
-        
-    }
 
     public static final TextureRegion RED_POINT = new TextureRegion(TextureFactory.createAlphaBoard(3, 3, Color.RED, 1.0f));
     
     @Override
     protected void gameObjectDraw(float delta) {
         deskStage.act();
-        deskStage.getViewport().getCamera().position.set(currentCameraX, currentCameraY, 0);
+        deskStage.getViewport().getCamera().position.set(
+                game.getManagerContext().getCrossScreenDataPackage().getCurrentCameraX(), 
+                game.getManagerContext().getCrossScreenDataPackage().getCurrentCameraY(), 
+                0);
+        if (currentCameraZoomDirty) {
+            deskCamera.zoom = (float) Math.pow(2, game.getManagerContext().getCrossScreenDataPackage().getCurrentCameraZoomPower());
+        }
         deskStage.getViewport().apply();
         deskStage.draw();
     }

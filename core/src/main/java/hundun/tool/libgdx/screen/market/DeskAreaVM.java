@@ -1,4 +1,4 @@
-package hundun.tool.libgdx.screen.mainscreen;
+package hundun.tool.libgdx.screen.market;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -10,41 +10,43 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.EventListener;import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
-import hundun.tool.libgdx.screen.mainscreen.MainScreen.TiledMapClickListener;
-import hundun.tool.logic.data.DeskData;
+import hundun.tool.libgdx.screen.MarketScreen;
+import hundun.tool.libgdx.screen.MarketScreen.TiledMapClickListener;
+import hundun.tool.logic.data.DeskRuntimeData;
+import lombok.Getter;
 
 /**
  * @author hundun
  * Created on 2023/05/09
  */
 public class DeskAreaVM extends Table {
-    public MainScreen parent;
+    public MarketScreen parent;
+    @Getter
     Map<String, DeskVM> nodes = new LinkedHashMap<>();
     
-    private Vector2 roomPos(int index) {
-        return new Vector2(
-                10 + (DeskVM.WIDTH + 25) * index, 
-                10 + 25
-                );
+
+    
+    public DeskAreaVM(MarketScreen parent) {
+        this.parent = parent;
+        
+        if (parent.getGame().debugMode) {
+            this.debugAll();
+        }
     }
     
-    public DeskAreaVM(MainScreen parent, List<DeskData> deskDatas) {
-        this.parent = parent;
+    public void upodateData(List<DeskRuntimeData> deskDatas) {
+        nodes.clear();
         
         deskDatas.forEach(deskData -> {
             DeskVM actor = new DeskVM(this, deskData);
             nodes.put(actor.getName(), actor);
             
-            Vector2 roomPos = roomPos(deskData.getRoomIndex());
+            Vector2 roomPos = deskData.getLocation().getPos();
             actor.setBounds(roomPos.x, roomPos.y, DeskVM.WIDTH, DeskVM.HEIGHT);
             EventListener eventListener = new TiledMapClickListener(parent.getGame(), actor);
             actor.addListener(eventListener);
             this.addActor(actor);
             
         });
-        
-        if (parent.getGame().debugMode) {
-            this.debugAll();
-        }
     }
 }

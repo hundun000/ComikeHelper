@@ -6,6 +6,7 @@ import java.util.Set;
 
 import hundun.gdxgame.gamelib.starter.save.IRootSaveExtension;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,8 +28,28 @@ public class RootSaveData {
     
     @Data
     public static class MyGameplaySaveData {
-        List<DeskData> deskDatas;
-
+        
+        List<RoomSaveData> roomSaveDatas;
+    }
+    
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class DeskSaveData {
+        String name;
+        String posDataLine;
+    }
+    
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class RoomSaveData {
+        String name;
+        int startX;
+        int startY;
+        List<DeskSaveData> deskSaveDatas;
     }
     
     public static final class Factory implements IRootSaveExtension<RootSaveData, MySystemSettingSaveData, MyGameplaySaveData> {

@@ -8,8 +8,9 @@ import com.ray3k.stripe.FreeTypeSkin;
 import de.eskalon.commons.screen.transition.impl.BlendingTransition;
 import hundun.gdxgame.corelib.base.BaseHundunGame;
 import hundun.gdxgame.gamelib.base.save.ISaveTool;
+import hundun.tool.libgdx.screen.MarketScreen;
+import hundun.tool.libgdx.screen.MyMenuScreen;
 import hundun.tool.libgdx.screen.ScreenContext;
-import hundun.tool.libgdx.screen.mainscreen.MainScreen;
 import hundun.tool.logic.ManagerContext;
 import hundun.tool.logic.MySaveHandler;
 import hundun.tool.logic.data.RootSaveData;
@@ -64,7 +65,7 @@ public class ComikeHelperGame extends BaseHundunGame<RootSaveData> {
         managerContext.lazyInitOnGameCreate();
         
         
-        screenManager.pushScreen(MainScreen.class.getSimpleName(), BlendingTransition.class.getSimpleName());
+        screenManager.pushScreen(MyMenuScreen.class.getSimpleName(), BlendingTransition.class.getSimpleName());
 
     }
 
