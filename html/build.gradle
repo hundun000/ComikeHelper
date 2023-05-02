@@ -31,7 +31,8 @@ configurations { lombok }
 
 dependencies {
   implementation project(':core')
-  implementation "com.github.hundun000:libgdx-hundun-lib:$hundunLibVersion:sources"
+  implementation "com.github.hundun000.libgdx-hundun-lib:gamelib:$hundunLibVersion:sources"
+  implementation "com.github.hundun000.libgdx-hundun-lib:corelib:$hundunLibVersion:sources"
   
   implementation "com.github.raeleus.stripe:stripe:$raeleusStripeVersion:sources"
   implementation "com.github.raeleus.stripe:freetype:$raeleusStripeVersion:sources"

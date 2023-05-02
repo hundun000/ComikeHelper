@@ -3,7 +3,8 @@ eclipse.project.name = appName + '-core'
 
 dependencies {
   api "com.badlogicgames.gdx:gdx:$gdxVersion"
-  api "com.github.hundun000:libgdx-hundun-lib:$hundunLibVersion"
+  api "com.github.hundun000.libgdx-hundun-lib:gamelib:$hundunLibVersion"
+  api "com.github.hundun000.libgdx-hundun-lib:corelib:$hundunLibVersion"
   implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
   implementation "com.github.raeleus.stripe:stripe:$raeleusStripeVersion"
   implementation "com.github.raeleus.stripe:freetype:$raeleusStripeVersion"

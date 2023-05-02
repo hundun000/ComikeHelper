@@ -9,6 +9,7 @@ buildscript {
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
   }
   dependencies {
+    classpath "com.android.tools.build:gradle:$androidPluginVersion"
     classpath "org.wisepersist:gwt-gradle-plugin:$gwtPluginVersion"
 
   }
@@ -17,10 +18,9 @@ buildscript {
 allprojects {
   apply plugin: 'eclipse'
   apply plugin: 'idea'
-  apply plugin: 'java-library'
 }
 
-configure(subprojects) {
+configure(subprojects - project(':android')) {
   apply plugin: 'java-library'
   sourceCompatibility = 1.8
   compileJava {
@@ -32,7 +32,7 @@ subprojects {
   version = '1.0.0'
   ext{
     appName = 'ComikeHelperDemo'
-    
+
     gdxFreeTypeGwtVersion = '1.9.10.1'
     screenmanagerVersion = '0.6.8'
     hundunLibVersion = '236a579777'
