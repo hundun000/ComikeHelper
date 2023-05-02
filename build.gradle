@@ -31,7 +31,7 @@ configure(subprojects - project(':android')) {
 subprojects {
   version = '1.0.0'
   ext{
-    appName = 'ComikeHelperDemo'
+    appName = 'ComikeHelper'
 
     gdxFreeTypeGwtVersion = '1.9.10.1'
     screenmanagerVersion = '0.6.8'
@@ -49,4 +49,4 @@ subprojects {
   }
 }
 
-eclipse.project.name = 'ComikeHelperDemo' + '-parent'
+eclipse.project.name = 'ComikeHelper' + '-parent'
