@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -68,8 +69,13 @@ public class MainScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData>
     public void show() {
         super.show();
         
-        Gdx.input.setInputProcessor(uiStage);
-        game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(uiStage);
+        multiplexer.addProcessor(deskStage);
+        Gdx.input.setInputProcessor(multiplexer);
+        
+        //Gdx.input.setInputProcessor(uiStage);
+        //game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
 
         backUiStage.clear();
         popupRootTable.clear();
@@ -136,6 +142,7 @@ public class MainScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData>
     
     @Override
     protected void gameObjectDraw(float delta) {
+        deskStage.act();
         deskStage.getViewport().getCamera().position.set(currentCameraX, currentCameraY, 0);
         deskStage.getViewport().apply();
         deskStage.draw();
