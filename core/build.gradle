@@ -1,0 +1,11 @@
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+eclipse.project.name = appName + '-core'
+
+dependencies {
+  api "com.badlogicgames.gdx:gdx:$gdxVersion"
+  api "com.github.hundun000:libgdx-hundun-lib:$hundunLibVersion"
+  implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+  implementation "com.github.raeleus.stripe:stripe:$raeleusStripeVersion"
+  implementation "com.github.raeleus.stripe:freetype:$raeleusStripeVersion"
+  implementation 'com.github.raeleus.TenPatch:tenpatch:5.2.3'
+}
