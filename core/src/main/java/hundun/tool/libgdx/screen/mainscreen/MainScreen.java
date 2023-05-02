@@ -38,14 +38,19 @@ public class MainScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData>
     @Getter
     protected final PlayScreenLayoutConst layoutConst;
     
+    @Getter
+    @Setter
     private float currentCameraX;
+    @Getter
+    @Setter
     private float currentCameraY;
 
     private final Stage deskStage;
     
     
     private DeskAreaVM deskAreaVM;
-
+    private CameraControlBoardVM cameraControlBoardVM;
+    
     public MainScreen(ComikeHelperGame game, PlayScreenLayoutConst layoutConst) {
         super(game, game.getSharedViewport());
         this.layoutConst = layoutConst;
@@ -70,6 +75,7 @@ public class MainScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData>
         super.show();
         
         InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(popupUiStage);
         multiplexer.addProcessor(uiStage);
         multiplexer.addProcessor(deskStage);
         Gdx.input.setInputProcessor(multiplexer);
@@ -94,7 +100,8 @@ public class MainScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData>
 
     private void lazyInitBackUiAndPopupUiContent() {
         // TODO Auto-generated method stub
-        
+        cameraControlBoardVM = new CameraControlBoardVM(this);
+        popupRootTable.add(cameraControlBoardVM).left();
     }
     
     public static class TiledMapClickListener extends ClickListener {
@@ -116,7 +123,7 @@ public class MainScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData>
 
         
         
-        DeskVM centerEntity = deskAreaVM.nodes.values().stream().findFirst().get();
+        DeskVM centerEntity = deskAreaVM.nodes.values().iterator().next();
         currentCameraX = centerEntity.getX();
         currentCameraY = centerEntity.getY();
     }

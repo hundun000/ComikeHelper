@@ -1,6 +1,7 @@
 package hundun.tool.libgdx.screen.mainscreen;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ import hundun.tool.logic.data.DeskData;
  */
 public class DeskAreaVM extends Table {
     public MainScreen parent;
-    Map<String, DeskVM> nodes = new HashMap<>();
+    Map<String, DeskVM> nodes = new LinkedHashMap<>();
     
     private Vector2 roomPos(int index) {
         return new Vector2(
