@@ -2,7 +2,8 @@ package hundun.tool.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import hundun.tool.ComikeHelperApp;
+
+import hundun.tool.ComikeHelperGame;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
@@ -11,7 +12,8 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new ComikeHelperApp(), getDefaultConfiguration());
+        ComikeHelperGame game = new ComikeHelperGame(new PreferencesSaveTool("ComikeHelperGame-desktop-save.xml"));
+        return new Lwjgl3Application(game, getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
