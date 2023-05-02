@@ -14,7 +14,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import hundun.gdxgame.corelib.base.BaseHundunScreen;
@@ -34,15 +37,19 @@ public class MainScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData>
     @Getter
     protected final PlayScreenLayoutConst layoutConst;
     
-    private Integer defaultCenterIndex;
     private float currentCameraX;
     private float currentCameraY;
-    List<DeskVM> deskVMMap = new ArrayList<>();
 
+    private final Stage deskStage;
+    
+    
+    private DeskAreaVM deskAreaVM;
 
     public MainScreen(ComikeHelperGame game, PlayScreenLayoutConst layoutConst) {
         super(game, game.getSharedViewport());
         this.layoutConst = layoutConst;
+        
+        this.deskStage = new Stage(new ScreenViewport(), game.getBatch());
     }
 
     @Override
@@ -70,7 +77,10 @@ public class MainScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData>
 
         uiRootTable.clear();
         lazyInitUiRootContext();
-
+        
+        deskStage.clear();
+        lazyInitDeskContext();
+        
         lazyInitLogicContext();
 
         Gdx.app.log(this.getClass().getSimpleName(), "show done");
@@ -82,49 +92,53 @@ public class MainScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData>
     }
     
     public static class TiledMapClickListener extends ClickListener {
-
+        ComikeHelperGame game;
         private DeskVM vm;
 
-        public TiledMapClickListener(DeskVM vm) {
+        public TiledMapClickListener(ComikeHelperGame game, DeskVM vm) {
+            this.game = game;
             this.vm = vm;
         }
 
         @Override
         public void clicked(InputEvent event, float x, float y) {
-            System.out.println(vm.getIndex() + " has been clicked.");
+            game.getFrontend().log(this.getClass().getSimpleName(), vm.getDeskData().getName() + " has been clicked.");
         }
     }
 
     private void lazyInitLogicContext() {
-        deskVMMap.clear();
+
         
-        IntStream.range(0, 100)
-                .forEach(it -> {
-                    DeskData deskData = DeskData.builder()
-                            .name("A" + it)
-                            .build();
-                    DeskVM actor = new DeskVM(this, deskData, it);
-                    deskVMMap.add(actor);
-                    
-                    actor.setBounds(actor.getPos().x, actor.getPos().y, DeskVM.WIDTH, DeskVM.HEIGHT);
-                    EventListener eventListener = new TiledMapClickListener(actor);
-                    actor.addListener(eventListener);
-                    uiStage.addActor(actor);
-                });
         
-        defaultCenterIndex = 0;
-        DeskVM centerEntity = deskVMMap.get(defaultCenterIndex);
-        currentCameraX = centerEntity.getPos().x;
-        currentCameraY = centerEntity.getPos().y;
+        DeskVM centerEntity = deskAreaVM.nodes.values().stream().findFirst().get();
+        currentCameraX = centerEntity.getX();
+        currentCameraY = centerEntity.getY();
     }
 
+    private void lazyInitDeskContext() {
+        List<DeskData> deskDatas = IntStream.range(0, 100)
+                .mapToObj(it -> DeskData.builder()
+                            .name("A" + it)
+                            .roomIndex(it)
+                            .build()
+                            )
+                .collect(Collectors.toList());
+        
+        deskAreaVM = new DeskAreaVM(this, deskDatas);
+        deskStage.addActor(deskAreaVM);
+    }
+    
     private void lazyInitUiRootContext() {
-
         
     }
 
     public static final TextureRegion RED_POINT = new TextureRegion(TextureFactory.createAlphaBoard(3, 3, Color.RED, 1.0f));
     
-    
+    @Override
+    protected void gameObjectDraw(float delta) {
+        deskStage.getViewport().getCamera().position.set(currentCameraX, currentCameraY, 0);
+        deskStage.getViewport().apply();
+        deskStage.draw();
+    }
 
 }

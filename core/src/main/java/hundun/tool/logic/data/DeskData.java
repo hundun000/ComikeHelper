@@ -17,4 +17,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DeskData {
     String name;
+    int roomIndex;
 }

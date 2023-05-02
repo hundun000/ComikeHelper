@@ -24,45 +24,22 @@ import lombok.Getter;
 public class DeskVM extends Table {
 
     public static final int WIDTH = 100;
-    public static final int HEIGHT = 150;
+    public static final int HEIGHT = 50;
     
-    MainScreen parent;
-    DeskData deskData;
-    
+    DeskAreaVM deskAreaVM;
     @Getter
-    Vector2 pos;
+    DeskData deskData;
 
     
-    @Getter
-    int index;
-    
-    static TextureRegion testTexture;
-    
-    static {
-        Pixmap pixmap200 = new Pixmap(Gdx.files.internal("badlogic.jpg"));
-        Pixmap pixmap100 = new Pixmap(80, 80, pixmap200.getFormat());
-        pixmap100.drawPixmap(pixmap200,
-                0, 0, pixmap200.getWidth(), pixmap200.getHeight(),
-                0, 0, pixmap100.getWidth(), pixmap100.getHeight()
-        );
-        testTexture = new TextureRegion(new Texture(pixmap100));
-        pixmap200.dispose();
-        pixmap100.dispose();
-    }
-    
-    public DeskVM(MainScreen parent, DeskData deskData, int index) {
-        this.parent = parent;
+    public DeskVM(DeskAreaVM deskAreaVM, DeskData deskData) {
+        this.deskAreaVM = deskAreaVM;
         this.deskData = deskData;
-        this.index = index;
 
         
         this.setBackground(new TextureRegionDrawable(new TextureRegion(TextureFactory.getSimpleBoardBackground(WIDTH, HEIGHT))));
-        this.add(new Image(testTexture));
+        this.add(new Label(deskData.getName(), deskAreaVM.parent.getGame().getMainSkin()));
         
-        this.pos = new Vector2(
-                10 + (WIDTH + 25) * index, 
-                10 + 25
-                );
+       
 
     }
 
