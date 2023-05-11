@@ -3,6 +3,7 @@ package hundun.tool.logic.data;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import hundun.tool.libgdx.screen.ScreenContext.LayoutConst;
 import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
 import hundun.tool.logic.data.RootSaveData.RoomSaveData;
 import lombok.AllArgsConstructor;
@@ -25,13 +26,13 @@ public class RoomRuntimeData {
     List<DeskRuntimeData> deskDatas;
     
     public static class Factory {
-        public static RoomRuntimeData fromSaveData(RoomSaveData saveData) {
+        public static RoomRuntimeData fromSaveData(LayoutConst layoutConst, RoomSaveData saveData) {
             return RoomRuntimeData.builder()
                     .name(saveData.getName())
                     .startX(saveData.getStartX())
                     .startY(saveData.getStartY())
                     .deskDatas(saveData.getDeskSaveDatas().stream()
-                            .map(it -> DeskRuntimeData.Factory.fromSaveData(it))
+                            .map(it -> DeskRuntimeData.Factory.fromSaveData(layoutConst, it))
                             .collect(Collectors.toList())
                             )
                     .build();

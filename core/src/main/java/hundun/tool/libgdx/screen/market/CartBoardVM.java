@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.libgdx.screen.MarketScreen;
+import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.RootSaveData.GoodSaveData;
 
 public class CartBoardVM extends Table {
@@ -39,11 +40,11 @@ public class CartBoardVM extends Table {
     }
 
     
-    public void updateData(List<GoodSaveData> goodSaveDatas) {
+    public void updateData(List<GoodRuntimeData> list) {
         //nodes.clear();
         childrenTable.clear();
         
-        goodSaveDatas.forEach(it -> {
+        list.forEach(it -> {
             CartGoodVM node = new CartGoodVM(screen, it);
             childrenTable.add(node).row();
             

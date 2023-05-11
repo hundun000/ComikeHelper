@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.libgdx.screen.MarketScreen;
+import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.RootSaveData.GoodSaveData;
 
 /**
@@ -19,7 +20,7 @@ public class CartGoodVM extends Table {
     
     MarketScreen screen;
     
-    public CartGoodVM(MarketScreen screen, GoodSaveData it) {
+    public CartGoodVM(MarketScreen screen, GoodRuntimeData it) {
         this.add(new Image(new Texture(Gdx.files.internal("badlogic.jpg"))))
                 .width(screen.getGame().getScreenContext().getLayoutConst().GOOD_IMAGE_SIZE)
                 .height(screen.getGame().getScreenContext().getLayoutConst().GOOD_IMAGE_SIZE)

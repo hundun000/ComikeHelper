@@ -1,5 +1,7 @@
 package hundun.tool.libgdx.screen;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
+
 import de.eskalon.commons.screen.transition.impl.BlendingTransition;
 import hundun.tool.ComikeHelperGame;
 import lombok.Getter;
@@ -15,6 +17,12 @@ public class ScreenContext {
     LayoutConst layoutConst;
     
     public static class LayoutConst {
+        public int DESK_SMALL_COL_PADDING = 30;
+        public int DESK_BIG_COL_PADDING = 200;
+        public int DESK_WIDTH = 400;
+        public int DESK_HEIGHT = 200;
+        
+        public int DESK_STAR_SIZE = 50;
         public int GOOD_IMAGE_SIZE = 200;
         public int GOOD_NODE_HEIGHT = 250;
         public int GOOD_NODE_WIDTH = 500;

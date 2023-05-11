@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -39,7 +40,7 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
             
             IntStream.range(1, 10).forEach(it -> deskSaveDatas.add(
                     DeskSaveData.builder()
-                            .name("name")
+                            .name(UUID.randomUUID().toString().substring(0, 5))
                             .posDataLine(area + ";" + it)
                             .goodSaveDatas(JavaFeatureForGwt.listOf(
                                     GoodSaveData.builder().name(area + "_" + it + "_" + "本子1").build(),

@@ -111,9 +111,11 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
     
     private void updateUIForShow() {
 
-        deskAreaVM.upodateData(game.getManagerContext().getCrossScreenDataPackage().getCurrentRoomData().getDeskDatas());
-        
+        // for newest DeskDatas
+        deskAreaVM.updateDeskDatas(game.getManagerContext().getCrossScreenDataPackage().getCurrentRoomData().getDeskDatas());
+        // for newest cart
         cartBoardVM.updateData(game.getManagerContext().getCrossScreenDataPackage().getCartGoods());
+        deskAreaVM.updateCartData(game.getManagerContext().getCrossScreenDataPackage().getCartGoods());
     }
 
     

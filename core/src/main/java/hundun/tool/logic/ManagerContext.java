@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import hundun.gdxgame.gamelib.starter.save.PairChildrenSaveHandler.ISubGameplaySaveHandler;
 import hundun.tool.ComikeHelperGame;
 import hundun.tool.libgdx.screen.market.CartGoodVM;
+import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.RootSaveData.GoodSaveData;
 import hundun.tool.logic.data.RootSaveData.MyGameplaySaveData;
@@ -42,10 +43,10 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
         RoomRuntimeData currentRoomData;
 
         Map<String, RoomRuntimeData> roomMap;
-        Map<String, GoodSaveData> goodMap;
+        Map<String, GoodRuntimeData> goodMap;
 
 
-        List<GoodSaveData> cartGoods;
+        List<GoodRuntimeData> cartGoods;
 
         public void modifyCurrentCamera(Float deltaX, Float deltaY) {
             if (deltaX != null) {
@@ -77,16 +78,18 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
     public void applyGameplaySaveData(MyGameplaySaveData gameplaySave) {
 
         Map<String, RoomRuntimeData> roomMap = gameplaySave.getRoomSaveDatas().stream()
-                .map(it -> RoomRuntimeData.Factory.fromSaveData(it))
+                .map(it -> RoomRuntimeData.Factory.fromSaveData(game.getScreenContext().getLayoutConst(), it))
                 .collect(Collectors.toMap(
                         it -> it.getName(),
                         it -> it
                         ));
-        Map<String, GoodSaveData> goodMap = new HashMap<>();
+        Map<String, GoodRuntimeData> goodMap = new HashMap<>();
         roomMap.values().stream()
             .forEach(room ->
                 room.getDeskDatas().stream().forEach(deskData ->
-                    deskData.getGoodSaveDatas().stream().forEach(goodSaveData ->
+                    deskData.getGoodSaveDatas().stream()
+                    .map(goodSaveData -> GoodRuntimeData.Factory.fromSaveData(deskData, goodSaveData))
+                    .forEach(goodSaveData ->
                             goodMap.put(goodSaveData.getName(), goodSaveData)
                         )
                     )
