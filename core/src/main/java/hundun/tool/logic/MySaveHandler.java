@@ -65,6 +65,8 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
                         .name("1号馆")
                         .startX(0)
                         .startY(0)
+                        .roomWidth(5000)
+                        .roomHeight(3000)
                         .deskSaveDatas(deskSaveDatas)
                         .build()
                 ));

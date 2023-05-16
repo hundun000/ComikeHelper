@@ -10,8 +10,10 @@ import java.util.stream.Collectors;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.EventListener;import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
+import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.libgdx.screen.MarketScreen;
 import hundun.tool.libgdx.screen.MarketScreen.TiledMapClickListener;
 import hundun.tool.logic.data.DeskRuntimeData;
@@ -38,8 +40,15 @@ public class DeskAreaVM extends Table {
         }
     }
 
-    public void updateDeskDatas(List<DeskRuntimeData> deskDatas) {
+    public void updateDeskDatas(int roomWidth, int roomHeight, List<DeskRuntimeData> deskDatas) {
+        this.clear();
         nodes.clear();
+
+        Image background = new Image();
+        background.setDrawable(DrawableFactory.getSimpleBoardBackground());
+        background.setBounds(0, 0, roomWidth, roomHeight);
+        this.addActor(background);
+        this.addListener(parent.new MyGestureListener());
 
         deskDatas.forEach(deskData -> {
             DeskVM actor = new DeskVM(this, deskData);

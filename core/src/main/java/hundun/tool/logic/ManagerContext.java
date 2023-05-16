@@ -7,10 +7,8 @@ import java.util.stream.Collectors;
 
 import hundun.gdxgame.gamelib.starter.save.PairChildrenSaveHandler.ISubGameplaySaveHandler;
 import hundun.tool.ComikeHelperGame;
-import hundun.tool.libgdx.screen.market.CartGoodVM;
 import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.RoomRuntimeData;
-import hundun.tool.logic.data.RootSaveData.GoodSaveData;
 import hundun.tool.logic.data.RootSaveData.MyGameplaySaveData;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -36,10 +34,10 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
     @AllArgsConstructor
     @Builder
     public static class CrossScreenDataPackage {
-
+        ComikeHelperGame game;
         private float currentCameraX;
         private float currentCameraY;
-        private float currentCameraZoomPower;
+        private float currentCameraZoomWeight;
         RoomRuntimeData currentRoomData;
 
         Map<String, RoomRuntimeData> roomMap;
@@ -57,9 +55,10 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
             }
         }
 
-        public void modifyCurrentCameraZoomPower(Float delta) {
-            currentCameraZoomPower += delta;
+        public void modifyCurrentCameraZoomWeight(Float delta) {
+            currentCameraZoomWeight += delta;
         }
+
     }
 
     public ManagerContext(ComikeHelperGame game) {
@@ -97,6 +96,7 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
 
 
         this.crossScreenDataPackage = CrossScreenDataPackage.builder()
+                .game(game)
                 .roomMap(roomMap)
                 .goodMap(goodMap)
                 .cartGoods(gameplaySave.getCartGoodIds().stream()

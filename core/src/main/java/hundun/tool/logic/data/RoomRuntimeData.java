@@ -23,6 +23,8 @@ public class RoomRuntimeData {
     String name;
     int startX;
     int startY;
+    int roomWidth;
+    int roomHeight;
     List<DeskRuntimeData> deskDatas;
     
     public static class Factory {
@@ -31,6 +33,8 @@ public class RoomRuntimeData {
                     .name(saveData.getName())
                     .startX(saveData.getStartX())
                     .startY(saveData.getStartY())
+                    .roomWidth(saveData.getRoomWidth())
+                    .roomHeight(saveData.getRoomHeight())
                     .deskDatas(saveData.getDeskSaveDatas().stream()
                             .map(it -> DeskRuntimeData.Factory.fromSaveData(layoutConst, it))
                             .collect(Collectors.toList())
