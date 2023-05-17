@@ -18,7 +18,6 @@ import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.libgdx.screen.MarketScreen;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
-import hundun.tool.logic.data.RootSaveData.GoodSaveData;
 
 public class CartBoardVM extends Table {
 
@@ -43,7 +42,7 @@ public class CartBoardVM extends Table {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 screen.setCartBoardVMDirty(true);
-                screen.getGame().getManagerContext().getCrossScreenDataPackage().setDetailingDeskData(null);
+                screen.getGame().getLogicContext().getCrossScreenDataPackage().setDetailingDeskData(null);
             }
         });
 

@@ -30,14 +30,14 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
     public MySaveHandler(IFrontend frontend, ISaveTool<RootSaveData> saveTool) {
         super(frontend, RootSaveData.Factory.INSTANCE, saveTool);
     }
-    
+
     @Override
     protected RootSaveData genereateStarterRootSaveData() {
-        
+
         List<DeskSaveData> deskSaveDatas = new ArrayList<>();
-        
+
         DeskRuntimeData.AREA_LIST.forEach(area -> {
-            
+
             IntStream.range(1, 10).forEach(it -> deskSaveDatas.add(
                     DeskSaveData.builder()
                             .name(UUID.randomUUID().toString().substring(0, 5))
@@ -48,7 +48,7 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
                                     ))
                             .build())
                     );
-            
+
         });
 
         MyGameplaySaveData saveData = new MyGameplaySaveData();
@@ -70,7 +70,7 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
                         .deskSaveDatas(deskSaveDatas)
                         .build()
                 ));
-        return new RootSaveData(null, saveData);
+        return new RootSaveData(new MySystemSettingSaveData(), saveData);
     }
 
 }

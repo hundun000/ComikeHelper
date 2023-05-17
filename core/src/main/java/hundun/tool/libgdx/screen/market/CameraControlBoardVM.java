@@ -25,7 +25,7 @@ public class CameraControlBoardVM extends Table {
         moveUpButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                parent.getGame().getManagerContext().getCrossScreenDataPackage().modifyCurrentCamera(null, STEP);
+                parent.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCamera(null, STEP);
             }
         });
         directionPart.add(new Image());
@@ -37,7 +37,7 @@ public class CameraControlBoardVM extends Table {
         moveLeftButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                parent.getGame().getManagerContext().getCrossScreenDataPackage().modifyCurrentCamera(-STEP, null);
+                parent.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCamera(-STEP, null);
             }
         });
         directionPart.add(moveLeftButton);
@@ -48,7 +48,7 @@ public class CameraControlBoardVM extends Table {
         moveRightButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                parent.getGame().getManagerContext().getCrossScreenDataPackage().modifyCurrentCamera(STEP, null);
+                parent.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCamera(STEP, null);
             }
         });
         directionPart.add(moveRightButton);
@@ -58,7 +58,7 @@ public class CameraControlBoardVM extends Table {
         moveDownButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                parent.getGame().getManagerContext().getCrossScreenDataPackage().modifyCurrentCamera(null, -STEP);
+                parent.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCamera(null, -STEP);
             }
         });
         directionPart.add(new Image());
@@ -72,7 +72,7 @@ public class CameraControlBoardVM extends Table {
         zoomInButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                parent.getGame().getManagerContext().getCrossScreenDataPackage().modifyCurrentCameraZoomWeight(-1.0f);
+                parent.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCameraZoomWeight(-1.0f);
                 parent.setCurrentCameraZoomDirty(true);
             }
         });
@@ -82,7 +82,7 @@ public class CameraControlBoardVM extends Table {
         zoomOutButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                parent.getGame().getManagerContext().getCrossScreenDataPackage().modifyCurrentCameraZoomWeight(1.0f);
+                parent.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCameraZoomWeight(1.0f);
                 parent.setCurrentCameraZoomDirty(true);
             }
         });

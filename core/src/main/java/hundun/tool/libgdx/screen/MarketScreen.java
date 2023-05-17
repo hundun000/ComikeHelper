@@ -1,6 +1,5 @@
 package hundun.tool.libgdx.screen;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +21,7 @@ import hundun.tool.libgdx.screen.market.CameraControlBoardVM;
 import hundun.tool.libgdx.screen.market.CartBoardVM;
 import hundun.tool.libgdx.screen.market.DeskAreaVM;
 import hundun.tool.libgdx.screen.market.DeskVM;
-import hundun.tool.logic.ManagerContext.CrossScreenDataPackage;
+import hundun.tool.logic.LogicContext.CrossScreenDataPackage;
 import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.RootSaveData;
@@ -65,7 +64,7 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         public void zoom(InputEvent event, float initialDistance, float distance) {
             super.zoom(event, initialDistance, distance);
             float deltaValue = (distance - initialDistance) < 0 ? 0.1f : -0.1f;
-            MarketScreen.this.getGame().getManagerContext().getCrossScreenDataPackage().modifyCurrentCameraZoomWeight(deltaValue);
+            MarketScreen.this.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCameraZoomWeight(deltaValue);
             MarketScreen.this.setCurrentCameraZoomDirty(true);
         }
 
@@ -74,7 +73,7 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
             super.pan(event, x, y, deltaX, deltaY);
             float cameraDeltaX = -deltaX;
             float cameraDeltaY = -deltaY;
-            MarketScreen.this.getGame().getManagerContext().getCrossScreenDataPackage().modifyCurrentCamera(cameraDeltaX, cameraDeltaY);
+            MarketScreen.this.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCamera(cameraDeltaX, cameraDeltaY);
         }
     }
 
@@ -126,7 +125,7 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
     }
 
     private void updateUIForShow() {
-        CrossScreenDataPackage crossScreenDataPackage = game.getManagerContext().getCrossScreenDataPackage();
+        CrossScreenDataPackage crossScreenDataPackage = game.getLogicContext().getCrossScreenDataPackage();
         // for newest DeskDatas
         RoomRuntimeData currentRoomData = crossScreenDataPackage.getCurrentRoomData();
         deskAreaVM.updateDeskDatas(
@@ -137,7 +136,7 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         // for newest cart
         cartBoardVMDirty = true;
         checkCartBoardVMDirty();
-        deskAreaVM.updateCartData(game.getManagerContext().getCrossScreenDataPackage().getCartGoods());
+        deskAreaVM.updateCartData(game.getLogicContext().getCrossScreenDataPackage().getCartGoods());
     }
 
     private void checkCartBoardVMDirty() {
@@ -145,8 +144,8 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
             return;
         }
         cartBoardVMDirty = false;
-        CrossScreenDataPackage crossScreenDataPackage = game.getManagerContext().getCrossScreenDataPackage();
-        List<GoodRuntimeData> showCartGoods = game.getManagerContext().getCrossScreenDataPackage().getCartGoods().stream()
+        CrossScreenDataPackage crossScreenDataPackage = game.getLogicContext().getCrossScreenDataPackage();
+        List<GoodRuntimeData> showCartGoods = game.getLogicContext().getCrossScreenDataPackage().getCartGoods().stream()
                 .filter(it -> crossScreenDataPackage.getDetailingDeskData() == null || it.getOwnerRef() == crossScreenDataPackage.getDetailingDeskData())
                 .collect(Collectors.toList());
         cartBoardVM.updateData(crossScreenDataPackage.getDetailingDeskData(), showCartGoods);
@@ -167,7 +166,7 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         @Override
         public void clicked(InputEvent event, float x, float y) {
             screen.setCartBoardVMDirty(true);
-            game.getManagerContext().getCrossScreenDataPackage().setDetailingDeskData(vm.getDeskData());
+            game.getLogicContext().getCrossScreenDataPackage().setDetailingDeskData(vm.getDeskData());
             game.getFrontend().log(this.getClass().getSimpleName(), vm.getDeskData().getName() + " has been clicked.");
         }
     }
@@ -181,12 +180,12 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
 
         deskStage.act();
         deskStage.getViewport().getCamera().position.set(
-                game.getManagerContext().getCrossScreenDataPackage().getCurrentCameraX(),
-                game.getManagerContext().getCrossScreenDataPackage().getCurrentCameraY(),
+                game.getLogicContext().getCrossScreenDataPackage().getCurrentCameraX(),
+                game.getLogicContext().getCrossScreenDataPackage().getCurrentCameraY(),
                 0);
         if (currentCameraZoomDirty) {
             currentCameraZoomDirty = false;
-            float weight = game.getManagerContext().getCrossScreenDataPackage().getCurrentCameraZoomWeight();
+            float weight = game.getLogicContext().getCrossScreenDataPackage().getCurrentCameraZoomWeight();
             float value = weight <= 0 ? (float)Math.pow(2, weight) : (float)Math.log(weight + 2);
             deskCamera.zoom = value;
             game.getFrontend().log(this.getClass().getSimpleName(), "deskCamera.zoom = %s", deskCamera.zoom);

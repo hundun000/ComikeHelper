@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import hundun.gdxgame.gamelib.starter.save.PairChildrenSaveHandler.ISubSystemSettingSaveHandler;
 import hundun.gdxgame.gamelib.starter.save.PairChildrenSaveHandler.ISubGameplaySaveHandler;
 import hundun.tool.ComikeHelperGame;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
+import hundun.tool.logic.data.RootSaveData;
 import hundun.tool.logic.data.RootSaveData.MyGameplaySaveData;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,12 +26,29 @@ import lombok.Setter;
  */
 @Getter
 @Setter(value = AccessLevel.PRIVATE)
-public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveData> {
+public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>, ISubSystemSettingSaveHandler<RootSaveData.MySystemSettingSaveData> {
     ComikeHelperGame game;
-
+    @Getter
+    String extRoot;
     @Getter
     CrossScreenDataPackage crossScreenDataPackage;
+    @Getter
+    ExternalResourceManager externalResourceManager;
 
+
+    @Override
+    public void applySystemSetting(RootSaveData.MySystemSettingSaveData systemSettingSave) {
+        this.extRoot = externalResourceManager.getExtRoot();
+    }
+
+    @Override
+    public void currentSituationToSystemSetting(RootSaveData.MySystemSettingSaveData systemSettingSave) {
+
+    }
+
+    public void lazyInitOnGameCreateStage3() {
+
+    }
 
     @Getter
     @Setter
@@ -37,7 +56,7 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
     @Builder
     public static class CrossScreenDataPackage {
         ComikeHelperGame game;
-        
+
         private float currentCameraX;
         private float currentCameraY;
         private float currentCameraZoomWeight;
@@ -49,7 +68,7 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
 
         List<GoodRuntimeData> cartGoods;
         DeskRuntimeData detailingDeskData;
-        
+
         public void modifyCurrentCamera(Float deltaX, Float deltaY) {
             if (deltaX != null) {
                 currentCameraX += deltaX;
@@ -65,17 +84,13 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
 
     }
 
-    public ManagerContext(ComikeHelperGame game) {
+    public LogicContext(ComikeHelperGame game) {
         this.game = game;
-
-
-    }
-
-    public void lazyInitOnGameCreate() {
-        game.getSaveHandler().registerSubHandler(this);
-
+        this.externalResourceManager = new ExternalResourceManager();
 
     }
+
+
 
     @Override
     public void applyGameplaySaveData(MyGameplaySaveData gameplaySave) {
@@ -111,8 +126,10 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
                         .collect(Collectors.toList())
                         )
                 .build();
-        
+
         crossScreenDataPackage.currentRoomData = crossScreenDataPackage.getRoomMap().values().iterator().next();
+
+        externalResourceManager.lazyInitOnGameCreate();
     }
 
     @Override
