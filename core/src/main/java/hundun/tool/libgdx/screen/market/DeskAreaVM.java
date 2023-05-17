@@ -56,7 +56,7 @@ public class DeskAreaVM extends Table {
 
             Vector2 roomPos = deskData.getLocation().getPos();
             actor.setBounds(roomPos.x, roomPos.y, parent.getGame().getScreenContext().getLayoutConst().DESK_WIDTH, parent.getGame().getScreenContext().getLayoutConst().DESK_HEIGHT);
-            EventListener eventListener = new TiledMapClickListener(parent.getGame(), actor);
+            EventListener eventListener = new TiledMapClickListener(parent, actor);
             actor.addListener(eventListener);
             this.addActor(actor);
 

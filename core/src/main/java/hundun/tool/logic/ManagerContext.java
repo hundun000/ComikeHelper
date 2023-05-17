@@ -7,8 +7,10 @@ import java.util.stream.Collectors;
 
 import hundun.gdxgame.gamelib.starter.save.PairChildrenSaveHandler.ISubGameplaySaveHandler;
 import hundun.tool.ComikeHelperGame;
+import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.RoomRuntimeData;
+import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.RootSaveData.MyGameplaySaveData;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -35,6 +37,7 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
     @Builder
     public static class CrossScreenDataPackage {
         ComikeHelperGame game;
+        
         private float currentCameraX;
         private float currentCameraY;
         private float currentCameraZoomWeight;
@@ -45,7 +48,8 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
 
 
         List<GoodRuntimeData> cartGoods;
-
+        DeskRuntimeData detailingDeskData;
+        
         public void modifyCurrentCamera(Float deltaX, Float deltaY) {
             if (deltaX != null) {
                 currentCameraX += deltaX;
@@ -87,7 +91,6 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
             .forEach(room ->
                 room.getDeskDatas().stream().forEach(deskData ->
                     deskData.getGoodSaveDatas().stream()
-                    .map(goodSaveData -> GoodRuntimeData.Factory.fromSaveData(deskData, goodSaveData))
                     .forEach(goodSaveData ->
                             goodMap.put(goodSaveData.getName(), goodSaveData)
                         )
@@ -100,11 +103,15 @@ public class ManagerContext implements ISubGameplaySaveHandler<MyGameplaySaveDat
                 .roomMap(roomMap)
                 .goodMap(goodMap)
                 .cartGoods(gameplaySave.getCartGoodIds().stream()
-                        .map(it -> goodMap.get(it))
+                        .map(it -> {
+                            GoodRuntimeData result = goodMap.get(it);
+                            result.getTags().add(GoodRuntimeTag.IN_CART);
+                            return result;
+                            })
                         .collect(Collectors.toList())
                         )
                 .build();
-
+        
         crossScreenDataPackage.currentRoomData = crossScreenDataPackage.getRoomMap().values().iterator().next();
     }
 

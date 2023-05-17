@@ -1,6 +1,7 @@
 package hundun.tool.logic.data;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -34,7 +35,7 @@ public class DeskRuntimeData {
     
     String name;
     DeskLocation location;
-    List<GoodSaveData> goodSaveDatas;
+    List<GoodRuntimeData> goodSaveDatas;
     
     @Data
     @Builder
@@ -72,11 +73,12 @@ public class DeskRuntimeData {
     
     public static class Factory {
         public static DeskRuntimeData fromSaveData(LayoutConst layoutConst, DeskSaveData saveData) {
-            return DeskRuntimeData.builder()
+            DeskRuntimeData result = DeskRuntimeData.builder()
                     .name(saveData.name)
                     .location(DeskLocation.Factory.fromLine(layoutConst, saveData.getPosDataLine()))
-                    .goodSaveDatas(saveData.getGoodSaveDatas())
                     .build();
+            result.setGoodSaveDatas(saveData.getGoodSaveDatas().stream().map(it -> GoodRuntimeData.Factory.fromSaveData(result, it)).collect(Collectors.toList()));
+            return result;
         }
     }
 

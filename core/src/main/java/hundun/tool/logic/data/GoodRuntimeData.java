@@ -1,5 +1,6 @@
 package hundun.tool.logic.data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,12 +23,19 @@ import lombok.NoArgsConstructor;
 public class GoodRuntimeData {
     DeskRuntimeData ownerRef;
     String name;
+    List<GoodRuntimeTag> tags;
+    
+    public enum GoodRuntimeTag {
+        IN_CART,
+        ;
+    }
     
     public static class Factory {
         public static GoodRuntimeData fromSaveData(DeskRuntimeData ownerRef, GoodSaveData saveData) {
             return GoodRuntimeData.builder()
                     .ownerRef(ownerRef)
                     .name(saveData.getName())
+                    .tags(new ArrayList<>())
                     .build();
         }
     }
