@@ -1,5 +1,6 @@
 package hundun.tool.logic;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +13,11 @@ import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
+import hundun.tool.logic.data.RoomRuntimeData.Factory;
 import hundun.tool.logic.data.RootSaveData;
+import hundun.tool.logic.data.RootSaveData.DeskSaveData;
 import hundun.tool.logic.data.RootSaveData.MyGameplaySaveData;
+import hundun.tool.logic.data.external.ExternalAllData;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import lombok.AccessLevel;
@@ -93,19 +97,23 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
 
     @Override
     public void applyGameplaySaveData(MyGameplaySaveData gameplaySave) {
-        ExternalMainData externalMainData = ExternalMainData.Factory.empty();
+        ExternalAllData externalAllData = ExternalAllData.Factory.empty();
         ExternalUserPrivateData userPrivateData = ExternalUserPrivateData.Factory.empty();
 
-        externalResourceManager.lazyInitOnGameCreate(externalMainData, userPrivateData);
-        if (externalMainData.getRoomSaveDatas().size() == 0) {
-            externalMainData.setRoomSaveDatas(gameplaySave.getDefaultRoomSaveDatas());
-            externalResourceManager.saveAsSharedData(externalMainData);
+        externalResourceManager.lazyInitOnGameCreate(externalAllData, userPrivateData);
+        if (externalAllData.getExternalMainData() == null) {
+            externalAllData.setExternalMainData(gameplaySave.getDefaultExternalMainData());
+            externalResourceManager.saveAsSharedData(externalAllData.getExternalMainData());
+        }
+        if (externalAllData.getDeskDatas().size() == 0) {
+            externalAllData.setDeskDatas(gameplaySave.getDefaultDeskSaveDatas());
+            externalResourceManager.saveAsSharedData(externalAllData.getDeskDatas());
         }
         if (userPrivateData.getCartGoodIds().size() == 0) {
-            userPrivateData.setCartGoodIds(gameplaySave.getCartGoodIds());
+            userPrivateData.setCartGoodIds(gameplaySave.getDefaultCartGoodIds());
             externalResourceManager.saveAsUserData(userPrivateData);
         }
-        handleFinalData(externalMainData, userPrivateData);
+        handleFinalData(externalAllData, userPrivateData);
     }
 
     @Override
@@ -113,9 +121,16 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
         throw new UnsupportedOperationException();
     }
 
-    private void handleFinalData(ExternalMainData externalMainData, ExternalUserPrivateData userPrivateData) {
-        Map<String, RoomRuntimeData> roomMap = externalMainData.getRoomSaveDatas().stream()
-            .map(it -> RoomRuntimeData.Factory.fromSaveData(game.getScreenContext().getLayoutConst(), it))
+    private void handleFinalData(ExternalAllData externalAllData, ExternalUserPrivateData userPrivateData) {
+        Map<String, RoomRuntimeData> roomMap = externalAllData.getExternalMainData().getRoomSaveDataMap().values().stream()
+            .map(roomSaveData -> {
+                List<DeskRuntimeData> deskRuntimeDatas = externalAllData.getDeskDatas().values().stream()
+                    .map(deskSaveData -> DeskRuntimeData.Factory.fromSaveData(game.getScreenContext().getLayoutConst(), deskSaveData))
+                    .filter(deskRuntimeData -> deskRuntimeData.getLocation().getRoom().equals(roomSaveData.getName()))
+                    .collect(Collectors.toList())
+                    ;
+                return Factory.fromSaveData(game.getScreenContext().getLayoutConst(), roomSaveData, deskRuntimeDatas);
+            })
             .collect(Collectors.toMap(
                 it -> it.getName(),
                 it -> it

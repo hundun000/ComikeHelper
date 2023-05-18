@@ -7,16 +7,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import hundun.gdxgame.gamelib.base.save.ISaveTool;
+import lombok.Getter;
 
-public class ExternalJsonSaveTool<T> implements ISaveTool<T> {
+public class SimpleExternalJsonSaveTool<T> implements ISaveTool<T> {
+
     private static final String charSet = "UTF-8";
     private final ObjectMapper objectMapper;
     private final Class<T> clazz;
     private final String folder;
     private final String path;
     private FileHandle fileHandle;
-
-    public ExternalJsonSaveTool(String folder, String fileName, Class<T> clazz) {
+    private FileHandle baseFolderFileHandle;
+    public SimpleExternalJsonSaveTool(String folder, String fileName, Class<T> clazz) {
         this.clazz = clazz;
         this.objectMapper = new ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT)
@@ -29,8 +31,8 @@ public class ExternalJsonSaveTool<T> implements ISaveTool<T> {
     @Override
     public void lazyInitOnGameCreate() {
         fileHandle = Gdx.files.external(path);
-        FileHandle temp = Gdx.files.external(folder);
-        temp.mkdirs();
+        baseFolderFileHandle = Gdx.files.external(folder);
+        baseFolderFileHandle.mkdirs();
     }
 
     @Override

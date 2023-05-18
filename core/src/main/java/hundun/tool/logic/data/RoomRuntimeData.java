@@ -1,10 +1,10 @@
 package hundun.tool.logic.data;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import hundun.tool.libgdx.screen.ScreenContext.LayoutConst;
-import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
 import hundun.tool.logic.data.RootSaveData.RoomSaveData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,21 +26,18 @@ public class RoomRuntimeData {
     int roomWidth;
     int roomHeight;
     List<DeskRuntimeData> deskDatas;
-    
+
     public static class Factory {
-        public static RoomRuntimeData fromSaveData(LayoutConst layoutConst, RoomSaveData saveData) {
+        public static RoomRuntimeData fromSaveData(LayoutConst layoutConst, RoomSaveData saveData, List<DeskRuntimeData> deskRuntimeDatas) {
             return RoomRuntimeData.builder()
                     .name(saveData.getName())
                     .startX(saveData.getStartX())
                     .startY(saveData.getStartY())
                     .roomWidth(saveData.getRoomWidth())
                     .roomHeight(saveData.getRoomHeight())
-                    .deskDatas(saveData.getDeskSaveDatas().stream()
-                            .map(it -> DeskRuntimeData.Factory.fromSaveData(layoutConst, it))
-                            .collect(Collectors.toList())
-                            )
+                    .deskDatas(deskRuntimeDatas)
                     .build();
         }
     }
-    
+
 }

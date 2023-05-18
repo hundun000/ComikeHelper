@@ -1,7 +1,9 @@
 package hundun.tool.logic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -16,6 +18,7 @@ import hundun.tool.logic.data.RootSaveData.GoodSaveData;
 import hundun.tool.logic.data.RootSaveData.MyGameplaySaveData;
 import hundun.tool.logic.data.RootSaveData.MySystemSettingSaveData;
 import hundun.tool.logic.data.RootSaveData.RoomSaveData;
+import hundun.tool.logic.data.external.ExternalMainData;
 
 
 /**
@@ -31,42 +34,50 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
     @Override
     protected RootSaveData genereateStarterRootSaveData() {
 
-        List<DeskSaveData> deskSaveDatas = new ArrayList<>();
 
+        Map<String, DeskSaveData> deskSaveDatas = new HashMap<>();
+        String room = "1号馆";
         DeskRuntimeData.AREA_LIST.forEach(area -> {
 
-            IntStream.range(1, 10).forEach(it -> deskSaveDatas.add(
+            IntStream.range(1, 5).forEach(it -> {
+                String name = room + "-" + area + "-" + it;
+                deskSaveDatas.put(
+                    name,
                     DeskSaveData.builder()
-                            .name(UUID.randomUUID().toString().substring(0, 5))
-                            .posDataLine(area + ";" + it)
-                            .goodSaveDatas(JavaFeatureForGwt.listOf(
-                                    GoodSaveData.builder().name(area + "_" + it + "_" + "本子1").build(),
-                                    GoodSaveData.builder().name(area + "_" + it + "_" + "本子2").build()
-                                    ))
-                            .build())
-                    );
+                        .name(name)
+                        .posDataLine(room + ";" + area + ";" + it)
+                        .goodSaveDatas(JavaFeatureForGwt.listOf(
+                            GoodSaveData.builder().name(area + "_" + it + "_" + "本子1").build(),
+                            GoodSaveData.builder().name(area + "_" + it + "_" + "本子2").build()
+                        ))
+                        .build());
+            });
 
         });
 
         MyGameplaySaveData saveData = new MyGameplaySaveData();
-        saveData.setCartGoodIds(JavaFeatureForGwt.listOf(
+        saveData.setDefaultCartGoodIds(JavaFeatureForGwt.listOf(
                 "A_1_本子1",
-                "B_1_本子1",
-                "C_1_本子1",
                 "A_2_本子1",
-                "B_2_本子1",
-                "C_2_本子1"
+                "A_3_本子1",
+                "A_4_本子1"
                 ));
-        saveData.setDefaultRoomSaveDatas(JavaFeatureForGwt.arraysAsList(
-                RoomSaveData.builder()
-                        .name("1号馆")
-                        .startX(0)
-                        .startY(0)
-                        .roomWidth(5000)
-                        .roomHeight(3000)
-                        .deskSaveDatas(deskSaveDatas)
-                        .build()
-                ));
+        saveData.setDefaultDeskSaveDatas(deskSaveDatas);
+        saveData.setDefaultExternalMainData(
+                ExternalMainData.builder()
+                    .roomSaveDataMap(JavaFeatureForGwt.mapOf(
+                        room,
+                        RoomSaveData.builder()
+                            .name(room)
+                            .startX(0)
+                            .startY(0)
+                            .roomWidth(5000)
+                            .roomHeight(3000)
+                            .build()
+                        )
+                    )
+                    .build()
+            );
         return new RootSaveData(new MySystemSettingSaveData(), saveData);
     }
 
