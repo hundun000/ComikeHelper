@@ -1,11 +1,8 @@
 package hundun.tool.logic;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import hundun.gdxgame.gamelib.base.IFrontend;
@@ -60,7 +57,7 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
                 "B_2_本子1",
                 "C_2_本子1"
                 ));
-        saveData.setRoomSaveDatas(JavaFeatureForGwt.arraysAsList(
+        saveData.setDefaultRoomSaveDatas(JavaFeatureForGwt.arraysAsList(
                 RoomSaveData.builder()
                         .name("1号馆")
                         .startX(0)

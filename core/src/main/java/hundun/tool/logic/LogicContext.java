@@ -14,6 +14,8 @@ import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.RootSaveData;
 import hundun.tool.logic.data.RootSaveData.MyGameplaySaveData;
+import hundun.tool.logic.data.external.ExternalMainData;
+import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,12 +45,10 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
 
     @Override
     public void currentSituationToSystemSetting(RootSaveData.MySystemSettingSaveData systemSettingSave) {
-
+        throw new UnsupportedOperationException();
     }
 
-    public void lazyInitOnGameCreateStage3() {
 
-    }
 
     @Getter
     @Setter
@@ -87,53 +87,67 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
     public LogicContext(ComikeHelperGame game) {
         this.game = game;
         this.externalResourceManager = new ExternalResourceManager();
-
     }
 
 
 
     @Override
     public void applyGameplaySaveData(MyGameplaySaveData gameplaySave) {
+        ExternalMainData externalMainData = ExternalMainData.Factory.empty();
+        ExternalUserPrivateData userPrivateData = ExternalUserPrivateData.Factory.empty();
 
-        Map<String, RoomRuntimeData> roomMap = gameplaySave.getRoomSaveDatas().stream()
-                .map(it -> RoomRuntimeData.Factory.fromSaveData(game.getScreenContext().getLayoutConst(), it))
-                .collect(Collectors.toMap(
-                        it -> it.getName(),
-                        it -> it
-                        ));
+        externalResourceManager.lazyInitOnGameCreate(externalMainData, userPrivateData);
+        if (externalMainData.getRoomSaveDatas().size() == 0) {
+            externalMainData.setRoomSaveDatas(gameplaySave.getDefaultRoomSaveDatas());
+            externalResourceManager.saveAsSharedData(externalMainData);
+        }
+        if (userPrivateData.getCartGoodIds().size() == 0) {
+            userPrivateData.setCartGoodIds(gameplaySave.getCartGoodIds());
+            externalResourceManager.saveAsUserData(userPrivateData);
+        }
+        handleFinalData(externalMainData, userPrivateData);
+    }
+
+    @Override
+    public void currentSituationToGameplaySaveData(MyGameplaySaveData myGameplaySaveData) {
+        throw new UnsupportedOperationException();
+    }
+
+    private void handleFinalData(ExternalMainData externalMainData, ExternalUserPrivateData userPrivateData) {
+        Map<String, RoomRuntimeData> roomMap = externalMainData.getRoomSaveDatas().stream()
+            .map(it -> RoomRuntimeData.Factory.fromSaveData(game.getScreenContext().getLayoutConst(), it))
+            .collect(Collectors.toMap(
+                it -> it.getName(),
+                it -> it
+            ));
         Map<String, GoodRuntimeData> goodMap = new HashMap<>();
         roomMap.values().stream()
             .forEach(room ->
                 room.getDeskDatas().stream().forEach(deskData ->
                     deskData.getGoodSaveDatas().stream()
-                    .forEach(goodSaveData ->
+                        .forEach(goodSaveData ->
                             goodMap.put(goodSaveData.getName(), goodSaveData)
                         )
-                    )
-                );
+                )
+            );
 
 
         this.crossScreenDataPackage = CrossScreenDataPackage.builder()
-                .game(game)
-                .roomMap(roomMap)
-                .goodMap(goodMap)
-                .cartGoods(gameplaySave.getCartGoodIds().stream()
-                        .map(it -> {
-                            GoodRuntimeData result = goodMap.get(it);
-                            result.getTags().add(GoodRuntimeTag.IN_CART);
-                            return result;
-                            })
-                        .collect(Collectors.toList())
-                        )
-                .build();
+            .game(game)
+            .roomMap(roomMap)
+            .goodMap(goodMap)
+            .cartGoods(userPrivateData.getCartGoodIds().stream()
+                .map(it -> {
+                    GoodRuntimeData result = goodMap.get(it);
+                    result.getTags().add(GoodRuntimeTag.IN_CART);
+                    return result;
+                })
+                .collect(Collectors.toList())
+            )
+            .build();
 
         crossScreenDataPackage.currentRoomData = crossScreenDataPackage.getRoomMap().values().iterator().next();
 
-        externalResourceManager.lazyInitOnGameCreate();
     }
 
-    @Override
-    public void currentSituationToGameplaySaveData(MyGameplaySaveData gameplaySave) {
-
-    }
 }

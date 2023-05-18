@@ -64,12 +64,7 @@ public class ComikeHelperGame extends BaseHundunGame<RootSaveData> {
      */
     @Override
     protected void createStage3() {
-
-        logicContext.lazyInitOnGameCreateStage3();
-
-
         screenManager.pushScreen(MyMenuScreen.class.getSimpleName(), BlendingTransition.class.getSimpleName());
-
     }
 
 

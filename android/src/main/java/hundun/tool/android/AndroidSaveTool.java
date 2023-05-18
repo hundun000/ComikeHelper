@@ -21,6 +21,6 @@ public class AndroidSaveTool implements ISaveTool<RootSaveData> {
 
     @Override
     public RootSaveData readRootSaveData() {
-        return new RootSaveData();
+        return null;
     }
 }

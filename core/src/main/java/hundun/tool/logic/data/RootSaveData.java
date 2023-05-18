@@ -1,8 +1,6 @@
 package hundun.tool.logic.data;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import hundun.gdxgame.gamelib.starter.save.IRootSaveExtension;
 import lombok.AllArgsConstructor;
@@ -29,7 +27,7 @@ public class RootSaveData {
     @Data
     public static class MyGameplaySaveData {
 
-        List<RoomSaveData> roomSaveDatas;
+        List<RoomSaveData> defaultRoomSaveDatas;
         List<String> cartGoodIds;
     }
 
