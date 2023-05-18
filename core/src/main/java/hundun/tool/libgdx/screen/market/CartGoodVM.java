@@ -27,7 +27,7 @@ public class CartGoodVM extends Table {
         if (it.getTags().contains(GoodRuntimeTag.IN_CART)) {
             this.add(new Image(new Texture(Gdx.files.internal("star.png"))));
         }
-        this.add(new Image(screen.getGame().getLogicContext().getExternalResourceManager().getTestTexture()))
+        this.add(new Image(new Texture(it.getOwnerRef().getCoverFileHandle())))
                 .width(screen.getGame().getScreenContext().getLayoutConst().GOOD_IMAGE_SIZE)
                 .height(screen.getGame().getScreenContext().getLayoutConst().GOOD_IMAGE_SIZE)
                 ;

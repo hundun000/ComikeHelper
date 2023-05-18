@@ -37,10 +37,12 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
 
         Map<String, DeskSaveData> deskSaveDatas = new HashMap<>();
         String room = "1号馆";
-        DeskRuntimeData.AREA_LIST.forEach(area -> {
+        List<String> AREA_LIST = JavaFeatureForGwt.arraysAsList("A");
+
+        AREA_LIST.forEach(area -> {
 
             IntStream.range(1, 5).forEach(it -> {
-                String name = room + "-" + area + "-" + it;
+                String name = "Foo-" + area + "-" + it;
                 deskSaveDatas.put(
                     name,
                     DeskSaveData.builder()
@@ -55,12 +57,33 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
 
         });
 
+        deskSaveDatas.put(
+            "砍口垒同好组",
+            DeskSaveData.builder()
+                .name("砍口垒同好组")
+                .posDataLine(room + ";特;0")
+                .goodSaveDatas(JavaFeatureForGwt.listOf(
+                    GoodSaveData.builder().name("砍口垒本子1").build(),
+                    GoodSaveData.builder().name("砍口垒本子2").build()
+                ))
+                .build());
+        deskSaveDatas.put(
+            "少女前线同好组",
+            DeskSaveData.builder()
+                .name("少女前线同好组")
+                .posDataLine(room + ";特;1")
+                .goodSaveDatas(JavaFeatureForGwt.listOf(
+                    GoodSaveData.builder().name("少女前线本子1").build(),
+                    GoodSaveData.builder().name("少女前线本子2").build()
+                ))
+                .build());
+
         MyGameplaySaveData saveData = new MyGameplaySaveData();
         saveData.setDefaultCartGoodIds(JavaFeatureForGwt.listOf(
                 "A_1_本子1",
                 "A_2_本子1",
-                "A_3_本子1",
-                "A_4_本子1"
+                "砍口垒本子1",
+                "少女前线本子1"
                 ));
         saveData.setDefaultDeskSaveDatas(deskSaveDatas);
         saveData.setDefaultExternalMainData(

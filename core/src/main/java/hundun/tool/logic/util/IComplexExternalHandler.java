@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface IComplexExternalHandler<T_MAIN, T_SUB> {
-    void lazyInitOnGameCreate();
     void writeMainData(T_MAIN saveData);
 
     T_MAIN readMainData();

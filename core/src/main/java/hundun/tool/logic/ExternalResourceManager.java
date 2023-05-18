@@ -1,9 +1,9 @@
 package hundun.tool.logic;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 
-import java.util.List;
 import java.util.Map;
 
 import hundun.tool.logic.data.RootSaveData.DeskSaveData;
@@ -11,6 +11,7 @@ import hundun.tool.logic.data.external.ExternalAllData;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.util.ComplexExternalJsonSaveTool;
+import hundun.tool.logic.util.ComplexExternalJsonSaveTool.DeskExternalRuntimeData;
 import hundun.tool.logic.util.SimpleExternalJsonSaveTool;
 import lombok.Getter;
 
@@ -18,7 +19,7 @@ public class ExternalResourceManager {
     private static final String USER_ROOT_FOLDER = "user/";
     private static final String SHARED_ROOT_FOLDER = "shared/";
     @Getter
-    Texture testTexture;
+    FileHandle defaultCoverFileHandle;
 
     ComplexExternalJsonSaveTool<ExternalMainData, DeskSaveData> sharedComplexSaveTool;
     //ExternalJsonSaveTool<ExternalMainData> userMainDataSaveTool;
@@ -36,16 +37,21 @@ public class ExternalResourceManager {
 
 
     public void lazyInitOnGameCreate(ExternalAllData masterMainData, ExternalUserPrivateData masterUserPrivateData) {
-        sharedComplexSaveTool.lazyInitOnGameCreate();
+        this.defaultCoverFileHandle = Gdx.files.internal("defaultCover.png");
+
+        sharedComplexSaveTool.lazyInitOnGameCreate(defaultCoverFileHandle);
         userPrivateDataSaveTool.lazyInitOnGameCreate();
 
-        this.testTexture = new Texture(Gdx.files.external("defaultTarget.png"));
-        ExternalMainData sharedMainData = sharedComplexSaveTool.readMainData();
-        Map<String, DeskSaveData> deskDataList = sharedComplexSaveTool.readAllSubFolderData();
+
+
         //ExternalMainData userMainData = userMainDataSaveTool.readRootSaveData();
         ExternalUserPrivateData userPrivateData = userPrivateDataSaveTool.readRootSaveData();
 
-        merge(masterMainData, sharedMainData, deskDataList);
+        merge(masterMainData,
+            sharedComplexSaveTool.readMainData(),
+            sharedComplexSaveTool.readAllSubFolderData(),
+            sharedComplexSaveTool.getDeskExternalRuntimeDataMap()
+        );
         merge(masterUserPrivateData, userPrivateData);
     }
 
@@ -58,12 +64,19 @@ public class ExternalResourceManager {
         }
     }
 
-    private void merge(ExternalAllData master, ExternalMainData other, Map<String, DeskSaveData> deskDataList) {
+    private void merge(ExternalAllData master,
+                       ExternalMainData other,
+                       Map<String, DeskSaveData> deskDataList,
+                       Map<String, DeskExternalRuntimeData> deskExternalRuntimeDataMap
+    ) {
         if (other != null) {
             master.setExternalMainData(other);
         }
         if (deskDataList != null) {
-            master.setExternalMainData(other);
+            master.getDeskDataMap().putAll(deskDataList);
+        }
+        if (deskExternalRuntimeDataMap != null) {
+            master.getDeskExternalRuntimeDataMap().putAll(deskExternalRuntimeDataMap);
         }
     }
 

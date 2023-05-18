@@ -1,12 +1,10 @@
 package hundun.tool.logic.data.external;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import hundun.tool.logic.data.RootSaveData.DeskSaveData;
-import hundun.tool.logic.data.RootSaveData.RoomSaveData;
+import hundun.tool.logic.util.ComplexExternalJsonSaveTool.DeskExternalRuntimeData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,13 +17,14 @@ import lombok.NoArgsConstructor;
 public class ExternalAllData {
 
     ExternalMainData externalMainData;
-
-    Map<String, DeskSaveData> deskDatas;
+    Map<String, DeskExternalRuntimeData> deskExternalRuntimeDataMap;
+    Map<String, DeskSaveData> deskDataMap;
 
     public static class Factory {
         public static ExternalAllData empty() {
             return  ExternalAllData.builder()
-                .deskDatas(new HashMap<>())
+                .deskExternalRuntimeDataMap(new HashMap<>())
+                .deskDataMap(new HashMap<>())
                 .build();
         }
 
