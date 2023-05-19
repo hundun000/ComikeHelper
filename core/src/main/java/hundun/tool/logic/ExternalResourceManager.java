@@ -21,15 +21,13 @@ public class ExternalResourceManager {
     @Getter
     FileHandle defaultCoverFileHandle;
 
-    ComplexExternalJsonSaveTool<ExternalMainData, DeskSaveData> sharedComplexSaveTool;
+    ComplexExternalJsonSaveTool sharedComplexSaveTool;
     //ExternalJsonSaveTool<ExternalMainData> userMainDataSaveTool;
     SimpleExternalJsonSaveTool<ExternalUserPrivateData> userPrivateDataSaveTool;
 
     public ExternalResourceManager() {
-        this.sharedComplexSaveTool = new ComplexExternalJsonSaveTool<>(
-            SHARED_ROOT_FOLDER,
-            "main.json", ExternalMainData.class,
-            "desk.json", DeskSaveData.class
+        this.sharedComplexSaveTool = new ComplexExternalJsonSaveTool(
+            SHARED_ROOT_FOLDER
             );
         //this.userMainDataSaveTool = new ExternalJsonSaveTool<>(USER_ROOT_FOLDER + "main.json", ExternalMainData.class);
         this.userPrivateDataSaveTool = new SimpleExternalJsonSaveTool<>(USER_ROOT_FOLDER, "private.json", ExternalUserPrivateData.class);
@@ -49,8 +47,7 @@ public class ExternalResourceManager {
 
         merge(masterMainData,
             sharedComplexSaveTool.readMainData(),
-            sharedComplexSaveTool.readAllSubFolderData(),
-            sharedComplexSaveTool.getDeskExternalRuntimeDataMap()
+            sharedComplexSaveTool.readAllSubFolderData()
         );
         merge(masterUserPrivateData, userPrivateData);
     }
@@ -66,14 +63,10 @@ public class ExternalResourceManager {
 
     private void merge(ExternalAllData master,
                        ExternalMainData other,
-                       Map<String, DeskSaveData> deskDataList,
                        Map<String, DeskExternalRuntimeData> deskExternalRuntimeDataMap
     ) {
         if (other != null) {
             master.setExternalMainData(other);
-        }
-        if (deskDataList != null) {
-            master.getDeskDataMap().putAll(deskDataList);
         }
         if (deskExternalRuntimeDataMap != null) {
             master.getDeskExternalRuntimeDataMap().putAll(deskExternalRuntimeDataMap);
@@ -92,7 +85,7 @@ public class ExternalResourceManager {
         userPrivateDataSaveTool.writeRootSaveData(userPrivateData);
     }
 
-    public void saveAsSharedData(Map<String, DeskSaveData> deskDatas) {
+    public void saveAsSharedData(Map<String, DeskExternalRuntimeData> deskDatas) {
         sharedComplexSaveTool.writeAllSubFolderData(deskDatas);
     }
 }

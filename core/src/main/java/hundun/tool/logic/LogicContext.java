@@ -14,6 +14,7 @@ import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.RoomRuntimeData.Factory;
 import hundun.tool.logic.data.RootSaveData;
+import hundun.tool.logic.data.RootSaveData.DeskSaveData;
 import hundun.tool.logic.data.RootSaveData.MyGameplaySaveData;
 import hundun.tool.logic.data.external.ExternalAllData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
@@ -103,9 +104,13 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
             externalAllData.setExternalMainData(gameplaySave.getDefaultExternalMainData());
             externalResourceManager.saveAsSharedData(externalAllData.getExternalMainData());
         }
-        if (externalAllData.getDeskDataMap().size() == 0) {
-            externalAllData.setDeskDataMap(gameplaySave.getDefaultDeskSaveDatas());
-            externalResourceManager.saveAsSharedData(externalAllData.getDeskDataMap());
+        if (externalAllData.getDeskExternalRuntimeDataMap().size() == 0) {
+            Map<String, DeskExternalRuntimeData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
+                it -> it.getKey(),
+                it -> DeskExternalRuntimeData.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
+            ));
+            externalAllData.setDeskExternalRuntimeDataMap(defaultDeskSaveDatas);
+            externalResourceManager.saveAsSharedData(defaultDeskSaveDatas);
         }
         if (userPrivateData.getCartGoodIds().size() == 0) {
             userPrivateData.setCartGoodIds(gameplaySave.getDefaultCartGoodIds());
@@ -122,17 +127,12 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
     private void handleFinalData(ExternalAllData externalAllData, ExternalUserPrivateData userPrivateData) {
         Map<String, RoomRuntimeData> roomMap = externalAllData.getExternalMainData().getRoomSaveDataMap().values().stream()
             .map(roomSaveData -> {
-                List<DeskRuntimeData> deskRuntimeDatas = externalAllData.getDeskDataMap().values().stream()
-                    .map(deskSaveData -> {
-                        DeskExternalRuntimeData deskExternalRuntimeData = externalAllData.getDeskExternalRuntimeDataMap().getOrDefault(
-                            deskSaveData.getName(),
-                            DeskExternalRuntimeData.forDefault(externalResourceManager.getDefaultCoverFileHandle()));
-                        return DeskRuntimeData.Factory.fromSaveData(
+                List<DeskRuntimeData> deskRuntimeDatas = externalAllData.getDeskExternalRuntimeDataMap().values().stream()
+                    .map(deskExternalRuntimeData -> DeskRuntimeData.Factory.fromSaveData(
                                 game.getScreenContext().getLayoutConst(),
-                                deskSaveData,
                                 deskExternalRuntimeData
-                                );
-                    })
+                                )
+                    )
                     .filter(deskRuntimeData -> deskRuntimeData.getLocation().getRoom().equals(roomSaveData.getName()))
                     .collect(Collectors.toList())
                     ;

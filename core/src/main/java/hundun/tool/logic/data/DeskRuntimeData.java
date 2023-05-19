@@ -75,14 +75,15 @@ public class DeskRuntimeData {
     }
 
     public static class Factory {
-        public static DeskRuntimeData fromSaveData(LayoutConst layoutConst, DeskSaveData saveData, DeskExternalRuntimeData deskExternalRuntimeData) {
+        public static DeskRuntimeData fromSaveData(LayoutConst layoutConst, DeskExternalRuntimeData deskExternalRuntimeData) {
+            DeskSaveData deskSaveData = deskExternalRuntimeData.getDeskSaveData();
             DeskRuntimeData result = DeskRuntimeData.builder()
-                    .name(saveData.name)
-                    .location(DeskLocation.Factory.fromLine(layoutConst, saveData.getPosDataLine()))
+                    .name(deskExternalRuntimeData.getDeskSaveData().name)
+                    .location(DeskLocation.Factory.fromLine(layoutConst, deskSaveData.getPosDataLine()))
                     .coverFileHandle(deskExternalRuntimeData.getCoverFileHandle())
                     .detailFileHandles(deskExternalRuntimeData.getImageFileHandles())
                     .build();
-            result.setGoodSaveDatas(saveData.getGoodSaveDatas().stream().map(it -> GoodRuntimeData.Factory.fromSaveData(result, it)).collect(Collectors.toList()));
+            result.setGoodSaveDatas(deskSaveData.getGoodSaveDatas().stream().map(it -> GoodRuntimeData.Factory.fromSaveData(result, it)).collect(Collectors.toList()));
             return result;
         }
     }
