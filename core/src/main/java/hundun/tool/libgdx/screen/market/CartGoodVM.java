@@ -7,6 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.libgdx.screen.MarketScreen;
 import hundun.tool.logic.data.GoodRuntimeData;
@@ -18,23 +21,54 @@ import hundun.tool.logic.data.RootSaveData.GoodSaveData;
  * Created on 2023/05/10
  */
 public class CartGoodVM extends Table {
-
+    static Map<GoodRuntimeTag, Texture> tagImageMap = new HashMap<>();
+    static {
+        tagImageMap.put(GoodRuntimeTag.IN_CART, new Texture(Gdx.files.internal("star.png")));
+    }
     MarketScreen screen;
-    Image starImage;
+    Table tagImageTable;
     Image mainImage;
 
-    public CartGoodVM(MarketScreen screen, GoodRuntimeData it) {
-        if (it.getTags().contains(GoodRuntimeTag.IN_CART)) {
-            this.add(new Image(new Texture(Gdx.files.internal("star.png"))));
-        }
-        this.add(new Image(new Texture(it.getOwnerRef().getCoverFileHandle())))
+    public CartGoodVM(MarketScreen screen, GoodRuntimeData goodRuntimeData) {
+        this.screen = screen;
+
+
+        init(goodRuntimeData);
+        update(goodRuntimeData);
+    }
+
+    private void init(GoodRuntimeData goodRuntimeData) {
+        tagImageTable = new Table();
+        // ------ row 1 -----
+        this.add(new Label(goodRuntimeData.getName(), screen.getGame().getMainSkin()))
+                .colspan(2)
+                .row()
+        ;
+        // ------ row 2 -----
+        this.add(new Image(new Texture(goodRuntimeData.getOwnerRef().getCoverFileHandle())))
                 .width(screen.getGame().getScreenContext().getLayoutConst().GOOD_IMAGE_SIZE)
                 .height(screen.getGame().getScreenContext().getLayoutConst().GOOD_IMAGE_SIZE)
+        ;
+        this.add(tagImageTable)
+                .grow()
                 ;
-        this.add(new Label(it.getName(), screen.getGame().getMainSkin()));
+
+
         this.setBackground(DrawableFactory.getSimpleBoardBackground(
                 screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_WIDTH,
                 screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_HEIGHT
-                ));
+        ));
     }
+
+    public void update(GoodRuntimeData goodRuntimeData) {
+        tagImageTable.clear();
+        goodRuntimeData.getTags().forEach(it -> {
+            if (tagImageMap.containsKey(it)) {
+                tagImageTable.add(new Image(tagImageMap.get(it)));
+            }
+        });
+
+
+    }
+
 }

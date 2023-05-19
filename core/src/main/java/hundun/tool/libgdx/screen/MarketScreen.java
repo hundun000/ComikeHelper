@@ -145,10 +145,7 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         }
         cartBoardVMDirty = false;
         CrossScreenDataPackage crossScreenDataPackage = game.getLogicContext().getCrossScreenDataPackage();
-        List<GoodRuntimeData> showCartGoods = game.getLogicContext().getCrossScreenDataPackage().getCartGoods().stream()
-                .filter(it -> crossScreenDataPackage.getDetailingDeskData() == null || it.getOwnerRef() == crossScreenDataPackage.getDetailingDeskData())
-                .collect(Collectors.toList());
-        cartBoardVM.updateData(crossScreenDataPackage.getDetailingDeskData(), showCartGoods);
+        cartBoardVM.updateData(crossScreenDataPackage.getDetailingDeskData(), crossScreenDataPackage.getCartGoods());
     }
 
 

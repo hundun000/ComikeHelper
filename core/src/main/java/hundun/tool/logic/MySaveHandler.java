@@ -82,6 +82,8 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
         saveData.setDefaultCartGoodIds(JavaFeatureForGwt.listOf(
                 "A_1_本子1",
                 "A_2_本子1",
+                "A_1_本子2",
+                "A_2_本子2",
                 "砍口垒本子1",
                 "少女前线本子1"
                 ));

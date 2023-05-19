@@ -10,13 +10,16 @@ import hundun.tool.logic.data.RootSaveData.RoomSaveData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author hundun
  * Created on 2023/05/09
  */
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

@@ -50,8 +50,9 @@ public class CartBoardVM extends Table {
         this.add(clearButton);
         this.row();
         this.add(scrollPane)
-                .width(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_WIDTH)
-                .height(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_HEIGHT * 3)
+                //.width(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_WIDTH)
+                //.height(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_HEIGHT * 3)
+                .grow()
                 ;
 
         this.setBackground(DrawableFactory.getSimpleBoardBackground());
@@ -62,22 +63,19 @@ public class CartBoardVM extends Table {
         //nodes.clear();
         childrenTable.clear();
 
-        List<GoodRuntimeData> list = new ArrayList<>(cartGoods);
+        List<GoodRuntimeData> needShowList = new ArrayList<>();
         if (detailingDeskData != null) {
             title.setText("goods of " + detailingDeskData.getName());
             clearButton.setVisible(true);
-            detailingDeskData.getGoodSaveDatas().forEach(it -> {
-                if (!list.contains(it)) {
-                    list.add(it);
-                }
-            });
+            needShowList.addAll(detailingDeskData.getGoodSaveDatas());
         } else {
             title.setText("goods of 心愿单");
             clearButton.setVisible(false);
+            needShowList.addAll(cartGoods);
         }
 
 
-        list.forEach(it -> {
+        needShowList.forEach(it -> {
             CartGoodVM node = new CartGoodVM(screen, it);
             childrenTable.add(node).row();
         });
