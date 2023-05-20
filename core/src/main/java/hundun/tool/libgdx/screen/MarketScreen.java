@@ -1,8 +1,5 @@
 package hundun.tool.libgdx.screen;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
@@ -21,8 +18,9 @@ import hundun.tool.libgdx.screen.market.CameraControlBoardVM;
 import hundun.tool.libgdx.screen.market.CartBoardVM;
 import hundun.tool.libgdx.screen.market.DeskAreaVM;
 import hundun.tool.libgdx.screen.market.DeskVM;
+import hundun.tool.libgdx.screen.market.PopupCloseButton;
+import hundun.tool.libgdx.screen.market.ImageViewerVM;
 import hundun.tool.logic.LogicContext.CrossScreenDataPackage;
-import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.RootSaveData;
 import lombok.Getter;
@@ -42,60 +40,64 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
     @Setter
     private boolean cartBoardVMDirty;
 
+
+    // ------ desk layer ------
     private final OrthographicCamera deskCamera;
     private final Stage deskStage;
-
-
     private DeskAreaVM deskAreaVM;
+    // ------ UI layer ------
     private CameraControlBoardVM cameraControlBoardVM;
 
     private CartBoardVM cartBoardVM;
+    // ------ image previewer layer ------
+    private final OrthographicCamera imagePreviewerCamera;
+    private final Stage imagePreviewerStage;
+    @Getter
+    private ImageViewerVM imageViewerVM;
+
+    // ------ popup layer ------
+    @Getter
+    private PopupCloseButton popupCloseButton;
 
     public MarketScreen(ComikeHelperGame game) {
         super(game, game.getSharedViewport());
 
         this.deskCamera = new OrthographicCamera();
         this.deskStage = new Stage(new ScreenViewport(deskCamera), game.getBatch());
+
+        this.imagePreviewerCamera = new OrthographicCamera();
+        this.imagePreviewerStage = new Stage(new ScreenViewport(imagePreviewerCamera), game.getBatch());
     }
 
-    public class MyGestureListener extends ActorGestureListener {
 
-        @Override
-        public void zoom(InputEvent event, float initialDistance, float distance) {
-            super.zoom(event, initialDistance, distance);
-            float deltaValue = (distance - initialDistance) < 0 ? 0.1f : -0.1f;
-            MarketScreen.this.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCameraZoomWeight(deltaValue);
-            MarketScreen.this.setCurrentCameraZoomDirty(true);
-        }
-
-        @Override
-        public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
-            super.pan(event, x, y, deltaX, deltaY);
-            float cameraDeltaX = -deltaX;
-            float cameraDeltaY = -deltaY;
-            MarketScreen.this.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCamera(cameraDeltaX, cameraDeltaY);
-        }
-    }
 
     @Override
     protected void create() {
-        // ------ popup layer ------
-        cameraControlBoardVM = new CameraControlBoardVM(this);
-        popupRootTable.add(cameraControlBoardVM)
-                .expand()
-                .bottom()
-                ;
+
 
         // ------ desk layer ------
         deskAreaVM = new DeskAreaVM(this);
         deskStage.addActor(deskAreaVM);
 
         // ------ UI layer ------
+        cameraControlBoardVM = new CameraControlBoardVM(this);
+        uiRootTable.add(cameraControlBoardVM)
+                .expand()
+                .bottom();
         cartBoardVM = new CartBoardVM(this);
         uiRootTable.add(cartBoardVM)
                 .growY()
+                ;
+        // ------ image previewer layer ------
+        imageViewerVM = new ImageViewerVM(this);
+        imagePreviewerStage.addActor(imageViewerVM);
+
+        // ------ popup layer ------
+        popupCloseButton = new PopupCloseButton(this);
+        popupRootTable.add(popupCloseButton)
                 .expand()
                 .right()
+                .top()
                 ;
     }
 
@@ -111,6 +113,7 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(popupUiStage);
+        multiplexer.addProcessor(imagePreviewerStage);
         multiplexer.addProcessor(uiStage);
         multiplexer.addProcessor(deskStage);
         Gdx.input.setInputProcessor(multiplexer);
@@ -136,7 +139,9 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         // for newest cart
         cartBoardVMDirty = true;
         checkCartBoardVMDirty();
-        deskAreaVM.updateCartData(game.getLogicContext().getCrossScreenDataPackage().getCartGoods());
+
+        popupCloseButton.hide();
+        imageViewerVM.hide();
     }
 
     private void checkCartBoardVMDirty() {
@@ -146,6 +151,7 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         cartBoardVMDirty = false;
         CrossScreenDataPackage crossScreenDataPackage = game.getLogicContext().getCrossScreenDataPackage();
         cartBoardVM.updateData(crossScreenDataPackage.getDetailingDeskData(), crossScreenDataPackage.getCartGoods());
+        deskAreaVM.updateCartData(crossScreenDataPackage.getCartGoods());
     }
 
 
@@ -171,9 +177,14 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
 
     public static final TextureRegion RED_POINT = new TextureRegion(TextureFactory.createAlphaBoard(3, 3, Color.RED, 1.0f));
 
+    private void logicOnDraw() {
+        checkCartBoardVMDirty();
+    }
+
+
     @Override
     protected void belowUiStageDraw(float delta) {
-        checkCartBoardVMDirty();
+        logicOnDraw();
 
         deskStage.act();
         deskStage.getViewport().getCamera().position.set(
@@ -191,4 +202,22 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         deskStage.draw();
     }
 
+
+    @Override
+    protected void aboveUiStageDraw(float delta) {
+        imagePreviewerStage.act();
+        imagePreviewerStage.getViewport().getCamera().position.set(
+                imageViewerVM.getCurrentCameraX(),
+                imageViewerVM.getCurrentCameraY(),
+                0);
+        if (imageViewerVM.isCurrentCameraZoomDirty()) {
+            imageViewerVM.setCurrentCameraZoomDirty(false);
+            float weight = imageViewerVM.getCurrentCameraZoomWeight();
+            float value = weight <= 0 ? (float)Math.pow(2, weight) : (float)Math.log(weight + 2);
+            imagePreviewerCamera.zoom = value;
+            game.getFrontend().log(this.getClass().getSimpleName(), "imagePreviewerCamera.zoom = %s", deskCamera.zoom);
+        }
+        imagePreviewerStage.getViewport().apply();
+        imagePreviewerStage.draw();
+    }
 }

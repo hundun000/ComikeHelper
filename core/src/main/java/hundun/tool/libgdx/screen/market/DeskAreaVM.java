@@ -1,24 +1,23 @@
 package hundun.tool.libgdx.screen.market;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.EventListener;import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.libgdx.screen.MarketScreen;
 import hundun.tool.libgdx.screen.MarketScreen.TiledMapClickListener;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
-import hundun.tool.logic.data.RootSaveData.GoodSaveData;
 import lombok.Getter;
 
 /**
@@ -48,7 +47,7 @@ public class DeskAreaVM extends Table {
         background.setDrawable(DrawableFactory.getSimpleBoardBackground());
         background.setBounds(0, 0, roomWidth, roomHeight);
         this.addActor(background);
-        this.addListener(parent.new MyGestureListener());
+        this.addListener(new DeskLayerGestureListener());
 
         deskDatas.forEach(deskData -> {
             DeskVM actor = new DeskVM(this, deskData);
@@ -72,5 +71,26 @@ public class DeskAreaVM extends Table {
         nodes.values().forEach(it -> {
             it.update(staredNodes.contains(it));
         });
+    }
+
+    public class DeskLayerGestureListener extends ActorGestureListener {
+
+        @Override
+        public void zoom(InputEvent event, float initialDistance, float distance) {
+            super.zoom(event, initialDistance, distance);
+
+            float deltaValue = (distance - initialDistance) < 0 ? 0.1f : -0.1f;
+            DeskAreaVM.this.parent.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCameraZoomWeight(deltaValue);
+            DeskAreaVM.this.parent.setCurrentCameraZoomDirty(true);
+        }
+
+        @Override
+        public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
+            super.pan(event, x, y, deltaX, deltaY);
+
+            float cameraDeltaX = -deltaX;
+            float cameraDeltaY = -deltaY;
+            DeskAreaVM.this.parent.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCamera(cameraDeltaX, cameraDeltaY);
+        }
     }
 }

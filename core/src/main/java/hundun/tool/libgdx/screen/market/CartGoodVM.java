@@ -3,9 +3,11 @@ package hundun.tool.libgdx.screen.market;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +47,19 @@ public class CartGoodVM extends Table {
                 .row()
         ;
         // ------ row 2 -----
-        this.add(new Image(new Texture(goodRuntimeData.getOwnerRef().getCoverFileHandle())))
+        Texture texture = new Texture(goodRuntimeData.getOwnerRef().getCoverFileHandle());
+        Image image = new Image(texture);
+        image.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                screen.getImageViewerVM().updateImageAndShow(texture);
+                screen.getPopupCloseButton().updateCallbackAndShow(() -> {
+                    screen.getImageViewerVM().hide();
+                });
+            }
+        });
+        this.add(image)
                 .width(screen.getGame().getScreenContext().getLayoutConst().GOOD_IMAGE_SIZE)
                 .height(screen.getGame().getScreenContext().getLayoutConst().GOOD_IMAGE_SIZE)
         ;
@@ -58,6 +72,8 @@ public class CartGoodVM extends Table {
                 screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_WIDTH,
                 screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_HEIGHT
         ));
+
+
     }
 
     public void update(GoodRuntimeData goodRuntimeData) {
