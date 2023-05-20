@@ -60,9 +60,6 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
     public static class CrossScreenDataPackage {
         ComikeHelperGame game;
 
-        private float currentCameraX;
-        private float currentCameraY;
-        private float currentCameraZoomWeight;
         RoomRuntimeData currentRoomData;
 
         Map<String, RoomRuntimeData> roomMap;
@@ -72,18 +69,6 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
         List<GoodRuntimeData> cartGoods;
         DeskRuntimeData detailingDeskData;
 
-        public void modifyCurrentCamera(Float deltaX, Float deltaY) {
-            if (deltaX != null) {
-                currentCameraX += deltaX;
-            }
-            if (deltaY != null) {
-                currentCameraY += deltaY;
-            }
-        }
-
-        public void modifyCurrentCameraZoomWeight(Float delta) {
-            currentCameraZoomWeight += delta;
-        }
 
     }
 

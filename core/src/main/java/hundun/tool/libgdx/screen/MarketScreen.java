@@ -7,14 +7,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import hundun.gdxgame.corelib.base.BaseHundunScreen;
 import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.tool.ComikeHelperGame;
-import hundun.tool.libgdx.screen.market.CameraControlBoardVM;
 import hundun.tool.libgdx.screen.market.CartBoardVM;
 import hundun.tool.libgdx.screen.market.DeskAreaVM;
 import hundun.tool.libgdx.screen.market.DeskVM;
@@ -34,10 +32,6 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
 
     @Getter
     @Setter
-    private boolean currentCameraZoomDirty;
-
-    @Getter
-    @Setter
     private boolean cartBoardVMDirty;
 
 
@@ -46,7 +40,6 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
     private final Stage deskStage;
     private DeskAreaVM deskAreaVM;
     // ------ UI layer ------
-    private CameraControlBoardVM cameraControlBoardVM;
 
     private CartBoardVM cartBoardVM;
     // ------ image previewer layer ------
@@ -80,13 +73,11 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         deskStage.addActor(deskAreaVM);
 
         // ------ UI layer ------
-        cameraControlBoardVM = new CameraControlBoardVM(this);
-        uiRootTable.add(cameraControlBoardVM)
-                .expand()
-                .bottom();
         cartBoardVM = new CartBoardVM(this);
         uiRootTable.add(cartBoardVM)
+                .expand()
                 .growY()
+                .right()
                 ;
         // ------ image previewer layer ------
         imageViewerVM = new ImageViewerVM(this);
@@ -188,12 +179,11 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
 
         deskStage.act();
         deskStage.getViewport().getCamera().position.set(
-                game.getLogicContext().getCrossScreenDataPackage().getCurrentCameraX(),
-                game.getLogicContext().getCrossScreenDataPackage().getCurrentCameraY(),
+                deskAreaVM.getCameraDataPackage().getCurrentCameraX(),
+                deskAreaVM.getCameraDataPackage().getCurrentCameraY(),
                 0);
-        if (currentCameraZoomDirty) {
-            currentCameraZoomDirty = false;
-            float weight = game.getLogicContext().getCrossScreenDataPackage().getCurrentCameraZoomWeight();
+        if (deskAreaVM.getCameraDataPackage().getAndClearCameraZoomDirty()) {
+            float weight = deskAreaVM.getCameraDataPackage().getCurrentCameraZoomWeight();
             float value = weight <= 0 ? (float)Math.pow(2, weight) : (float)Math.log(weight + 2);
             deskCamera.zoom = value;
             game.getFrontend().log(this.getClass().getSimpleName(), "deskCamera.zoom = %s", deskCamera.zoom);
@@ -207,12 +197,11 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
     protected void aboveUiStageDraw(float delta) {
         imagePreviewerStage.act();
         imagePreviewerStage.getViewport().getCamera().position.set(
-                imageViewerVM.getCurrentCameraX(),
-                imageViewerVM.getCurrentCameraY(),
+                imageViewerVM.getCameraDataPackage().getCurrentCameraX(),
+                imageViewerVM.getCameraDataPackage().getCurrentCameraY(),
                 0);
-        if (imageViewerVM.isCurrentCameraZoomDirty()) {
-            imageViewerVM.setCurrentCameraZoomDirty(false);
-            float weight = imageViewerVM.getCurrentCameraZoomWeight();
+        if (imageViewerVM.getCameraDataPackage().getAndClearCameraZoomDirty()) {
+            float weight = imageViewerVM.getCameraDataPackage().getCurrentCameraZoomWeight();
             float value = weight <= 0 ? (float)Math.pow(2, weight) : (float)Math.log(weight + 2);
             imagePreviewerCamera.zoom = value;
             game.getFrontend().log(this.getClass().getSimpleName(), "imagePreviewerCamera.zoom = %s", deskCamera.zoom);

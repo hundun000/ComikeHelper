@@ -14,6 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
+import hundun.tool.libgdx.other.CameraDataPackage;
+import hundun.tool.libgdx.other.CameraGestureListener;
 import hundun.tool.libgdx.screen.MarketScreen;
 import hundun.tool.libgdx.screen.MarketScreen.TiledMapClickListener;
 import hundun.tool.logic.data.DeskRuntimeData;
@@ -28,11 +30,12 @@ public class DeskAreaVM extends Table {
     public MarketScreen parent;
     @Getter
     Map<String, DeskVM> nodes = new LinkedHashMap<>();
-
-
+    @Getter
+    CameraDataPackage cameraDataPackage;
 
     public DeskAreaVM(MarketScreen parent) {
         this.parent = parent;
+        this.cameraDataPackage = new CameraDataPackage();
 
         if (parent.getGame().debugMode) {
             this.debugAll();
@@ -47,7 +50,7 @@ public class DeskAreaVM extends Table {
         background.setDrawable(DrawableFactory.getSimpleBoardBackground());
         background.setBounds(0, 0, roomWidth, roomHeight);
         this.addActor(background);
-        this.addListener(new DeskLayerGestureListener());
+        this.addListener(new CameraGestureListener(cameraDataPackage));
 
         deskDatas.forEach(deskData -> {
             DeskVM actor = new DeskVM(this, deskData);
@@ -73,24 +76,4 @@ public class DeskAreaVM extends Table {
         });
     }
 
-    public class DeskLayerGestureListener extends ActorGestureListener {
-
-        @Override
-        public void zoom(InputEvent event, float initialDistance, float distance) {
-            super.zoom(event, initialDistance, distance);
-
-            float deltaValue = (distance - initialDistance) < 0 ? 0.1f : -0.1f;
-            DeskAreaVM.this.parent.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCameraZoomWeight(deltaValue);
-            DeskAreaVM.this.parent.setCurrentCameraZoomDirty(true);
-        }
-
-        @Override
-        public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
-            super.pan(event, x, y, deltaX, deltaY);
-
-            float cameraDeltaX = -deltaX;
-            float cameraDeltaY = -deltaY;
-            DeskAreaVM.this.parent.getGame().getLogicContext().getCrossScreenDataPackage().modifyCurrentCamera(cameraDeltaX, cameraDeltaY);
-        }
-    }
 }
