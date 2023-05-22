@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import hundun.gdxgame.corelib.base.BaseHundunScreen;
 import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.tool.ComikeHelperGame;
-import hundun.tool.libgdx.screen.market.CartBoardVM;
+import hundun.tool.libgdx.screen.market.MainBoardVM;
 import hundun.tool.libgdx.screen.market.DeskAreaVM;
 import hundun.tool.libgdx.screen.market.DeskVM;
 import hundun.tool.libgdx.screen.market.PopupCloseButton;
@@ -41,7 +41,7 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
     private DeskAreaVM deskAreaVM;
     // ------ UI layer ------
 
-    private CartBoardVM cartBoardVM;
+    private MainBoardVM mainBoardVM;
     // ------ image previewer layer ------
     private final OrthographicCamera imagePreviewerCamera;
     private final Stage imagePreviewerStage;
@@ -73,8 +73,8 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         deskStage.addActor(deskAreaVM);
 
         // ------ UI layer ------
-        cartBoardVM = new CartBoardVM(this);
-        uiRootTable.add(cartBoardVM)
+        mainBoardVM = new MainBoardVM(this);
+        uiRootTable.add(mainBoardVM)
                 .expand()
                 .growY()
                 .right()
@@ -141,7 +141,7 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         }
         cartBoardVMDirty = false;
         CrossScreenDataPackage crossScreenDataPackage = game.getLogicContext().getCrossScreenDataPackage();
-        cartBoardVM.updateData(crossScreenDataPackage.getDetailingDeskData(), crossScreenDataPackage.getCartGoods());
+        mainBoardVM.updateData(crossScreenDataPackage.getDetailingDeskData(), crossScreenDataPackage.getCartGoods());
         deskAreaVM.updateCartData(crossScreenDataPackage.getCartGoods());
     }
 

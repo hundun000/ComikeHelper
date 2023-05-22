@@ -3,6 +3,7 @@ package hundun.tool.logic.util;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -52,8 +53,9 @@ public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<Exte
     public ComplexExternalJsonSaveTool(String folder) {
 
         this.objectMapper = new ObjectMapper()
-            .enable(SerializationFeature.INDENT_OUTPUT)
-        ;
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                ;
         this.folder = folder;
 
     }

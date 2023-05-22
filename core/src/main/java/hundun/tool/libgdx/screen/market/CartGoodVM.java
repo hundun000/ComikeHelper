@@ -49,16 +49,6 @@ public class CartGoodVM extends Table {
         // ------ row 2 -----
         Texture texture = new Texture(goodRuntimeData.getOwnerRef().getCoverFileHandle());
         Image image = new Image(texture);
-        image.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                screen.getImageViewerVM().updateImageAndShow(texture);
-                screen.getPopupCloseButton().updateCallbackAndShow(() -> {
-                    screen.getImageViewerVM().hide();
-                });
-            }
-        });
         this.add(image)
                 .width(screen.getGame().getScreenContext().getLayoutConst().GOOD_IMAGE_SIZE)
                 .height(screen.getGame().getScreenContext().getLayoutConst().GOOD_IMAGE_SIZE)

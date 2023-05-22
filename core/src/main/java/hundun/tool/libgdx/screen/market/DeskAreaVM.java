@@ -51,6 +51,7 @@ public class DeskAreaVM extends Table {
         background.setBounds(0, 0, roomWidth, roomHeight);
         this.addActor(background);
         this.addListener(new CameraGestureListener(cameraDataPackage));
+        this.getCameraDataPackage().forceSet(roomWidth / 2.0f, roomHeight/ 2.0f, 0);
 
         deskDatas.forEach(deskData -> {
             DeskVM actor = new DeskVM(this, deskData);

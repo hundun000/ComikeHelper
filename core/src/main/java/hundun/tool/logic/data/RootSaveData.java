@@ -57,8 +57,6 @@ public class RootSaveData {
     @Builder
     public static class RoomSaveData {
         String name;
-        int startX;
-        int startY;
         int roomWidth;
         int roomHeight;
     }

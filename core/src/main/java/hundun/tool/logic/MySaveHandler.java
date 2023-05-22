@@ -94,8 +94,6 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
                         room,
                         RoomSaveData.builder()
                             .name(room)
-                            .startX(0)
-                            .startY(0)
                             .roomWidth(5000)
                             .roomHeight(3000)
                             .build()
