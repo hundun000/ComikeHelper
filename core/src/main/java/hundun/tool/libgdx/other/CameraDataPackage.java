@@ -33,10 +33,16 @@ public class CameraDataPackage {
         return result;
     }
 
-    public void forceSet(float currentCameraX, float currentCameraY, int currentCameraZoomWeight) {
-        this.currentCameraX = currentCameraX;
-        this.currentCameraY = currentCameraY;
-        this.currentCameraZoomWeight = currentCameraZoomWeight;
-        this.currentCameraZoomDirty = true;
+    public void forceSet(Float currentCameraX, Float currentCameraY, Integer currentCameraZoomWeight) {
+        if (currentCameraX != null) {
+            this.currentCameraX = currentCameraX;
+        }
+        if (currentCameraY != null) {
+            this.currentCameraY = currentCameraY;
+        }
+        if (currentCameraZoomWeight != null) {
+            this.currentCameraZoomWeight = currentCameraZoomWeight;
+            this.currentCameraZoomDirty = true;
+        }
     }
 }

@@ -57,11 +57,12 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
 
         });
 
+        String specialRoom = "2号馆";
         deskSaveDatas.put(
             "砍口垒同好组",
             DeskSaveData.builder()
                 .name("砍口垒同好组")
-                .posDataLine(room + ";特;0")
+                .posDataLine(specialRoom + ";特;0")
                 .goodSaveDatas(JavaFeatureForGwt.listOf(
                     GoodSaveData.builder().name("砍口垒本子1").build(),
                     GoodSaveData.builder().name("砍口垒本子2").build()
@@ -71,7 +72,7 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
             "少女前线同好组",
             DeskSaveData.builder()
                 .name("少女前线同好组")
-                .posDataLine(room + ";特;1")
+                .posDataLine(specialRoom + ";特;1")
                 .goodSaveDatas(JavaFeatureForGwt.listOf(
                     GoodSaveData.builder().name("少女前线本子1").build(),
                     GoodSaveData.builder().name("少女前线本子2").build()
@@ -97,6 +98,13 @@ public class MySaveHandler extends PairChildrenSaveHandler<RootSaveData, MySyste
                             .roomWidth(5000)
                             .roomHeight(3000)
                             .build()
+                        ,
+                        specialRoom,
+                        RoomSaveData.builder()
+                                .name(specialRoom)
+                                .roomWidth(5000)
+                                .roomHeight(3000)
+                                .build()
                         )
                     )
                     .build()

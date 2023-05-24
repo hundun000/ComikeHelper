@@ -18,6 +18,7 @@ import hundun.tool.libgdx.screen.market.DeskAreaVM;
 import hundun.tool.libgdx.screen.market.DeskVM;
 import hundun.tool.libgdx.screen.market.PopupCloseButton;
 import hundun.tool.libgdx.screen.market.ImageViewerVM;
+import hundun.tool.libgdx.screen.market.RoomSwitchBoardVM;
 import hundun.tool.logic.LogicContext.CrossScreenDataPackage;
 import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.RootSaveData;
@@ -39,9 +40,11 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
     private final OrthographicCamera deskCamera;
     private final Stage deskStage;
     private DeskAreaVM deskAreaVM;
-    // ------ UI layer ------
 
+    // ------ UI layer ------
     private MainBoardVM mainBoardVM;
+    private RoomSwitchBoardVM roomSwitchBoardVM;
+
     // ------ image previewer layer ------
     private final OrthographicCamera imagePreviewerCamera;
     private final Stage imagePreviewerStage;
@@ -73,9 +76,17 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         deskStage.addActor(deskAreaVM);
 
         // ------ UI layer ------
+        roomSwitchBoardVM = new RoomSwitchBoardVM(this);
+        uiRootTable.add(roomSwitchBoardVM)
+                .expand()
+                //.grow()
+                .left()
+                .top()
+                ;
+
         mainBoardVM = new MainBoardVM(this);
         uiRootTable.add(mainBoardVM)
-                .expand()
+                //.expand()
                 .growY()
                 .right()
                 ;
@@ -119,6 +130,16 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
     }
 
     private void updateUIForShow() {
+        popupCloseButton.hide();
+        imageViewerVM.hide();
+        roomSwitchBoardVM.intoSmallMode();
+
+        deskAreaVM.getCameraDataPackage().forceSet(null, null, 0);
+
+        updateUIAfterRoomChanged();
+    }
+
+    public void updateUIAfterRoomChanged() {
         CrossScreenDataPackage crossScreenDataPackage = game.getLogicContext().getCrossScreenDataPackage();
         // for newest DeskDatas
         RoomRuntimeData currentRoomData = crossScreenDataPackage.getCurrentRoomData();
@@ -126,13 +147,11 @@ public class MarketScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
                 currentRoomData.getRoomWidth(),
                 currentRoomData.getRoomHeight(),
                 currentRoomData.getDeskDatas()
-                );
+        );
+        roomSwitchBoardVM.intoFullMode();
         // for newest cart
         cartBoardVMDirty = true;
         checkCartBoardVMDirty();
-
-        popupCloseButton.hide();
-        imageViewerVM.hide();
     }
 
     private void checkCartBoardVMDirty() {

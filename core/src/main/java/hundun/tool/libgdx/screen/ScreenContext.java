@@ -31,7 +31,10 @@ public class ScreenContext {
         public final int CART_BOARD_EXTRA_IMAGE_SIZE = 300;
 
         public final int CART_BOARD_WIDTH = 600;
-        
+
+        public final int ROOM_SWITCH_NODE_WIDTH = 250;
+        public final int ROOM_SWITCH_NODE_HEIGHT = 75;
+
     }
     
     public ScreenContext(ComikeHelperGame game) {
