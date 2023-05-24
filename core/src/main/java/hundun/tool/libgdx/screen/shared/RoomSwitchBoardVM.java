@@ -1,4 +1,4 @@
-package hundun.tool.libgdx.screen.market;
+package hundun.tool.libgdx.screen.shared;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
+import hundun.tool.libgdx.screen.AbstractComikeScreen;
 import hundun.tool.libgdx.screen.MarketScreen;
 import hundun.tool.logic.LogicContext.CrossScreenDataPackage;
 import hundun.tool.logic.data.RoomRuntimeData;
@@ -23,7 +24,7 @@ import hundun.tool.logic.data.RoomRuntimeData;
  * Created on 2023/05/17
  */
 public class RoomSwitchBoardVM extends Container<Table> {
-    MarketScreen screen;
+    AbstractComikeScreen screen;
 
     SmallModeTable smallModeTable;
     FullModeTable fullModeTable;
@@ -88,7 +89,7 @@ public class RoomSwitchBoardVM extends Container<Table> {
         Label label;
         RoomRuntimeData roomRuntimeData;
 
-        public RoomSwitchNode(MarketScreen screen) {
+        public RoomSwitchNode(AbstractComikeScreen screen) {
             this.signTexture = new TextureRegionDrawable(new Texture(Gdx.files.internal("sign.png")));
 
             this.signImage = new Image();
@@ -111,8 +112,7 @@ public class RoomSwitchBoardVM extends Container<Table> {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     super.clicked(event, x, y);
-                    screen.getGame().getLogicContext().getCrossScreenDataPackage().setCurrentRoomData(roomRuntimeData);
-                    screen.updateUIAfterRoomChanged();
+                    screen.onRoomSwitchClicked(roomRuntimeData);
                 }
             });
         }
@@ -129,7 +129,7 @@ public class RoomSwitchBoardVM extends Container<Table> {
         }
     }
 
-    public RoomSwitchBoardVM(MarketScreen screen) {
+    public RoomSwitchBoardVM(AbstractComikeScreen screen) {
         this.screen = screen;
 
         // ------ candidates ------

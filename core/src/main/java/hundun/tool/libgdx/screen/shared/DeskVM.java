@@ -1,20 +1,16 @@
-package hundun.tool.libgdx.screen.market;
+package hundun.tool.libgdx.screen.shared;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.tool.ComikeHelperGame;
+import hundun.tool.libgdx.screen.shared.DeskAreaVM;
 import hundun.tool.logic.data.DeskRuntimeData;
 import lombok.Getter;
 
@@ -33,7 +29,7 @@ public class DeskVM extends Table {
     Image starImage;
     
     public DeskVM(DeskAreaVM deskAreaVM, DeskRuntimeData deskData) {
-        this.game = deskAreaVM.parent.getGame();
+        this.game = deskAreaVM.screen.getGame();
         this.deskAreaVM = deskAreaVM;
         this.deskData = deskData;
 

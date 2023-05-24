@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import de.eskalon.commons.screen.transition.impl.BlendingTransition;
@@ -31,9 +32,9 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
     int BUTTON_SMALL_HEIGHT = 75;
 
     Actor title;
-    Actor buttonContinueGame;
+
     Actor buttonNewGame;
-    Actor buttonIntoSettingScreen;
+    Actor buttonIntoPrepareScreen;
     Image backImage;
 
     public MyMenuScreen(ComikeHelperGame game) {
@@ -46,39 +47,30 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
 
         Image backImage = new Image(new TextureRegionDrawable(new TextureRegion(TextureFactory.getSimpleBoardBackground())));
 
-        Button buttonNewGame = new TextButton("New game", game.getMainSkin());
-        buttonNewGame.addListener(new InputListener(){
+        this.buttonNewGame = new TextButton("New game", game.getMainSkin());
+        buttonNewGame.addListener(new ClickListener(){
             @Override
-            public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
                 game.getSaveHandler().gameplayLoadOrStarter(false);
                 game.getScreenManager().pushScreen(MarketScreen.class.getSimpleName(), BlendingTransition.class.getSimpleName());
             }
-            @Override
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
         });
 
-        Button buttonContinueGame = new TextButton("Continue game", game.getMainSkin());
-        buttonContinueGame.addListener(new InputListener(){
+
+        this.buttonIntoPrepareScreen = new TextButton("prepare", game.getMainSkin());
+        buttonIntoPrepareScreen.addListener(new ClickListener(){
             @Override
-            public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                game.getSaveHandler().gameplayLoadOrStarter(true);
-                game.getScreenManager().pushScreen(MarketScreen.class.getSimpleName(), BlendingTransition.class.getSimpleName());
-            }
-            @Override
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                return true;
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                game.getSaveHandler().gameplayLoadOrStarter(false);
+                game.getScreenManager().pushScreen(BuilderScreen.class.getSimpleName(), BlendingTransition.class.getSimpleName());
             }
         });
-
-        Button buttonIntoSettingScreen = new TextButton("Setting", game.getMainSkin());
 
         this.title = titleLabel;
         this.backImage = backImage;
-        this.buttonContinueGame = buttonContinueGame;
-        this.buttonNewGame = buttonNewGame;
-        this.buttonIntoSettingScreen = buttonIntoSettingScreen;
+
     }
 
 
@@ -95,20 +87,16 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
             .row();
 
 
-        if (game.getSaveHandler().hasContinuedGameplaySave()) {
-            uiRootTable.add(buttonContinueGame)
-                .height(BUTTON_BIG_HEIGHT)
-                .fillY()
-                .padTop(10)
-                .row();
-        }
-
         uiRootTable.add(buttonNewGame)
             .height(game.getSaveHandler().hasContinuedGameplaySave() ? BUTTON_SMALL_HEIGHT : BUTTON_BIG_HEIGHT)
             .fillY()
             .padTop(10)
             .row();
-
+        uiRootTable.add(buttonIntoPrepareScreen)
+                .height(game.getSaveHandler().hasContinuedGameplaySave() ? BUTTON_SMALL_HEIGHT : BUTTON_BIG_HEIGHT)
+                .fillY()
+                .padTop(10)
+                .row();
 
     }
 

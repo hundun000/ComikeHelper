@@ -14,6 +14,7 @@ import lombok.Getter;
 public class ScreenContext {
     MarketScreen mainScreen;
     MyMenuScreen menuScreen;
+    BuilderScreen builderScreen;
     LayoutConst layoutConst;
     
     public static class LayoutConst {
@@ -45,10 +46,12 @@ public class ScreenContext {
         this.layoutConst = new LayoutConst();
         this.mainScreen = new MarketScreen(game);
         this.menuScreen = new MyMenuScreen(game);
+        this.builderScreen = new BuilderScreen(game);
         
         game.getScreenManager().addScreen(mainScreen.getClass().getSimpleName(), mainScreen);
         game.getScreenManager().addScreen(menuScreen.getClass().getSimpleName(), menuScreen);
-        
+        game.getScreenManager().addScreen(builderScreen.getClass().getSimpleName(), builderScreen);
+
         BlendingTransition blendingTransition = new BlendingTransition(game.getBatch(), 1F);
         game.getScreenManager().addScreenTransition(BlendingTransition.class.getSimpleName(), blendingTransition);
     }

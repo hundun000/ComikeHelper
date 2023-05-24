@@ -3,8 +3,6 @@ package hundun.tool.libgdx.other;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 
-import hundun.tool.libgdx.screen.market.DeskAreaVM;
-
 public class CameraGestureListener extends ActorGestureListener {
 
     private final CameraDataPackage cameraDataPackage;
