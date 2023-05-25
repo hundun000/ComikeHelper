@@ -13,11 +13,11 @@ import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.RoomRuntimeData.Factory;
-import hundun.tool.logic.data.RootSaveData;
-import hundun.tool.logic.data.RootSaveData.DeskSaveData;
-import hundun.tool.logic.data.RootSaveData.MyGameplaySaveData;
 import hundun.tool.logic.data.external.ExternalAllData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
+import hundun.tool.logic.data.save.RootSaveData;
+import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
+import hundun.tool.logic.data.save.RootSaveData.MyGameplaySaveData;
 import hundun.tool.logic.util.ComplexExternalJsonSaveTool.DeskExternalRuntimeData;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -75,15 +75,19 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
 
     public LogicContext(ComikeHelperGame game) {
         this.game = game;
-        this.externalResourceManager = new ExternalResourceManager();
+        this.externalResourceManager = new ExternalResourceManager(game);
     }
 
     public void loadExcelData() {
         ExternalAllData externalAllData = ExternalAllData.Factory.empty();
         ExternalUserPrivateData userPrivateData = ExternalUserPrivateData.Factory.empty();
 
-        externalResourceManager.providerExcelGameplayData(externalAllData, userPrivateData);
-        handleFinalData(externalAllData, userPrivateData);
+        boolean success = externalResourceManager.providerExcelGameplayData(externalAllData, userPrivateData);
+        if (success) {
+            handleFinalData(externalAllData, userPrivateData);
+        } else {
+            game.getFrontend().log(this.getClass().getSimpleName(), "providerExcelGameplayData failed.");
+        }
     }
 
     @Override
@@ -101,7 +105,7 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
             if (externalAllData.getDeskExternalRuntimeDataMap().size() == 0) {
                 Map<String, DeskExternalRuntimeData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
                     it -> it.getKey(),
-                    it -> DeskExternalRuntimeData.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
+                    it -> DeskExternalRuntimeData.Factory.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
                 ));
                 externalAllData.setDeskExternalRuntimeDataMap(defaultDeskSaveDatas);
                 externalResourceManager.saveAsSharedData(defaultDeskSaveDatas);
@@ -114,7 +118,7 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
             externalAllData.setExternalMainData(gameplaySave.getDefaultExternalMainData());
             Map<String, DeskExternalRuntimeData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
                     it -> it.getKey(),
-                    it -> DeskExternalRuntimeData.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
+                    it -> DeskExternalRuntimeData.Factory.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
                 ));
             externalAllData.setDeskExternalRuntimeDataMap(defaultDeskSaveDatas);
             userPrivateData.setCartGoodIds(gameplaySave.getDefaultCartGoodIds());
@@ -123,6 +127,7 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
         
         handleFinalData(externalAllData, userPrivateData);
     }
+    
 
     @Override
     public void currentSituationToGameplaySaveData(MyGameplaySaveData myGameplaySaveData) {
@@ -133,7 +138,7 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
         Map<String, RoomRuntimeData> roomMap = externalAllData.getExternalMainData().getRoomSaveDataMap().values().stream()
             .map(roomSaveData -> {
                 List<DeskRuntimeData> deskRuntimeDatas = externalAllData.getDeskExternalRuntimeDataMap().values().stream()
-                    .map(deskExternalRuntimeData -> DeskRuntimeData.Factory.fromSaveData(
+                    .map(deskExternalRuntimeData -> DeskRuntimeData.Factory.fromExternalRuntimeData(
                                 game.getScreenContext().getLayoutConst(),
                                 deskExternalRuntimeData
                                 )

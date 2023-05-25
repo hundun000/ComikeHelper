@@ -16,7 +16,7 @@ import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.libgdx.screen.MarketScreen;
 import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
-import hundun.tool.logic.data.RootSaveData.GoodSaveData;
+import hundun.tool.logic.data.save.RootSaveData.GoodSaveData;
 
 /**
  * @author hundun

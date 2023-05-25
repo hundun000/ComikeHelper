@@ -9,7 +9,7 @@ import hundun.tool.ComikeHelperGame;
 import hundun.tool.libgdx.screen.shared.DeskAreaVM;
 import hundun.tool.libgdx.screen.shared.DeskVM;
 import hundun.tool.logic.data.RoomRuntimeData;
-import hundun.tool.logic.data.RootSaveData;
+import hundun.tool.logic.data.save.RootSaveData;
 
 public abstract class AbstractComikeScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveData> {
 

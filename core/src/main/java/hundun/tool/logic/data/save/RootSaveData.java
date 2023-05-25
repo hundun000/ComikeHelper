@@ -1,4 +1,4 @@
-package hundun.tool.logic.data;
+package hundun.tool.logic.data.save;
 
 import java.util.List;
 import java.util.Map;
@@ -49,16 +49,6 @@ public class RootSaveData {
         String name;
         String posDataLine;
         List<GoodSaveData> goodSaveDatas;
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class RoomSaveData {
-        String name;
-        int roomWidth;
-        int roomHeight;
     }
 
     public static final class Factory implements IRootSaveExtension<RootSaveData, MySystemSettingSaveData, MyGameplaySaveData> {

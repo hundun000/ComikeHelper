@@ -7,10 +7,11 @@ import com.badlogic.gdx.graphics.Texture;
 import java.util.List;
 import java.util.Map;
 
-import hundun.tool.logic.data.RootSaveData.DeskSaveData;
+import hundun.tool.ComikeHelperGame;
 import hundun.tool.logic.data.external.ExternalAllData;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
+import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
 import hundun.tool.logic.util.ComplexExternalJsonSaveTool;
 import hundun.tool.logic.util.ExternalExcelSaveTool;
 import hundun.tool.logic.util.ComplexExternalJsonSaveTool.DeskExternalRuntimeData;
@@ -18,18 +19,19 @@ import hundun.tool.logic.util.SimpleExternalJsonSaveTool;
 import lombok.Getter;
 
 public class ExternalResourceManager {
-    private static final String BUILDER_ROOT_FOLDER = "builder/";
-    private static final String USER_ROOT_FOLDER = "user/";
-    private static final String SHARED_ROOT_FOLDER = "shared/";
+    private static final String BUILDER_ROOT_FOLDER = "ComikeHelper/builder/";
+    private static final String USER_ROOT_FOLDER = "ComikeHelper/user/";
+    private static final String SHARED_ROOT_FOLDER = "ComikeHelper/shared/";
     @Getter
     FileHandle defaultCoverFileHandle;
-
+    ComikeHelperGame game;
     ComplexExternalJsonSaveTool sharedComplexSaveTool;
     //ExternalJsonSaveTool<ExternalMainData> userMainDataSaveTool;
     SimpleExternalJsonSaveTool<ExternalUserPrivateData> userPrivateDataSaveTool;
     ExternalExcelSaveTool builderExcelSaveTool;
     
-    public ExternalResourceManager() {
+    public ExternalResourceManager(ComikeHelperGame game) {
+        this.game = game;
         this.sharedComplexSaveTool = new ComplexExternalJsonSaveTool(
             SHARED_ROOT_FOLDER
             );
@@ -58,13 +60,22 @@ public class ExternalResourceManager {
     }
     
     
-    public void providerExcelGameplayData(ExternalAllData externalAllData, ExternalUserPrivateData userPrivateData) {
+    public boolean providerExcelGameplayData(ExternalAllData externalAllData, ExternalUserPrivateData userPrivateData) {
         builderExcelSaveTool.lazyInitOnGameCreate();
         
         builderExcelSaveTool.lazyInitOnRuntime("test.xlsx");
         
         List<Map<Integer, String>> data = builderExcelSaveTool.readRootSaveData();
         System.out.println("data = " + data);
+        
+        ExternalAllData externalAllDataFromExcel = ExternalAllData.Factory.fromExcelData(game.getScreenContext().getLayoutConst(), data, defaultCoverFileHandle);
+        merge(externalAllData,
+                externalAllDataFromExcel.getExternalMainData(),
+                externalAllDataFromExcel.getDeskExternalRuntimeDataMap()
+            );
+        
+        boolean success = data != null;
+        return success;
     }
 
     private void merge(ExternalUserPrivateData master, ExternalUserPrivateData other) {
@@ -80,8 +91,8 @@ public class ExternalResourceManager {
                        ExternalMainData other,
                        Map<String, DeskExternalRuntimeData> deskExternalRuntimeDataMap
     ) {
-        if (other != null) {
-            master.setExternalMainData(other);
+        if (other != null && other.getRoomSaveDataMap() != null) {
+            master.getExternalMainData().getRoomSaveDataMap().putAll(other.getRoomSaveDataMap());
         }
         if (deskExternalRuntimeDataMap != null) {
             master.getDeskExternalRuntimeDataMap().putAll(deskExternalRuntimeDataMap);

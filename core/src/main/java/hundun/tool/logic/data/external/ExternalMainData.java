@@ -3,8 +3,9 @@ package hundun.tool.logic.data.external;
 import java.util.ArrayList;
 import java.util.Map;
 
-import hundun.tool.logic.data.RootSaveData.DeskSaveData;
-import hundun.tool.logic.data.RootSaveData.RoomSaveData;
+import hundun.tool.logic.data.RoomRuntimeData;
+import hundun.tool.logic.data.save.RoomSaveData;
+import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +18,7 @@ import lombok.NoArgsConstructor;
 public class ExternalMainData {
 
     Map<String, RoomSaveData> roomSaveDataMap;
+    
 
+    
 }

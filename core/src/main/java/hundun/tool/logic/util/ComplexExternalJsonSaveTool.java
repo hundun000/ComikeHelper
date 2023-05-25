@@ -14,10 +14,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import hundun.tool.logic.data.RootSaveData.DeskSaveData;
+import hundun.tool.libgdx.screen.ScreenContext.LayoutConst;
+import hundun.tool.logic.data.DeskRuntimeData;
+import hundun.tool.logic.data.GoodRuntimeData;
+import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
 import hundun.tool.logic.data.external.ExternalMainData;
+import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
 import hundun.tool.logic.util.ComplexExternalJsonSaveTool.DeskExternalRuntimeData;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<ExternalMainData, DeskExternalRuntimeData> {
@@ -34,19 +41,36 @@ public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<Exte
     private static final String mainFileName = "main.json";
     private static final String subFileName = "desk.json";
     FileHandle defaultCover;
+    
     @Setter
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
     public static class DeskExternalRuntimeData {
         DeskSaveData deskSaveData;
         FileHandle coverFileHandle;
         List<FileHandle> imageFileHandles;
 
-        public static DeskExternalRuntimeData forDefault(FileHandle defaultCover, DeskSaveData deskSaveData) {
-            DeskExternalRuntimeData result = new DeskExternalRuntimeData();
-            result.setDeskSaveData(deskSaveData);
-            result.setCoverFileHandle(defaultCover);
-            result.setImageFileHandles(new ArrayList<>());
-            return result;
+        
+        
+        public static class Factory {
+            public static DeskExternalRuntimeData forDefault(FileHandle defaultCover, DeskSaveData deskSaveData) {
+                DeskExternalRuntimeData result = new DeskExternalRuntimeData();
+                result.setDeskSaveData(deskSaveData);
+                result.setCoverFileHandle(defaultCover);
+                result.setImageFileHandles(new ArrayList<>());
+                return result;
+            }
+            
+            public static DeskExternalRuntimeData fromBasic(DeskSaveData deskSaveData, FileHandle coverFileHandle) {
+                DeskExternalRuntimeData result = DeskExternalRuntimeData.builder()
+                        .deskSaveData(deskSaveData)
+                        .coverFileHandle(coverFileHandle)
+                        .imageFileHandles(new ArrayList<>(0))
+                        .build();
+                return result;
+            }
         }
     }
 
