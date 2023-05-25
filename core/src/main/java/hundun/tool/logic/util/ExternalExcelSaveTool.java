@@ -1,5 +1,12 @@
 package hundun.tool.logic.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.event.AnalysisEventListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,30 +15,38 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import hundun.gdxgame.gamelib.base.save.ISaveTool;
 
-public class ExternalExcelSaveTool<T> implements ISaveTool<T> {
+public class ExternalExcelSaveTool implements ISaveTool<List<Map<Integer, String>>> {
 
-    private static final String charSet = "UTF-8";
-    private final ObjectMapper objectMapper;
-    private final Class<T> clazz;
+
     private final String folder;
-    private final String path;
+    private String path;
     private FileHandle fileHandle;
     private FileHandle baseFolderFileHandle;
-    public ExternalExcelSaveTool(String folder, String fileName, Class<T> clazz) {
-        this.clazz = clazz;
-        this.objectMapper = new ObjectMapper()
-            .enable(SerializationFeature.INDENT_OUTPUT)
-        ;
+    
+    private List<Map<Integer, String>> cachedDataList;
+    
+    public ExternalExcelSaveTool(String folder) {
         this.folder = folder;
-        this.path = folder + "/" + fileName;
     }
 
 
     @Override
     public void lazyInitOnGameCreate() {
-        fileHandle = Gdx.files.external(path);
+        
         baseFolderFileHandle = Gdx.files.external(folder);
         baseFolderFileHandle.mkdirs();
+
+    }
+    
+    public void lazyInitOnRuntime(String fileName) {
+        this.path = folder + "/" + fileName;
+        fileHandle = Gdx.files.external(path);
+        
+        if (fileHandle.exists()) {
+            String filePath = fileHandle.file().getPath();
+            cachedDataList = EasyExcel.read(filePath).sheet().doReadSync();
+        }
+
     }
 
     @Override
@@ -40,25 +55,15 @@ public class ExternalExcelSaveTool<T> implements ISaveTool<T> {
     }
 
     @Override
-    public void writeRootSaveData(T saveData) {
-        try {
-            String str = objectMapper.writeValueAsString(saveData);
-            fileHandle.writeString(str, false, charSet);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    public void writeRootSaveData(List<Map<Integer, String>> saveData) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public T readRootSaveData() {
-        if (!fileHandle.exists()) {
-            return null;
-        }
-        String str = fileHandle.readString(charSet);
-        try {
-            return objectMapper.readValue(str, clazz);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    public List<Map<Integer, String>> readRootSaveData() {
+        return cachedDataList;
     }
+    
+    
+
 }

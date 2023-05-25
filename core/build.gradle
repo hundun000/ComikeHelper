@@ -9,6 +9,8 @@ dependencies {
   implementation "com.github.raeleus.stripe:stripe:$raeleusStripeVersion"
   implementation "com.github.raeleus.stripe:freetype:$raeleusStripeVersion"
   implementation 'com.github.raeleus.TenPatch:tenpatch:5.2.3'
+  implementation 'com.github.raeleus.TenPatch:tenpatch:5.2.3'
+  implementation "com.alibaba:easyexcel:3.1.1"
   
   api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.5'
   api group: 'com.github.nmorel.gwtjackson', name: 'gwt-jackson', version: '0.15.4'

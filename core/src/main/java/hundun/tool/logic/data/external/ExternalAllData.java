@@ -22,8 +22,11 @@ public class ExternalAllData {
     public static class Factory {
         public static ExternalAllData empty() {
             return  ExternalAllData.builder()
-                .deskExternalRuntimeDataMap(new HashMap<>())
-                .build();
+                    .externalMainData(ExternalMainData.builder()
+                            .roomSaveDataMap(new HashMap<>())
+                            .build())
+                    .deskExternalRuntimeDataMap(new HashMap<>())
+                    .build();
         }
 
     }

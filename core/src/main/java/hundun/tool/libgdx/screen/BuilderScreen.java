@@ -3,7 +3,10 @@ package hundun.tool.libgdx.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import hundun.tool.ComikeHelperGame;
@@ -24,7 +27,8 @@ public class BuilderScreen extends AbstractComikeScreen {
 
     // ------ UI layer ------
     private RoomSwitchBoardVM roomSwitchBoardVM;
-
+    private TextButton testExcelButton;
+    
     // ------ image previewer layer ------
 
 
@@ -56,7 +60,19 @@ public class BuilderScreen extends AbstractComikeScreen {
                 //.grow()
                 .left()
                 .top()
-        ;
+                ;
+        
+        testExcelButton = new TextButton("testExcel", game.getMainSkin());
+        testExcelButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                game.getLogicContext().loadExcelData();
+                updateUIAfterRoomChanged();
+            }
+        });
+        uiRootTable.add(testExcelButton)
+                ;
         // ------ image previewer layer ------
 
 

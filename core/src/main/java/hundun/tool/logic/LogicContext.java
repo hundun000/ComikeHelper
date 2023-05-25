@@ -39,7 +39,8 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
     CrossScreenDataPackage crossScreenDataPackage;
     @Getter
     ExternalResourceManager externalResourceManager;
-
+    @Setter
+    private boolean skipApplyExternalGameplayData;
 
     @Override
     public void applySystemSetting(RootSaveData.MySystemSettingSaveData systemSettingSave) {
@@ -77,30 +78,49 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
         this.externalResourceManager = new ExternalResourceManager();
     }
 
-
-
-    @Override
-    public void applyGameplaySaveData(MyGameplaySaveData gameplaySave) {
+    public void loadExcelData() {
         ExternalAllData externalAllData = ExternalAllData.Factory.empty();
         ExternalUserPrivateData userPrivateData = ExternalUserPrivateData.Factory.empty();
 
-        externalResourceManager.lazyInitOnGameCreate(externalAllData, userPrivateData);
-        if (externalAllData.getExternalMainData() == null) {
+        externalResourceManager.providerExcelGameplayData(externalAllData, userPrivateData);
+        handleFinalData(externalAllData, userPrivateData);
+    }
+
+    @Override
+    public void applyGameplaySaveData(MyGameplaySaveData gameplaySave) {
+
+        ExternalAllData externalAllData = ExternalAllData.Factory.empty();
+        ExternalUserPrivateData userPrivateData = ExternalUserPrivateData.Factory.empty();
+
+        if (!skipApplyExternalGameplayData) {
+            externalResourceManager.providerExternalGameplayData(externalAllData, userPrivateData);
+            if (externalAllData.getExternalMainData() == null) {
+                externalAllData.setExternalMainData(gameplaySave.getDefaultExternalMainData());
+                externalResourceManager.saveAsSharedData(externalAllData.getExternalMainData());
+            }
+            if (externalAllData.getDeskExternalRuntimeDataMap().size() == 0) {
+                Map<String, DeskExternalRuntimeData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
+                    it -> it.getKey(),
+                    it -> DeskExternalRuntimeData.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
+                ));
+                externalAllData.setDeskExternalRuntimeDataMap(defaultDeskSaveDatas);
+                externalResourceManager.saveAsSharedData(defaultDeskSaveDatas);
+            }
+            if (userPrivateData.getCartGoodIds().size() == 0) {
+                userPrivateData.setCartGoodIds(gameplaySave.getDefaultCartGoodIds());
+                externalResourceManager.saveAsUserData(userPrivateData);
+            }
+        } else {
             externalAllData.setExternalMainData(gameplaySave.getDefaultExternalMainData());
-            externalResourceManager.saveAsSharedData(externalAllData.getExternalMainData());
-        }
-        if (externalAllData.getDeskExternalRuntimeDataMap().size() == 0) {
             Map<String, DeskExternalRuntimeData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
-                it -> it.getKey(),
-                it -> DeskExternalRuntimeData.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
-            ));
+                    it -> it.getKey(),
+                    it -> DeskExternalRuntimeData.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
+                ));
             externalAllData.setDeskExternalRuntimeDataMap(defaultDeskSaveDatas);
-            externalResourceManager.saveAsSharedData(defaultDeskSaveDatas);
-        }
-        if (userPrivateData.getCartGoodIds().size() == 0) {
             userPrivateData.setCartGoodIds(gameplaySave.getDefaultCartGoodIds());
-            externalResourceManager.saveAsUserData(userPrivateData);
         }
+        
+        
         handleFinalData(externalAllData, userPrivateData);
     }
 
@@ -153,7 +173,7 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
             )
             .build();
 
-        crossScreenDataPackage.currentRoomData = crossScreenDataPackage.getRoomMap().values().iterator().next();
+        crossScreenDataPackage.currentRoomData = crossScreenDataPackage.getRoomMap().values().stream().findFirst().orElse(null);
 
     }
 

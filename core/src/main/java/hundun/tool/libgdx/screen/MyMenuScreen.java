@@ -63,6 +63,7 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
+                game.getLogicContext().setSkipApplyExternalGameplayData(true);
                 game.getSaveHandler().gameplayLoadOrStarter(false);
                 game.getScreenManager().pushScreen(BuilderScreen.class.getSimpleName(), BlendingTransition.class.getSimpleName());
             }
