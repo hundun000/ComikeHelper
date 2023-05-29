@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.files.FileHandle;
@@ -42,16 +43,16 @@ public class ExternalAllData {
         public static ExternalAllData fromExcelData(LayoutConst layoutConst, List<Map<Integer, String>> data, FileHandle coverFileHandle) {
             Map<Integer, String> firstLine = data.remove(0);
             String roomName = firstLine.get(0);
-            RoomSaveData singleRoomSaveData = RoomSaveData.builder()
-                    .name(roomName)
-                    .roomWidth(Integer.parseInt(firstLine.get(1)))
-                    .roomHeight(Integer.parseInt(firstLine.get(2)))
-                    .build();
+            
             
             List<DeskSaveData> deskSaveDatas = new ArrayList<>();
+            AtomicInteger maxCol = new AtomicInteger(0);
             for (int row = 0; row < data.size(); row++) {
                 int y = layoutConst.DESK_HEIGHT * (data.size() - row);
                 data.get(row).forEach((col, cell) -> {
+                    if (col > maxCol.get()) {
+                        maxCol.set(col);
+                    }
                     if (cell == null || cell.equals("*")) {
                         return;
                     }
@@ -85,6 +86,14 @@ public class ExternalAllData {
                             it -> it
                             ))
                     ;
+            
+            int roomWidth = (maxCol.get() + 1) * layoutConst.DESK_WIDTH;
+            int roomHeight = (data.size() + 1) * layoutConst.DESK_HEIGHT;
+            RoomSaveData singleRoomSaveData = RoomSaveData.builder()
+                    .name(roomName)
+                    .roomWidth(roomWidth)
+                    .roomHeight(roomHeight)
+                    .build();
             
             return ExternalAllData.builder()
                     .externalMainData(ExternalMainData.builder()

@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.libgdx.other.CameraDataPackage;
 import hundun.tool.libgdx.other.CameraGestureListener;
+import hundun.tool.libgdx.other.CameraMouseListener;
 import hundun.tool.libgdx.screen.AbstractComikeScreen;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
@@ -47,6 +48,7 @@ public class DeskAreaVM extends Table {
         background.setBounds(0, 0, roomWidth, roomHeight);
         this.addActor(background);
         this.addListener(new CameraGestureListener(cameraDataPackage));
+        this.addListener(new CameraMouseListener(cameraDataPackage));
         this.getCameraDataPackage().forceSet(roomWidth / 2.0f, roomHeight/ 2.0f, null);
 
         deskDatas.forEach(deskData -> {
