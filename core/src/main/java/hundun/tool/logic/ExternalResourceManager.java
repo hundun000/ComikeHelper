@@ -61,6 +61,10 @@ public class ExternalResourceManager {
     
     
     public boolean providerExcelGameplayData(ExternalAllData externalAllData, ExternalUserPrivateData userPrivateData) {
+        this.defaultCoverFileHandle = Gdx.files.internal("defaultCover.png");
+
+        sharedComplexSaveTool.lazyInitOnGameCreate(defaultCoverFileHandle);
+        userPrivateDataSaveTool.lazyInitOnGameCreate();
         builderExcelSaveTool.lazyInitOnGameCreate();
         
         builderExcelSaveTool.lazyInitOnRuntime("test.xlsx");

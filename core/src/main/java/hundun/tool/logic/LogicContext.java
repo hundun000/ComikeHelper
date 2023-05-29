@@ -31,7 +31,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter(value = AccessLevel.PRIVATE)
-public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>, ISubSystemSettingSaveHandler<RootSaveData.MySystemSettingSaveData> {
+public class LogicContext {
     ComikeHelperGame game;
     @Getter
     String extRoot;
@@ -39,20 +39,13 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
     CrossScreenDataPackage crossScreenDataPackage;
     @Getter
     ExternalResourceManager externalResourceManager;
-    @Setter
-    private boolean skipApplyExternalGameplayData;
 
-    @Override
-    public void applySystemSetting(RootSaveData.MySystemSettingSaveData systemSettingSave) {
+    private ExternalAllData externalAllData;
+    private ExternalUserPrivateData userPrivateData;
+
+    public void lazyInitOnCreateStage1() {
         this.extRoot = externalResourceManager.getExtRoot();
     }
-
-    @Override
-    public void currentSituationToSystemSetting(RootSaveData.MySystemSettingSaveData systemSettingSave) {
-        throw new UnsupportedOperationException();
-    }
-
-
 
     @Getter
     @Setter
@@ -79,8 +72,8 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
     }
 
     public void loadExcelData() {
-        ExternalAllData externalAllData = ExternalAllData.Factory.empty();
-        ExternalUserPrivateData userPrivateData = ExternalUserPrivateData.Factory.empty();
+        this.externalAllData = ExternalAllData.Factory.empty();
+        this.userPrivateData = ExternalUserPrivateData.Factory.empty();
 
         boolean success = externalResourceManager.providerExcelGameplayData(externalAllData, userPrivateData);
         if (success) {
@@ -90,49 +83,40 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
         }
     }
 
-    @Override
-    public void applyGameplaySaveData(MyGameplaySaveData gameplaySave) {
 
-        ExternalAllData externalAllData = ExternalAllData.Factory.empty();
-        ExternalUserPrivateData userPrivateData = ExternalUserPrivateData.Factory.empty();
+    public void loadCurrentOrUseDefaultData() {
 
-        if (!skipApplyExternalGameplayData) {
-            externalResourceManager.providerExternalGameplayData(externalAllData, userPrivateData);
-            if (externalAllData.getExternalMainData() == null) {
-                externalAllData.setExternalMainData(gameplaySave.getDefaultExternalMainData());
-                externalResourceManager.saveAsSharedData(externalAllData.getExternalMainData());
-            }
-            if (externalAllData.getDeskExternalRuntimeDataMap().size() == 0) {
-                Map<String, DeskExternalRuntimeData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
-                    it -> it.getKey(),
-                    it -> DeskExternalRuntimeData.Factory.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
-                ));
-                externalAllData.setDeskExternalRuntimeDataMap(defaultDeskSaveDatas);
-                externalResourceManager.saveAsSharedData(defaultDeskSaveDatas);
-            }
-            if (userPrivateData.getCartGoodIds().size() == 0) {
-                userPrivateData.setCartGoodIds(gameplaySave.getDefaultCartGoodIds());
-                externalResourceManager.saveAsUserData(userPrivateData);
-            }
-        } else {
+        
+        this.externalAllData = ExternalAllData.Factory.empty();
+        this.userPrivateData = ExternalUserPrivateData.Factory.empty();
+
+
+        externalResourceManager.providerExternalGameplayData(externalAllData, userPrivateData);
+        
+        boolean useDefault = externalAllData.getExternalMainData().getRoomSaveDataMap().size() == 0;
+        if (useDefault) {
+            MyGameplaySaveData gameplaySave = RootSaveData.Extension.genereateStarterGameplaySaveData();
             externalAllData.setExternalMainData(gameplaySave.getDefaultExternalMainData());
             Map<String, DeskExternalRuntimeData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
-                    it -> it.getKey(),
-                    it -> DeskExternalRuntimeData.Factory.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
-                ));
+                it -> it.getKey(),
+                it -> DeskExternalRuntimeData.Factory.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
+            ));
             externalAllData.setDeskExternalRuntimeDataMap(defaultDeskSaveDatas);
             userPrivateData.setCartGoodIds(gameplaySave.getDefaultCartGoodIds());
+            
+            saveCurrent();
         }
-        
         
         handleFinalData(externalAllData, userPrivateData);
     }
     
-
-    @Override
-    public void currentSituationToGameplaySaveData(MyGameplaySaveData myGameplaySaveData) {
-        throw new UnsupportedOperationException();
+    
+    public void saveCurrent() {
+        externalResourceManager.saveAsSharedData(externalAllData.getExternalMainData());
+        externalResourceManager.saveAsSharedData(externalAllData.getDeskExternalRuntimeDataMap());
+        externalResourceManager.saveAsUserData(userPrivateData);
     }
+
 
     private void handleFinalData(ExternalAllData externalAllData, ExternalUserPrivateData userPrivateData) {
         Map<String, RoomRuntimeData> roomMap = externalAllData.getExternalMainData().getRoomSaveDataMap().values().stream()
@@ -178,7 +162,7 @@ public class LogicContext implements ISubGameplaySaveHandler<MyGameplaySaveData>
             )
             .build();
 
-        crossScreenDataPackage.currentRoomData = crossScreenDataPackage.getRoomMap().values().stream().findFirst().orElse(null);
+        crossScreenDataPackage.currentRoomData = crossScreenDataPackage.getRoomMap().values().stream().findFirst().get();
 
     }
 

@@ -52,7 +52,7 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                game.getSaveHandler().gameplayLoadOrStarter(false);
+                game.getLogicContext().loadCurrentOrUseDefaultData();
                 game.getScreenManager().pushScreen(MarketScreen.class.getSimpleName(), BlendingTransition.class.getSimpleName());
             }
         });
@@ -63,8 +63,7 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                game.getLogicContext().setSkipApplyExternalGameplayData(true);
-                game.getSaveHandler().gameplayLoadOrStarter(false);
+                game.getLogicContext().loadExcelData();
                 game.getScreenManager().pushScreen(BuilderScreen.class.getSimpleName(), BlendingTransition.class.getSimpleName());
             }
         });
@@ -89,12 +88,12 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
 
 
         uiRootTable.add(buttonNewGame)
-            .height(game.getSaveHandler().hasContinuedGameplaySave() ? BUTTON_SMALL_HEIGHT : BUTTON_BIG_HEIGHT)
+            .height(BUTTON_BIG_HEIGHT)
             .fillY()
             .padTop(10)
             .row();
         uiRootTable.add(buttonIntoPrepareScreen)
-                .height(game.getSaveHandler().hasContinuedGameplaySave() ? BUTTON_SMALL_HEIGHT : BUTTON_BIG_HEIGHT)
+                .height(BUTTON_BIG_HEIGHT)
                 .fillY()
                 .padTop(10)
                 .row();

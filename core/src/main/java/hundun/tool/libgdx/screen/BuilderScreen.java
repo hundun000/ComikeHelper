@@ -63,12 +63,12 @@ public class BuilderScreen extends AbstractComikeScreen {
                 .top()
                 ;
         
-        testExcelButton = new TextButton("testExcel", game.getMainSkin());
+        testExcelButton = new TextButton("save", game.getMainSkin());
         testExcelButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                game.getLogicContext().loadExcelData();
+                game.getLogicContext().saveCurrent();
                 updateUIAfterRoomChanged();
             }
         });

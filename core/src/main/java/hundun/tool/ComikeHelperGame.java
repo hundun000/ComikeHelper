@@ -11,7 +11,6 @@ import hundun.gdxgame.gamelib.base.save.ISaveTool;
 import hundun.tool.libgdx.screen.MyMenuScreen;
 import hundun.tool.libgdx.screen.ScreenContext;
 import hundun.tool.logic.LogicContext;
-import hundun.tool.logic.MySaveHandler;
 import hundun.tool.logic.data.save.RootSaveData;
 import lombok.Getter;
 
@@ -34,7 +33,8 @@ public class ComikeHelperGame extends BaseHundunGame<RootSaveData> {
         debugMode = true;
 
         this.sharedViewport = new ScreenViewport();
-        this.saveHandler = new MySaveHandler(this.frontend, saveTool);
+        // this project use external files, not saveHandler 
+        this.saveHandler = null;
         this.mainSkinFilePath = null;
         this.screenContext = new ScreenContext(this);
         this.logicContext = new LogicContext(this);
@@ -45,9 +45,7 @@ public class ComikeHelperGame extends BaseHundunGame<RootSaveData> {
     protected void createStage1() {
         super.createStage1();
         this.mainSkin = new FreeTypeSkin(Gdx.files.internal("skins/freetype/skin.json"));
-
-        this.getSaveHandler().registerSubHandler(logicContext);
-        saveHandler.systemSettingLoadOrStarter();
+        this.logicContext.lazyInitOnCreateStage1();
     }
 
     /**
