@@ -4,8 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import hundun.tool.ComikeHelperGame;
 import hundun.tool.logic.data.external.ExternalDeskData;
@@ -13,9 +16,12 @@ import hundun.tool.logic.data.external.ExternalAllData;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
+import hundun.tool.logic.data.save.RootSaveData.GoodSaveData;
 import hundun.tool.logic.util.ComplexExternalJsonSaveTool;
 import hundun.tool.logic.util.ExternalExcelSaveTool;
 import hundun.tool.logic.util.SimpleExternalJsonSaveTool;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 public class ExternalResourceManager {
@@ -53,21 +59,63 @@ public class ExternalResourceManager {
                 );
     }
     
+    @AllArgsConstructor
+    @Getter
+    @Builder
+    public static class DeskExcelTempData {
+        String deskName;
+        List<GoodSaveData> goods;
+    }
+
+    
+    
     
     public boolean providerExcelGameplayData(ExternalAllData externalAllData, ExternalUserPrivateData userPrivateData) {
 
         
-        sharedExcelSaveTool.lazyInitOnRuntime("test.xlsx");
-        List<Map<Integer, String>> roomRawExcelData = sharedExcelSaveTool.readRootSaveData();
-        ExternalAllData externalAllDataFromExcel = ExternalAllData.Factory.fromExcelData(game.getScreenContext().getLayoutConst(), roomRawExcelData, defaultCoverFileHandle);
+        Map<String, List<Map<Integer, String>>> roomTempDataMap = new HashMap<>();
+        for (int i = 0; i < 5; i++) {
+            boolean exists = sharedExcelSaveTool.lazyInitOnRuntime("room_" + i + ".xlsx");
+            if (!exists) {
+                break;
+            }
+            List<Map<Integer, String>> roomRawExcelData = sharedExcelSaveTool.readRootSaveData();
+            Map<Integer, String> firstLine = roomRawExcelData.remove(0);
+            String roomName = firstLine.get(0);
+            roomTempDataMap.put(roomName, roomRawExcelData);
+        }
+        
+        sharedExcelSaveTool.lazyInitOnRuntime("desk.xlsx");
+        List<Map<Integer, String>> deskGoodsRawExcelData = sharedExcelSaveTool.readRootSaveData();
+        Map<String, DeskExcelTempData> deskGoodsMap = new HashMap<>();
+        deskGoodsRawExcelData.forEach(line -> {
+            String deskPos = line.get(0);
+            String deskName = line.get(1);
+            String goodName = line.get(2);
+            if (!deskGoodsMap.containsKey(deskPos)) {
+                deskGoodsMap.put(deskPos, DeskExcelTempData.builder()
+                        .deskName(deskName)
+                        .goods(new ArrayList<>())
+                        .build());
+            }
+            deskGoodsMap.get(deskPos).getGoods().add(GoodSaveData.builder()
+                    .name(goodName)
+                    .build());
+        });
+
+        ExternalAllData externalAllDataFromExcel = ExternalAllData.Factory.fromExcelData(
+                game.getScreenContext().getLayoutConst(), 
+                roomTempDataMap, 
+                deskGoodsMap,
+                defaultCoverFileHandle
+                );
+        
         merge(externalAllData,
                 externalAllDataFromExcel.getExternalMainData(),
                 externalAllDataFromExcel.getDeskExternalRuntimeDataMap()
             );
         
-        sharedExcelSaveTool.lazyInitOnRuntime("cart.xlsx");
-        List<Map<Integer, String>> cartRawExcelData = sharedExcelSaveTool.readRootSaveData();
-        
+
         
         boolean success = true;
         return success;

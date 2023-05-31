@@ -38,13 +38,16 @@ public class ExternalExcelSaveTool implements ISaveTool<List<Map<Integer, String
 
     }
     
-    public void lazyInitOnRuntime(String fileName) {
+    public boolean lazyInitOnRuntime(String fileName) {
         this.path = folder + "/" + fileName;
         fileHandle = Gdx.files.external(path);
         
         if (fileHandle.exists()) {
             String filePath = fileHandle.file().getPath();
             cachedDataList = EasyExcel.read(filePath).sheet().doReadSync();
+            return true;
+        } else {
+            return false;
         }
         
     }

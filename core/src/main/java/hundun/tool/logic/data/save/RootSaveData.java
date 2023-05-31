@@ -53,7 +53,11 @@ public class RootSaveData {
     @Builder
     public static class DeskSaveData {
         String name;
-        String posDataLine;
+        String room;
+        String area;
+        int areaIndex;
+        int x;
+        int y;
         List<GoodSaveData> goodSaveDatas;
     }
     
@@ -76,7 +80,9 @@ public class RootSaveData {
                         name,
                         DeskSaveData.builder()
                             .name(name)
-                            .posDataLine(room + ";" + area + ";" + it)
+                            .room(room)
+                            .area(area)
+                            .areaIndex(it)
                             .goodSaveDatas(JavaFeatureForGwt.listOf(
                                 GoodSaveData.builder().name(area + "_" + it + "_" + "本子1").build(),
                                 GoodSaveData.builder().name(area + "_" + it + "_" + "本子2").build()
@@ -91,7 +97,11 @@ public class RootSaveData {
                 "砍口垒同好组",
                 DeskSaveData.builder()
                     .name("砍口垒同好组")
-                    .posDataLine(specialRoom + ";特;0")
+                    .room(specialRoom)
+                    .area("特")
+                    .areaIndex(0)
+                    .x(100)
+                    .y(100)
                     .goodSaveDatas(JavaFeatureForGwt.listOf(
                         GoodSaveData.builder().name("砍口垒本子1").build(),
                         GoodSaveData.builder().name("砍口垒本子2").build()
@@ -101,7 +111,11 @@ public class RootSaveData {
                 "少女前线同好组",
                 DeskSaveData.builder()
                     .name("少女前线同好组")
-                    .posDataLine(specialRoom + ";特;1")
+                    .room(specialRoom)
+                    .area("特")
+                    .areaIndex(1)
+                    .x(100)
+                    .y(300)
                     .goodSaveDatas(JavaFeatureForGwt.listOf(
                         GoodSaveData.builder().name("少女前线本子1").build(),
                         GoodSaveData.builder().name("少女前线本子2").build()

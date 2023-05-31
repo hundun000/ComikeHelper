@@ -24,9 +24,10 @@ public class ScreenContext {
         public final int DESK_HEIGHT = 200;
         
         public final int DESK_STAR_SIZE = 50;
-        public final int GOOD_IMAGE_SIZE = 200;
+        public final int GOOD_IMAGE_SIZE = 150;
         public final int GOOD_NODE_HEIGHT = GOOD_IMAGE_SIZE + 50;
-        public final int GOOD_NODE_WIDTH = 300;
+        public final int GOOD_NODE_WIDTH = 400;
+        public final int GOOD_NODE_PAD = 10;
 
         public final int CART_BOARD_EXTRA_AREA_WIDTH = 500;
         public final int CART_BOARD_EXTRA_IMAGE_SIZE = 300;

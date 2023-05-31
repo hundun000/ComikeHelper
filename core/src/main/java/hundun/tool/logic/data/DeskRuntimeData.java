@@ -61,24 +61,12 @@ public class DeskRuntimeData {
         public static class Factory {
 
             
-            public static DeskLocation fromLine(LayoutConst layoutConst, String posDataLine) {
-                List<String> parts = new ArrayList<>(Arrays.asList(posDataLine.split(Companion.SPLIT)));
-                String room = parts.remove(0);
-                String area = parts.remove(0);
-                int areaIndex = Integer.parseInt(parts.remove(0));
-                Vector2 pos;
-                if (parts.size() > 1) {
-                    float x = Float.parseFloat(parts.remove(0));
-                    float y = Float.parseFloat(parts.remove(0));
-                    pos = new Vector2(x, y);
-                } else {
-                    pos = calculatePos(layoutConst, area, areaIndex);
-                }
+            public static DeskLocation fromLine(LayoutConst layoutConst, DeskSaveData deskSaveData) {
                 return DeskLocation.builder()
-                        .room(room)
-                        .area(area)
-                        .areaIndex(areaIndex)
-                        .pos(pos)
+                        .room(deskSaveData.getRoom())
+                        .area(deskSaveData.getArea())
+                        .areaIndex(deskSaveData.getAreaIndex())
+                        .pos(new Vector2(deskSaveData.getX(), deskSaveData.getY()))
                         .build();
             }
             
@@ -98,7 +86,7 @@ public class DeskRuntimeData {
             DeskSaveData deskSaveData = externalDeskData.getDeskSaveData();
             DeskRuntimeData result = DeskRuntimeData.builder()
                     .name(deskSaveData.getName())
-                    .location(DeskLocation.Factory.fromLine(layoutConst, deskSaveData.getPosDataLine()))
+                    .location(DeskLocation.Factory.fromLine(layoutConst, deskSaveData))
                     .coverFileHandle(externalDeskData.getCoverFileHandle())
                     .detailFileHandles(externalDeskData.getImageFileHandles())
                     .build();

@@ -101,6 +101,9 @@ public class MainBoardVM extends Table {
         needShowList.forEach(it -> {
             CartGoodVM node = new CartGoodVM(screen, it);
             childrenTable.add(node)
+                    .width(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_WIDTH)
+                    .height(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_HEIGHT)
+                    .padBottom(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_PAD)
                     .row();
         });
 

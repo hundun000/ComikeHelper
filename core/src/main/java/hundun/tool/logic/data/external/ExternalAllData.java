@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -11,10 +12,12 @@ import com.badlogic.gdx.files.FileHandle;
 
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.tool.libgdx.screen.ScreenContext.LayoutConst;
+import hundun.tool.logic.ExternalResourceManager.DeskExcelTempData;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
 import hundun.tool.logic.data.save.RoomSaveData;
 import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
+import hundun.tool.logic.data.save.RootSaveData.GoodSaveData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,6 +33,17 @@ public class ExternalAllData {
     Map<String, ExternalDeskData> deskExternalRuntimeDataMap;
 
     public static class Factory {
+        
+        private static String extractInteger(String str) {
+            String integer = "";
+            int i = str.length() - 1;
+            while (i >= 0 && Character.isDigit(str.charAt(i))) {
+                integer = str.charAt(i) + integer;
+                i--;
+            }
+            return integer;
+        }
+        
         public static ExternalAllData empty() {
             return  ExternalAllData.builder()
                     .externalMainData(ExternalMainData.builder()
@@ -39,67 +53,95 @@ public class ExternalAllData {
                     .build();
         }
         
-        public static ExternalAllData fromExcelData(LayoutConst layoutConst, List<Map<Integer, String>> data, FileHandle coverFileHandle) {
-            Map<Integer, String> firstLine = data.remove(0);
-            String roomName = firstLine.get(0);
+        
+        private static RoomSaveData handleOneRoom(LayoutConst layoutConst,
+                String roomName,
+                List<Map<Integer, String>> lines, 
+                Map<String, DeskExcelTempData> deskExcelTempDataMap,
+                FileHandle coverFileHandle, 
+                Map<String, ExternalDeskData> deskExternalRuntimeDataMap
+                ) {
             
             
-            List<DeskSaveData> deskSaveDatas = new ArrayList<>();
             AtomicInteger maxCol = new AtomicInteger(0);
-            for (int row = 0; row < data.size(); row++) {
-                int y = layoutConst.DESK_HEIGHT * (data.size() - row);
-                data.get(row).forEach((col, cell) -> {
+            for (int row = 0; row < lines.size(); row++) {
+                int y = layoutConst.DESK_HEIGHT * (lines.size() - row);
+                lines.get(row).forEach((col, comikePos) -> {
                     if (col > maxCol.get()) {
                         maxCol.set(col);
                     }
-                    if (cell == null || cell.equals("*")) {
+                    if (comikePos == null || comikePos.equals("*")) {
                         return;
                     }
                     int x = layoutConst.DESK_WIDTH * col;
-                    String[] posAndPosParts = cell.split(":");
-                    String name;
-                    String posLine = roomName + DeskLocation.Companion.SPLIT;
-                    if (posAndPosParts.length == 2) {
-                        posLine += posAndPosParts[0];
-                        name = posAndPosParts[1];
+                    
+                    final String areaIndexText = extractInteger(comikePos);
+                    final int areaIndex = Integer.parseInt(areaIndexText);
+                    final String area = comikePos.substring(0, comikePos.length() - areaIndexText.length());
+                    
+                    DeskExcelTempData deskExcelTempData = deskExcelTempDataMap.get(comikePos);
+                    
+                    String deskName;
+                    List<GoodSaveData> goods;
+                    if (deskExcelTempData != null) {
+                        deskName = deskExcelTempData.getDeskName();
+                        goods = deskExcelTempData.getGoods();
                     } else {
-                        posLine += posAndPosParts[0];
-                        name = posLine.replace(DeskLocation.Companion.SPLIT, "_");
+                        deskName = comikePos + "的店";
+                        goods = new ArrayList<>();
                     }
-                    posLine += DeskLocation.Companion.SPLIT + x + DeskLocation.Companion.SPLIT + y;
-                    deskSaveDatas.add(DeskSaveData.builder()
-                                .name(name)
-                                .posDataLine(posLine)
-                                .goodSaveDatas(new ArrayList<>())
-                                .build());
+                    
+                    DeskSaveData deskSaveData = DeskSaveData.builder()
+                                .name(deskName)
+                                .room(roomName)
+                                .area(area)
+                                .areaIndex(areaIndex)
+                                .x(x)
+                                .y(y)
+                                .goodSaveDatas(goods)
+                                .build();
+                    ExternalDeskData externalDeskData = ExternalDeskData.Factory.fromBasic(deskSaveData, coverFileHandle);
+                    deskExternalRuntimeDataMap.put(deskName, externalDeskData);
                 });
                 
             }
             
-            Map<String, ExternalDeskData> deskExternalRuntimeDataMap = deskSaveDatas.stream()
-                    .map(it -> {
-                        return ExternalDeskData.Factory.fromBasic(it, coverFileHandle);
-                    })
-                    .collect(Collectors.toMap(
-                            it -> it.getDeskSaveData().getName(), 
-                            it -> it
-                            ))
-                    ;
+
             
             int roomWidth = (maxCol.get() + 1) * layoutConst.DESK_WIDTH;
-            int roomHeight = (data.size() + 1) * layoutConst.DESK_HEIGHT;
-            RoomSaveData singleRoomSaveData = RoomSaveData.builder()
+            int roomHeight = (lines.size() + 1) * layoutConst.DESK_HEIGHT;
+            RoomSaveData roomSaveData = RoomSaveData.builder()
                     .name(roomName)
                     .roomWidth(roomWidth)
                     .roomHeight(roomHeight)
                     .build();
+            return roomSaveData;
+        }
+        
+        public static ExternalAllData fromExcelData(LayoutConst layoutConst, 
+                Map<String, List<Map<Integer, String>>> roomTempDataMap, 
+                Map<String, DeskExcelTempData> deskExcelTempDataMap, 
+                FileHandle coverFileHandle
+                ) {
+            Map<String, ExternalDeskData> deskExternalRuntimeDataMap = new HashMap<>();
+            Map<String, RoomSaveData> roomSaveDataMap = new HashMap<>();
+            
+            roomTempDataMap.forEach((roomName, lines) -> {
+                RoomSaveData roomSaveData = handleOneRoom(
+                        layoutConst, 
+                        roomName, 
+                        lines, 
+                        deskExcelTempDataMap,
+                        coverFileHandle, 
+                        deskExternalRuntimeDataMap
+                        );
+                roomSaveDataMap.put(roomName, roomSaveData);
+            });
+            
             
             return ExternalAllData.builder()
                     .externalMainData(ExternalMainData.builder()
-                            .roomSaveDataMap(JavaFeatureForGwt.mapOf(
-                                    singleRoomSaveData.getName(), 
-                                    singleRoomSaveData
-                                    ))
+                            .roomSaveDataMap(roomSaveDataMap)
                             .build())
                     .deskExternalRuntimeDataMap(deskExternalRuntimeDataMap)
                     .build();

@@ -58,10 +58,7 @@ public class CartGoodVM extends Table {
                 ;
 
 
-        this.setBackground(DrawableFactory.getSimpleBoardBackground(
-                screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_WIDTH,
-                screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_HEIGHT
-        ));
+        this.setBackground(DrawableFactory.getSimpleBoardBackground());
 
 
     }
