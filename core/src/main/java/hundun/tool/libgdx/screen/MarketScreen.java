@@ -66,7 +66,8 @@ public class MarketScreen extends AbstractComikeScreen {
         // ------ desk layer ------
         deskAreaVM = new DeskAreaVM(this);
         deskStage.addActor(deskAreaVM);
-
+        deskStage.setScrollFocus(deskAreaVM);
+        
         // ------ UI layer ------
         roomSwitchBoardVM = new RoomSwitchBoardVM(this);
         uiRootTable.add(roomSwitchBoardVM)

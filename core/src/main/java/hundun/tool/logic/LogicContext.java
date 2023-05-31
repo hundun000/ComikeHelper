@@ -13,12 +13,12 @@ import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.RoomRuntimeData.Factory;
+import hundun.tool.logic.data.external.ExternalDeskData;
 import hundun.tool.logic.data.external.ExternalAllData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.save.RootSaveData;
 import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
 import hundun.tool.logic.data.save.RootSaveData.MyGameplaySaveData;
-import hundun.tool.logic.util.ComplexExternalJsonSaveTool.DeskExternalRuntimeData;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,6 +45,7 @@ public class LogicContext {
 
     public void lazyInitOnCreateStage1() {
         this.extRoot = externalResourceManager.getExtRoot();
+        externalResourceManager.lazyInitOnCreateStage1();
     }
 
     @Getter
@@ -97,9 +98,9 @@ public class LogicContext {
         if (useDefault) {
             MyGameplaySaveData gameplaySave = RootSaveData.Extension.genereateStarterGameplaySaveData();
             externalAllData.setExternalMainData(gameplaySave.getDefaultExternalMainData());
-            Map<String, DeskExternalRuntimeData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
+            Map<String, ExternalDeskData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
                 it -> it.getKey(),
-                it -> DeskExternalRuntimeData.Factory.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
+                it -> ExternalDeskData.Factory.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
             ));
             externalAllData.setDeskExternalRuntimeDataMap(defaultDeskSaveDatas);
             userPrivateData.setCartGoodIds(gameplaySave.getDefaultCartGoodIds());

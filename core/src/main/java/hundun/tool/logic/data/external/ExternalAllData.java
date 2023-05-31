@@ -15,7 +15,6 @@ import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
 import hundun.tool.logic.data.save.RoomSaveData;
 import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
-import hundun.tool.logic.util.ComplexExternalJsonSaveTool.DeskExternalRuntimeData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +27,7 @@ import lombok.NoArgsConstructor;
 public class ExternalAllData {
 
     ExternalMainData externalMainData;
-    Map<String, DeskExternalRuntimeData> deskExternalRuntimeDataMap;
+    Map<String, ExternalDeskData> deskExternalRuntimeDataMap;
 
     public static class Factory {
         public static ExternalAllData empty() {
@@ -77,9 +76,9 @@ public class ExternalAllData {
                 
             }
             
-            Map<String, DeskExternalRuntimeData> deskExternalRuntimeDataMap = deskSaveDatas.stream()
+            Map<String, ExternalDeskData> deskExternalRuntimeDataMap = deskSaveDatas.stream()
                     .map(it -> {
-                        return DeskExternalRuntimeData.Factory.fromBasic(it, coverFileHandle);
+                        return ExternalDeskData.Factory.fromBasic(it, coverFileHandle);
                     })
                     .collect(Collectors.toMap(
                             it -> it.getDeskSaveData().getName(), 

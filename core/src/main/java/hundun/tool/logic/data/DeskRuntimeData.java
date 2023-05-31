@@ -10,8 +10,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.tool.libgdx.screen.ScreenContext.LayoutConst;
+import hundun.tool.logic.data.external.ExternalDeskData;
 import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
-import hundun.tool.logic.util.ComplexExternalJsonSaveTool.DeskExternalRuntimeData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -94,13 +94,13 @@ public class DeskRuntimeData {
     }
 
     public static class Factory {
-        public static DeskRuntimeData fromExternalRuntimeData(LayoutConst layoutConst, DeskExternalRuntimeData deskExternalRuntimeData) {
-            DeskSaveData deskSaveData = deskExternalRuntimeData.getDeskSaveData();
+        public static DeskRuntimeData fromExternalRuntimeData(LayoutConst layoutConst, ExternalDeskData externalDeskData) {
+            DeskSaveData deskSaveData = externalDeskData.getDeskSaveData();
             DeskRuntimeData result = DeskRuntimeData.builder()
                     .name(deskSaveData.getName())
                     .location(DeskLocation.Factory.fromLine(layoutConst, deskSaveData.getPosDataLine()))
-                    .coverFileHandle(deskExternalRuntimeData.getCoverFileHandle())
-                    .detailFileHandles(deskExternalRuntimeData.getImageFileHandles())
+                    .coverFileHandle(externalDeskData.getCoverFileHandle())
+                    .detailFileHandles(externalDeskData.getImageFileHandles())
                     .build();
             result.setGoodSaveDatas(deskSaveData.getGoodSaveDatas().stream().map(it -> GoodRuntimeData.Factory.fromSaveData(result, it)).collect(Collectors.toList()));
             return result;

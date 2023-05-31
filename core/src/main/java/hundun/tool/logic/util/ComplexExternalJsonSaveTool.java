@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -18,16 +17,11 @@ import hundun.tool.libgdx.screen.ScreenContext.LayoutConst;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
+import hundun.tool.logic.data.external.ExternalDeskData;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
-import hundun.tool.logic.util.ComplexExternalJsonSaveTool.DeskExternalRuntimeData;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<ExternalMainData, DeskExternalRuntimeData> {
+public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<ExternalMainData, ExternalDeskData> {
 
     private static final String charSet = "UTF-8";
     private final ObjectMapper objectMapper;
@@ -42,38 +36,6 @@ public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<Exte
     private static final String subFileName = "desk.json";
     FileHandle defaultCover;
     
-    @Setter
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class DeskExternalRuntimeData {
-        DeskSaveData deskSaveData;
-        FileHandle coverFileHandle;
-        List<FileHandle> imageFileHandles;
-
-        
-        
-        public static class Factory {
-            public static DeskExternalRuntimeData forDefault(FileHandle defaultCover, DeskSaveData deskSaveData) {
-                DeskExternalRuntimeData result = new DeskExternalRuntimeData();
-                result.setDeskSaveData(deskSaveData);
-                result.setCoverFileHandle(defaultCover);
-                result.setImageFileHandles(new ArrayList<>());
-                return result;
-            }
-            
-            public static DeskExternalRuntimeData fromBasic(DeskSaveData deskSaveData, FileHandle coverFileHandle) {
-                DeskExternalRuntimeData result = DeskExternalRuntimeData.builder()
-                        .deskSaveData(deskSaveData)
-                        .coverFileHandle(coverFileHandle)
-                        .imageFileHandles(new ArrayList<>(0))
-                        .build();
-                return result;
-            }
-        }
-    }
-
     public ComplexExternalJsonSaveTool(String folder) {
 
         this.objectMapper = new ObjectMapper()
@@ -84,22 +46,7 @@ public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<Exte
 
     }
 
-    public static DeskExternalRuntimeData toExternalRuntimeData(FileHandle imageFolder, String key, FileHandle defaultCover) {
-        DeskExternalRuntimeData deskExternalRuntimeData = new DeskExternalRuntimeData();
-        deskExternalRuntimeData.setImageFileHandles(new ArrayList<>());
-        if (imageFolder.exists()) {
-            Arrays.stream(imageFolder.list()).forEach(it -> {
-                if (it.name().startsWith("cover.")) {
-                    deskExternalRuntimeData.setCoverFileHandle(it);
-                } else {
-                    deskExternalRuntimeData.getImageFileHandles().add(it);
-                }
-            });
-        } else {
-            deskExternalRuntimeData.setCoverFileHandle(defaultCover);
-        }
-        return deskExternalRuntimeData;
-    }
+    
 
     public void lazyInitOnGameCreate(FileHandle defaultCover) {
         baseFolderFileHandle = Gdx.files.external(folder);
@@ -132,7 +79,7 @@ public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<Exte
     }
 
     @Override
-    public void writeSubFolderData(String subFolderName, DeskExternalRuntimeData runtimeData) {
+    public void writeSubFolderData(String subFolderName, ExternalDeskData runtimeData) {
         writeSubFolderData(subFolderName, runtimeData.getDeskSaveData());
     }
 
@@ -151,7 +98,7 @@ public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<Exte
     }
 
     @Override
-    public DeskExternalRuntimeData readSubFolderData(String subFolderName) {
+    public ExternalDeskData readSubFolderData(String subFolderName) {
         FileHandle subFileHandle = Gdx.files.external(folder + "/" + subFolderName + "/" + subFileName);
         if (subFileHandle == null || !subFileHandle.exists()) {
             return null;
@@ -160,16 +107,16 @@ public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<Exte
         try {
             DeskSaveData deskSaveData = objectMapper.readValue(str, DeskSaveData.class);
             FileHandle imageFolder = Gdx.files.external(folder + "/" + subFolderName + "/images/");
-            DeskExternalRuntimeData deskExternalRuntimeData = toExternalRuntimeData(imageFolder, subFolderName, defaultCover);
-            deskExternalRuntimeData.setDeskSaveData(deskSaveData);
-            return deskExternalRuntimeData;
+            ExternalDeskData externalDeskData = ExternalDeskData.Factory.fromFolder(imageFolder, subFolderName, defaultCover);
+            externalDeskData.setDeskSaveData(deskSaveData);
+            return externalDeskData;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Map<String, DeskExternalRuntimeData> readAllSubFolderData() {
+    public Map<String, ExternalDeskData> readAllSubFolderData() {
         return Arrays.stream(baseFolderFileHandle.list())
             .filter(it -> it.isDirectory())
             .collect(Collectors.toMap(
@@ -179,7 +126,7 @@ public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<Exte
     }
 
     @Override
-    public void writeAllSubFolderData(Map<String, DeskExternalRuntimeData> saveDataMap) {
+    public void writeAllSubFolderData(Map<String, ExternalDeskData> saveDataMap) {
         saveDataMap.forEach((k, v) -> writeSubFolderData(k, v));
     }
 }
