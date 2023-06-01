@@ -1,10 +1,13 @@
 package hundun.tool.libgdx.screen;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -27,7 +30,7 @@ public class BuilderScreen extends AbstractComikeScreen {
 
     // ------ UI layer ------
     private RoomSwitchBoardVM roomSwitchBoardVM;
-    private TextButton testExcelButton;
+    
     
     // ------ image previewer layer ------
 
@@ -63,17 +66,39 @@ public class BuilderScreen extends AbstractComikeScreen {
                 .top()
                 ;
         
-        testExcelButton = new TextButton("save", game.getMainSkin());
-        testExcelButton.addListener(new ClickListener() {
+        Table allButtonTable = new Table();
+        uiRootTable.add(allButtonTable);
+        
+        TextButton loadExcelButton = new TextButton("load excel", game.getMainSkin());
+        loadExcelButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                game.getLogicContext().loadExcelData();
+            }
+        });
+        allButtonTable.add(loadExcelButton).row();
+        
+        TextButton handleFinalDataButton = new TextButton("handle Final Data", game.getMainSkin());
+        handleFinalDataButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                game.getLogicContext().handleFinalData();
+                updateUIAfterRoomChanged();
+            }
+        });
+        allButtonTable.add(handleFinalDataButton).row();
+        
+        TextButton saveButton = new TextButton("save", game.getMainSkin());
+        saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 game.getLogicContext().saveCurrent();
-                updateUIAfterRoomChanged();
             }
         });
-        uiRootTable.add(testExcelButton)
-                ;
+        allButtonTable.add(saveButton);
         // ------ image previewer layer ------
 
 
@@ -119,11 +144,20 @@ public class BuilderScreen extends AbstractComikeScreen {
         CrossScreenDataPackage crossScreenDataPackage = game.getLogicContext().getCrossScreenDataPackage();
         // for newest DeskDatas
         RoomRuntimeData currentRoomData = crossScreenDataPackage.getCurrentRoomData();
-        deskAreaVM.updateDeskDatas(
-                currentRoomData.getRoomWidth(),
-                currentRoomData.getRoomHeight(),
-                currentRoomData.getDeskDatas()
-        );
+        if (currentRoomData != null) {
+            deskAreaVM.updateDeskDatas(
+                    currentRoomData.getRoomWidth(),
+                    currentRoomData.getRoomHeight(),
+                    currentRoomData.getDeskDatas()
+            );
+        } else {
+            deskAreaVM.updateDeskDatas(
+                    100,
+                    100,
+                    new ArrayList<>(0)
+            );
+        }
+        
         roomSwitchBoardVM.intoFullMode();
     }
 

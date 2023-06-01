@@ -72,16 +72,17 @@ public class LogicContext {
         this.externalResourceManager = new ExternalResourceManager(game);
     }
 
-    public void loadExcelData() {
+    public boolean loadExcelData() {
         this.externalAllData = ExternalAllData.Factory.empty();
         this.userPrivateData = ExternalUserPrivateData.Factory.empty();
 
         boolean success = externalResourceManager.providerExcelGameplayData(externalAllData, userPrivateData);
-        if (success) {
-            handleFinalData(externalAllData, userPrivateData);
-        } else {
-            game.getFrontend().log(this.getClass().getSimpleName(), "providerExcelGameplayData failed.");
-        }
+        return success;
+    }
+    
+    public void loadEmpty() {
+        this.externalAllData = ExternalAllData.Factory.empty();
+        this.userPrivateData = ExternalUserPrivateData.Factory.empty();
     }
 
 
@@ -108,7 +109,7 @@ public class LogicContext {
             saveCurrent();
         }
         
-        handleFinalData(externalAllData, userPrivateData);
+        
     }
     
     
@@ -119,7 +120,7 @@ public class LogicContext {
     }
 
 
-    private void handleFinalData(ExternalAllData externalAllData, ExternalUserPrivateData userPrivateData) {
+    public void handleFinalData() {
         Map<String, RoomRuntimeData> roomMap = externalAllData.getExternalMainData().getRoomSaveDataMap().values().stream()
             .map(roomSaveData -> {
                 List<DeskRuntimeData> deskRuntimeDatas = externalAllData.getDeskExternalRuntimeDataMap().values().stream()
@@ -163,7 +164,7 @@ public class LogicContext {
             )
             .build();
 
-        crossScreenDataPackage.currentRoomData = crossScreenDataPackage.getRoomMap().values().stream().findFirst().get();
+        crossScreenDataPackage.currentRoomData = crossScreenDataPackage.getRoomMap().values().stream().findFirst().orElse(null);
 
     }
 
