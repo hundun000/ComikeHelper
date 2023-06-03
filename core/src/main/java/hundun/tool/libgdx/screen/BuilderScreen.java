@@ -69,22 +69,22 @@ public class BuilderScreen extends AbstractComikeScreen {
         Table allButtonTable = new Table();
         uiRootTable.add(allButtonTable);
         
-        TextButton loadExcelButton = new TextButton("load excel", game.getMainSkin());
+        TextButton loadExcelButton = new TextButton("append excel", game.getMainSkin());
         loadExcelButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                game.getLogicContext().loadExcelData();
+                game.getLogicContext().appendExcelData();
             }
         });
         allButtonTable.add(loadExcelButton).row();
         
-        TextButton handleFinalDataButton = new TextButton("handle Final Data", game.getMainSkin());
+        TextButton handleFinalDataButton = new TextButton("handle current", game.getMainSkin());
         handleFinalDataButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                game.getLogicContext().handleFinalData();
+                game.getLogicContext().updateCrossScreenDataPackage();
                 updateUIAfterRoomChanged();
             }
         });
@@ -95,7 +95,7 @@ public class BuilderScreen extends AbstractComikeScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                game.getLogicContext().saveCurrent();
+                game.getLogicContext().saveCurrentSharedData();
             }
         });
         allButtonTable.add(saveButton);

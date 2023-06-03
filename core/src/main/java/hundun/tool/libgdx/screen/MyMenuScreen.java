@@ -47,13 +47,14 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
 
         Image backImage = new Image(new TextureRegionDrawable(new TextureRegion(TextureFactory.getSimpleBoardBackground())));
 
-        this.buttonNewGame = new TextButton("观展", game.getMainSkin());
+        this.buttonNewGame = new TextButton("开始", game.getMainSkin());
         buttonNewGame.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                game.getLogicContext().loadCurrentOrUseDefaultData();
-                game.getLogicContext().handleFinalData();
+                game.getLogicContext().loadEmpty();
+                game.getLogicContext().appendSaveDataOrDefaultData();
+                game.getLogicContext().updateCrossScreenDataPackage();
                 game.getScreenManager().pushScreen(MarketScreen.class.getSimpleName(), BlendingTransition.class.getSimpleName());
             }
         });
@@ -65,7 +66,7 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 game.getLogicContext().loadEmpty();
-                game.getLogicContext().handleFinalData();
+                game.getLogicContext().updateCrossScreenDataPackage();
                 game.getScreenManager().pushScreen(BuilderScreen.class.getSimpleName(), BlendingTransition.class.getSimpleName());
             }
         });

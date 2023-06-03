@@ -1,5 +1,6 @@
 package hundun.tool.logic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,10 +15,9 @@ import hundun.tool.logic.data.RoomRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.RoomRuntimeData.Factory;
 import hundun.tool.logic.data.external.ExternalDeskData;
-import hundun.tool.logic.data.external.ExternalAllData;
+import hundun.tool.logic.data.external.ExternalComikeData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.save.RootSaveData;
-import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
 import hundun.tool.logic.data.save.RootSaveData.MyGameplaySaveData;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -36,12 +36,20 @@ public class LogicContext {
     @Getter
     String extRoot;
     @Getter
-    CrossScreenDataPackage crossScreenDataPackage;
-    @Getter
     ExternalResourceManager externalResourceManager;
-
-    private ExternalAllData externalAllData;
-    private ExternalUserPrivateData userPrivateData;
+    @Getter
+    List<IModifyGoodTagListener> modifyGoodTagListeners = new ArrayList<>();
+    
+    /*
+     * load时拿到temp，然后计算并更新crossScreenDataPackage;
+     * 运行时只读写crossScreenDataPackage;
+     * save时用crossScreenDataPackage计算出temp，然后存temp;
+     */
+    
+    @Getter
+    CrossScreenDataPackage crossScreenDataPackage;
+    private ExternalComikeData tempComikeData;
+    private ExternalUserPrivateData tempUserPrivateData;
 
     public void lazyInitOnCreateStage1() {
         this.extRoot = externalResourceManager.getExtRoot();
@@ -62,7 +70,6 @@ public class LogicContext {
 
 
         List<GoodRuntimeData> cartGoods;
-        DeskRuntimeData detailingDeskData;
 
 
     }
@@ -72,58 +79,77 @@ public class LogicContext {
         this.externalResourceManager = new ExternalResourceManager(game);
     }
 
-    public boolean loadExcelData() {
-        this.externalAllData = ExternalAllData.Factory.empty();
-        this.userPrivateData = ExternalUserPrivateData.Factory.empty();
+    public boolean appendExcelData() {
 
-        boolean success = externalResourceManager.providerExcelGameplayData(externalAllData, userPrivateData);
+        boolean success = externalResourceManager.providerExcelGameplayData(tempComikeData, tempUserPrivateData);
         return success;
     }
     
     public void loadEmpty() {
-        this.externalAllData = ExternalAllData.Factory.empty();
-        this.userPrivateData = ExternalUserPrivateData.Factory.empty();
+        this.tempComikeData = ExternalComikeData.Factory.empty();
+        this.tempUserPrivateData = ExternalUserPrivateData.Factory.empty();
     }
 
-
-    public void loadCurrentOrUseDefaultData() {
-
+    public static interface IModifyGoodTagListener {
+        void onModifyGoodTag(GoodRuntimeData thiz, GoodRuntimeTag tag, boolean setToOn);
+    }
+    
+    public void modifyGoodTag(GoodRuntimeData thiz, GoodRuntimeTag tag, boolean setToOn) {
         
-        this.externalAllData = ExternalAllData.Factory.empty();
-        this.userPrivateData = ExternalUserPrivateData.Factory.empty();
+        game.getFrontend().log(this.getClass().getSimpleName(), "tag {0} setToOn = {1}", tag, setToOn);
+        if (setToOn) {
+            if (!thiz.getTags().contains(GoodRuntimeTag.IN_CART)) {
+                thiz.getTags().add(GoodRuntimeTag.IN_CART);
+                crossScreenDataPackage.getCartGoods().add(thiz);
+            }
+        } else {
+            if (thiz.getTags().contains(GoodRuntimeTag.IN_CART)) {
+                thiz.getTags().remove(GoodRuntimeTag.IN_CART);
+                crossScreenDataPackage.getCartGoods().remove(thiz);
+            }
+        }
+        modifyGoodTagListeners.forEach(it -> it.onModifyGoodTag(thiz, tag, setToOn));
+    }
 
+    public void appendSaveDataOrDefaultData() {
 
-        externalResourceManager.providerExternalGameplayData(externalAllData, userPrivateData);
+        externalResourceManager.providerExternalGameplayData(tempComikeData, tempUserPrivateData);
         
-        boolean useDefault = externalAllData.getExternalMainData().getRoomSaveDataMap().size() == 0;
+        boolean useDefault = tempComikeData.getExternalMainData().getRoomSaveDataMap().size() == 0;
         if (useDefault) {
             MyGameplaySaveData gameplaySave = RootSaveData.Extension.genereateStarterGameplaySaveData();
-            externalAllData.setExternalMainData(gameplaySave.getDefaultExternalMainData());
+            tempComikeData.setExternalMainData(gameplaySave.getDefaultExternalMainData());
             Map<String, ExternalDeskData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
                 it -> it.getKey(),
                 it -> ExternalDeskData.Factory.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
             ));
-            externalAllData.setDeskExternalRuntimeDataMap(defaultDeskSaveDatas);
-            userPrivateData.setCartGoodIds(gameplaySave.getDefaultCartGoodIds());
+            tempComikeData.setDeskExternalRuntimeDataMap(defaultDeskSaveDatas);
+            tempUserPrivateData.setCartGoodIds(gameplaySave.getDefaultCartGoodIds());
             
-            saveCurrent();
+            saveCurrentSharedData();
+            calculateAndSaveCurrentUserData();
         }
         
         
     }
     
     
-    public void saveCurrent() {
-        externalResourceManager.saveAsSharedData(externalAllData.getExternalMainData());
-        externalResourceManager.saveAsSharedData(externalAllData.getDeskExternalRuntimeDataMap());
-        externalResourceManager.saveAsUserData(userPrivateData);
+    public void saveCurrentSharedData() {
+        externalResourceManager.saveAsSharedData(tempComikeData.getExternalMainData());
+        externalResourceManager.saveAsSharedData(tempComikeData.getDeskExternalRuntimeDataMap());
     }
 
-
-    public void handleFinalData() {
-        Map<String, RoomRuntimeData> roomMap = externalAllData.getExternalMainData().getRoomSaveDataMap().values().stream()
+    public void calculateAndSaveCurrentUserData() {
+        tempUserPrivateData = ExternalUserPrivateData.builder()
+                .cartGoodIds(crossScreenDataPackage.getCartGoods().stream().map(it -> it.getName()).collect(Collectors.toList()))
+                .build();
+        externalResourceManager.saveAsUserData(tempUserPrivateData);
+    }
+    
+    public void updateCrossScreenDataPackage() {
+        Map<String, RoomRuntimeData> roomMap = tempComikeData.getExternalMainData().getRoomSaveDataMap().values().stream()
             .map(roomSaveData -> {
-                List<DeskRuntimeData> deskRuntimeDatas = externalAllData.getDeskExternalRuntimeDataMap().values().stream()
+                List<DeskRuntimeData> deskRuntimeDatas = tempComikeData.getDeskExternalRuntimeDataMap().values().stream()
                     .map(deskExternalRuntimeData -> DeskRuntimeData.Factory.fromExternalRuntimeData(
                                 game.getScreenContext().getLayoutConst(),
                                 deskExternalRuntimeData
@@ -154,10 +180,10 @@ public class LogicContext {
             .game(game)
             .roomMap(roomMap)
             .goodMap(goodMap)
-            .cartGoods(userPrivateData.getCartGoodIds().stream()
+            .cartGoods(tempUserPrivateData.getCartGoodIds().stream()
                 .map(it -> {
                     GoodRuntimeData result = goodMap.get(it);
-                    result.getTags().add(GoodRuntimeTag.IN_CART);
+                    result.lazyInit(tempUserPrivateData);
                     return result;
                 })
                 .collect(Collectors.toList())

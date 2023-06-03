@@ -15,9 +15,9 @@ import hundun.tool.libgdx.screen.ScreenContext.LayoutConst;
 import hundun.tool.logic.ExternalResourceManager.DeskExcelTempData;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
+import hundun.tool.logic.data.save.DeskSaveData;
+import hundun.tool.logic.data.save.GoodSaveData;
 import hundun.tool.logic.data.save.RoomSaveData;
-import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
-import hundun.tool.logic.data.save.RootSaveData.GoodSaveData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ExternalAllData {
+public class ExternalComikeData {
 
     ExternalMainData externalMainData;
     Map<String, ExternalDeskData> deskExternalRuntimeDataMap;
@@ -44,8 +44,8 @@ public class ExternalAllData {
             return integer;
         }
         
-        public static ExternalAllData empty() {
-            return  ExternalAllData.builder()
+        public static ExternalComikeData empty() {
+            return  ExternalComikeData.builder()
                     .externalMainData(ExternalMainData.builder()
                             .roomSaveDataMap(new HashMap<>())
                             .build())
@@ -118,7 +118,7 @@ public class ExternalAllData {
             return roomSaveData;
         }
         
-        public static ExternalAllData fromExcelData(LayoutConst layoutConst, 
+        public static ExternalComikeData fromExcelData(LayoutConst layoutConst, 
                 Map<String, List<Map<Integer, String>>> roomTempDataMap, 
                 Map<String, DeskExcelTempData> deskExcelTempDataMap, 
                 FileHandle coverFileHandle
@@ -139,7 +139,7 @@ public class ExternalAllData {
             });
             
             
-            return ExternalAllData.builder()
+            return ExternalComikeData.builder()
                     .externalMainData(ExternalMainData.builder()
                             .roomSaveDataMap(roomSaveDataMap)
                             .build())

@@ -17,8 +17,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.libgdx.screen.MarketScreen;
+import hundun.tool.logic.LogicContext.CrossScreenDataPackage;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
+import lombok.Setter;
 
 public class MainBoardVM extends Table {
 
@@ -32,10 +34,24 @@ public class MainBoardVM extends Table {
     Container<Table> extraArea;
 
     DeskExtraVM deskExtraVM;
-
+    GoodExtraVM goodExtraVM;
+    @Setter
+    MainBoardState state;
+    @Setter
+    DeskRuntimeData detailingDeskData;
+    @Setter
+    GoodRuntimeData detailingGoodData;
+    
+    public enum MainBoardState {
+        DESK,
+        CART,
+        GOOD,
+        ;
+    }
+    
     public MainBoardVM(MarketScreen screen) {
         this.screen = screen;
-
+        
         this.childrenTable = new Table();
         ScrollPane scrollPane = new ScrollPane(childrenTable, screen.getGame().getMainSkin());
         scrollPane.setScrollingDisabled(true, false);
@@ -46,8 +62,22 @@ public class MainBoardVM extends Table {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                screen.setCartBoardVMDirty(true);
-                screen.getGame().getLogicContext().getCrossScreenDataPackage().setDetailingDeskData(null);
+                switch (state) {
+                    case DESK:
+                        setState(MainBoardState.CART);
+                        updateByState();
+                        break;
+                    case GOOD:
+                        if (detailingDeskData != null) {
+                            setState(MainBoardState.DESK);
+                        } else {
+                            setState(MainBoardState.CART);
+                        }
+                        updateByState();
+                        break;
+                    default:
+                        break;
+                }
             }
         });
 
@@ -74,29 +104,40 @@ public class MainBoardVM extends Table {
 
         // ----- candidates ------
         this.deskExtraVM = new DeskExtraVM(screen);
+        this.goodExtraVM = new GoodExtraVM(screen);
     }
 
-
-    public void updateData(DeskRuntimeData detailingDeskData, List<GoodRuntimeData> cartGoods) {
-        //nodes.clear();
-
-
+    public void name() {
+        
+    }
+    
+    private void updateAsDetailingDesk(DeskRuntimeData detailingDeskData) {
         List<GoodRuntimeData> needShowList = new ArrayList<>();
         Table newExtra;
 
-        if (detailingDeskData != null) {
-            title.setText(detailingDeskData.getName());
-            clearButton.setVisible(true);
-            needShowList.addAll(detailingDeskData.getGoodSaveDatas());
-            newExtra = deskExtraVM;
-            deskExtraVM.updateData(detailingDeskData);
-        } else {
-            title.setText("心愿单");
-            clearButton.setVisible(false);
-            needShowList.addAll(cartGoods);
-            newExtra = null;
-        }
+        title.setText(detailingDeskData.getName());
+        clearButton.setVisible(true);
+        needShowList.addAll(detailingDeskData.getGoodSaveDatas());
+        newExtra = deskExtraVM;
+        deskExtraVM.updateData(detailingDeskData);
 
+        updateCore(needShowList, newExtra);
+    }
+    
+    private void updateAsDetailingGood(GoodRuntimeData detailingGood) {
+        List<GoodRuntimeData> needShowList = new ArrayList<>();
+        Table newExtra;
+
+        title.setText(detailingGood.getName());
+        clearButton.setVisible(true);
+        needShowList.add(detailingGood);
+        newExtra = goodExtraVM;
+        goodExtraVM.updateData(detailingGood);
+
+        updateCore(needShowList, newExtra);
+    }
+    
+    private void updateCore(List<GoodRuntimeData> needShowList, Table newExtra) {
         childrenTable.clear();
         needShowList.forEach(it -> {
             CartGoodVM node = new CartGoodVM(screen, it);
@@ -108,5 +149,36 @@ public class MainBoardVM extends Table {
         });
 
         extraArea.setActor(newExtra);
+    }
+    
+
+    private void updateAsCart(List<GoodRuntimeData> cartGoods) {
+        List<GoodRuntimeData> needShowList = new ArrayList<>();
+        Table newExtra;
+
+        title.setText("心愿单");
+        clearButton.setVisible(false);
+        needShowList.addAll(cartGoods);
+        newExtra = null;
+
+        updateCore(needShowList, newExtra);
+    }
+
+    public void updateByState() {
+        CrossScreenDataPackage crossScreenDataPackage = screen.getGame().getLogicContext().getCrossScreenDataPackage();
+        switch (state) {
+            case CART:
+                updateAsCart(crossScreenDataPackage.getCartGoods());
+                break;
+            case DESK:
+                updateAsDetailingDesk(detailingDeskData);
+                break;
+            case GOOD:
+                updateAsDetailingGood(detailingGoodData);
+                break;
+            default:
+                break;
+        }
+        
     }
 }

@@ -14,19 +14,16 @@ import java.util.Map;
 
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.libgdx.screen.MarketScreen;
+import hundun.tool.libgdx.screen.market.MainBoardVM.MainBoardState;
 import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
-import hundun.tool.logic.data.save.RootSaveData.GoodSaveData;
 
 /**
  * @author hundun
  * Created on 2023/05/10
  */
 public class CartGoodVM extends Table {
-    static Map<GoodRuntimeTag, Texture> tagImageMap = new HashMap<>();
-    static {
-        tagImageMap.put(GoodRuntimeTag.IN_CART, new Texture(Gdx.files.internal("star.png")));
-    }
+    
     MarketScreen screen;
     Table tagImageTable;
     Image mainImage;
@@ -40,7 +37,7 @@ public class CartGoodVM extends Table {
     }
 
     private void init(GoodRuntimeData goodRuntimeData) {
-        tagImageTable = new Table();
+        
         // ------ row 1 -----
         this.add(new Label(goodRuntimeData.getName(), screen.getGame().getMainSkin()))
                 .colspan(2)
@@ -53,21 +50,31 @@ public class CartGoodVM extends Table {
                 .width(screen.getGame().getScreenContext().getLayoutConst().GOOD_IMAGE_SIZE)
                 .height(screen.getGame().getScreenContext().getLayoutConst().GOOD_IMAGE_SIZE)
         ;
+        tagImageTable = new Table();
         this.add(tagImageTable)
                 .grow()
                 ;
 
 
         this.setBackground(DrawableFactory.getSimpleBoardBackground());
-
+        this.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                screen.getMainBoardVM().setState(MainBoardState.GOOD);
+                screen.getMainBoardVM().setDetailingGoodData(goodRuntimeData);
+                screen.getMainBoardVM().updateByState();
+            }
+        });
 
     }
 
     public void update(GoodRuntimeData goodRuntimeData) {
         tagImageTable.clear();
         goodRuntimeData.getTags().forEach(it -> {
-            if (tagImageMap.containsKey(it)) {
-                tagImageTable.add(new Image(tagImageMap.get(it)));
+            Texture texture = screen.getGame().getScreenContext().getTagImageMap().get(it);
+            if (texture != null) {
+                tagImageTable.add(new Image(texture));
             }
         });
 

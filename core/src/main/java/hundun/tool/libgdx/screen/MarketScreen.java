@@ -12,11 +12,15 @@ import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.tool.ComikeHelperGame;
 import hundun.tool.libgdx.screen.shared.DeskVM;
 import hundun.tool.libgdx.screen.market.MainBoardVM;
+import hundun.tool.libgdx.screen.market.MainBoardVM.MainBoardState;
 import hundun.tool.libgdx.screen.shared.DeskAreaVM;
 import hundun.tool.libgdx.screen.market.PopupCloseButton;
 import hundun.tool.libgdx.screen.market.ImageViewerVM;
 import hundun.tool.libgdx.screen.shared.RoomSwitchBoardVM;
 import hundun.tool.logic.LogicContext.CrossScreenDataPackage;
+import hundun.tool.logic.LogicContext.IModifyGoodTagListener;
+import hundun.tool.logic.data.GoodRuntimeData;
+import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.RoomRuntimeData;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,14 +29,11 @@ import lombok.Setter;
  * @author hundun
  * Created on 2023/05/09
  */
-public class MarketScreen extends AbstractComikeScreen {
-
-    @Getter
-    @Setter
-    private boolean cartBoardVMDirty;
+public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTagListener {
 
 
     // ------ UI layer ------
+    @Getter
     private MainBoardVM mainBoardVM;
     private RoomSwitchBoardVM roomSwitchBoardVM;
 
@@ -98,8 +99,14 @@ public class MarketScreen extends AbstractComikeScreen {
 
     @Override
     public void dispose() {
-
-
+        
+    }
+    
+    @Override
+    public void hide() {
+        super.hide();
+        
+        game.getLogicContext().getModifyGoodTagListeners().remove(this);
     }
 
     @Override
@@ -116,6 +123,7 @@ public class MarketScreen extends AbstractComikeScreen {
         //Gdx.input.setInputProcessor(uiStage);
         //game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
 
+        game.getLogicContext().getModifyGoodTagListeners().add(this);
         updateUIForShow();
 
 
@@ -128,7 +136,8 @@ public class MarketScreen extends AbstractComikeScreen {
         roomSwitchBoardVM.intoSmallMode();
 
         deskAreaVM.getCameraDataPackage().forceSet(null, null, 0);
-
+        mainBoardVM.setState(MainBoardState.CART);
+        
         updateUIAfterRoomChanged();
     }
 
@@ -146,17 +155,12 @@ public class MarketScreen extends AbstractComikeScreen {
         );
         roomSwitchBoardVM.intoFullMode();
         // for newest cart
-        cartBoardVMDirty = true;
-        checkCartBoardVMDirty();
+        onCartTagChanged();
     }
 
-    private void checkCartBoardVMDirty() {
-        if (!cartBoardVMDirty) {
-            return;
-        }
-        cartBoardVMDirty = false;
+    private void onCartTagChanged() {
         CrossScreenDataPackage crossScreenDataPackage = game.getLogicContext().getCrossScreenDataPackage();
-        mainBoardVM.updateData(crossScreenDataPackage.getDetailingDeskData(), crossScreenDataPackage.getCartGoods());
+        mainBoardVM.updateByState();
         deskAreaVM.updateCartData(crossScreenDataPackage.getCartGoods());
     }
 
@@ -165,7 +169,7 @@ public class MarketScreen extends AbstractComikeScreen {
 
     @Override
     protected void logicOnDraw() {
-        checkCartBoardVMDirty();
+        
     }
 
     @Override
@@ -194,7 +198,17 @@ public class MarketScreen extends AbstractComikeScreen {
 
     @Override
     public void onDeskClicked(DeskVM vm) {
-        this.setCartBoardVMDirty(true);
-        game.getLogicContext().getCrossScreenDataPackage().setDetailingDeskData(vm.getDeskData());
+        mainBoardVM.setState(MainBoardState.DESK);
+        mainBoardVM.setDetailingDeskData(vm.getDeskData());
+        mainBoardVM.updateByState();
+    }
+
+
+
+    @Override
+    public void onModifyGoodTag(GoodRuntimeData thiz, GoodRuntimeTag tag, boolean setToOn) {
+        if (tag == GoodRuntimeTag.IN_CART) {
+            onCartTagChanged();
+        }
     }
 }

@@ -19,7 +19,7 @@ import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
 import hundun.tool.logic.data.external.ExternalDeskData;
 import hundun.tool.logic.data.external.ExternalMainData;
-import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
+import hundun.tool.logic.data.save.DeskSaveData;
 
 public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<ExternalMainData, ExternalDeskData> {
 

@@ -12,11 +12,10 @@ import java.util.stream.Collectors;
 
 import hundun.tool.ComikeHelperGame;
 import hundun.tool.logic.data.external.ExternalDeskData;
-import hundun.tool.logic.data.external.ExternalAllData;
+import hundun.tool.logic.data.external.ExternalComikeData;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
-import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
-import hundun.tool.logic.data.save.RootSaveData.GoodSaveData;
+import hundun.tool.logic.data.save.GoodSaveData;
 import hundun.tool.logic.util.ComplexExternalJsonSaveTool;
 import hundun.tool.logic.util.ExternalExcelSaveTool;
 import hundun.tool.logic.util.SimpleExternalJsonSaveTool;
@@ -47,7 +46,7 @@ public class ExternalResourceManager {
     }
 
 
-    public void providerExternalGameplayData(ExternalAllData masterMainData, ExternalUserPrivateData masterUserPrivateData) {
+    public void providerExternalGameplayData(ExternalComikeData masterMainData, ExternalUserPrivateData masterUserPrivateData) {
         
 
         merge(masterMainData,
@@ -70,7 +69,7 @@ public class ExternalResourceManager {
     
     
     
-    public boolean providerExcelGameplayData(ExternalAllData externalAllData, ExternalUserPrivateData userPrivateData) {
+    public boolean providerExcelGameplayData(ExternalComikeData externalComikeData, ExternalUserPrivateData userPrivateData) {
 
         
         Map<String, List<Map<Integer, String>>> roomTempDataMap = new HashMap<>();
@@ -103,14 +102,14 @@ public class ExternalResourceManager {
                     .build());
         });
 
-        ExternalAllData externalAllDataFromExcel = ExternalAllData.Factory.fromExcelData(
+        ExternalComikeData externalAllDataFromExcel = ExternalComikeData.Factory.fromExcelData(
                 game.getScreenContext().getLayoutConst(), 
                 roomTempDataMap, 
                 deskGoodsMap,
                 defaultCoverFileHandle
                 );
         
-        merge(externalAllData,
+        merge(externalComikeData,
                 externalAllDataFromExcel.getExternalMainData(),
                 externalAllDataFromExcel.getDeskExternalRuntimeDataMap()
             );
@@ -130,7 +129,7 @@ public class ExternalResourceManager {
         }
     }
 
-    private void merge(ExternalAllData master,
+    private void merge(ExternalComikeData master,
                        ExternalMainData other,
                        Map<String, ExternalDeskData> deskExternalRuntimeDataMap
     ) {

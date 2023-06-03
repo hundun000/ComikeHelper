@@ -8,11 +8,8 @@ import java.util.stream.IntStream;
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.gamelib.starter.save.IRootSaveExtension;
 import hundun.tool.logic.data.external.ExternalMainData;
-import hundun.tool.logic.data.save.RootSaveData.DeskSaveData;
-import hundun.tool.logic.data.save.RootSaveData.GoodSaveData;
 import hundun.tool.logic.data.save.RootSaveData.MyGameplaySaveData;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -38,30 +35,6 @@ public class RootSaveData {
         Map<String, DeskSaveData> defaultDeskSaveDatas;
         List<String> defaultCartGoodIds;
     }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class GoodSaveData {
-        String name;
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class DeskSaveData {
-        String name;
-        String room;
-        String area;
-        int areaIndex;
-        int x;
-        int y;
-        List<GoodSaveData> goodSaveDatas;
-    }
-    
-    
 
     public static final class Extension implements IRootSaveExtension<RootSaveData, MySystemSettingSaveData, MyGameplaySaveData> {
 
