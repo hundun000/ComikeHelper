@@ -34,10 +34,16 @@
 		"g": 1,
 		"b": 0,
 		"a": 1
+	},
+	"MIKU_COLOR": {
+		"r": 0,
+		"g": 1,
+		"b": 0.9490196,
+		"a": 1
 	}
 },
 "com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator": {
-	"freeTypeNormal": {
+	"MiSans-Bold": {
 		"font": "MiSans-Bold.ttf",
 		"size": 42,
 		"mono": false,
@@ -74,7 +80,9 @@
 },
 "com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle": {
 	"default": {
-		"up": "button2_rounded_CC"
+		"up": "button2_rounded_CC",
+		"down": "button2_rounded_CC_down",
+		"disabled": "button2_rounded_CC_disable"
 	},
 	"toggle": {
 		"up": "default-round",
@@ -86,34 +94,32 @@
 	"default": {
 		"checkboxOn": "check-on",
 		"checkboxOff": "check-off",
-		"font": "freeTypeNormal",
+		"font": "default-font",
 		"fontColor": "white"
 	}
 },
 "com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle": {
 	"default": {
-		"imageUp": "button2_rounded_CC"
+		"imageUp": "button2_rounded_CC",
+		"imageDown": "button2_rounded_CC_down"
 	}
 },
 "com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle": {
 	"default": {
 		"imageUp": "button2_rounded_CC",
-		"font": "freeTypeNormal"
+		"imageDown": "button2_rounded_CC_down",
+		"font": "MiSans-Bold"
 	}
 },
 "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
 	"default": {
-		"font": "freeTypeNormal",
+		"font": "MiSans-Bold",
 		"fontColor": "black"
-	},
-	"whiteType": {
-		"font": "freeTypeNormal",
-		"fontColor": "white"
 	}
 },
 "com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle": {
 	"default": {
-		"font": "default-font",
+		"font": "MiSans-Bold",
 		"fontColorSelected": "white",
 		"fontColorUnselected": "white",
 		"selection": "selection"
@@ -140,7 +146,7 @@
 },
 "com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle": {
 	"default": {
-		"font": "default-font",
+		"font": "MiSans-Bold",
 		"fontColor": "white",
 		"background": "default-select",
 		"scrollStyle": "default",
@@ -167,7 +173,7 @@
 },
 "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
 	"default": {
-		"font": "freeTypeNormal",
+		"font": "MiSans-Bold",
 		"fontColor": "black",
 		"up": "button2_rounded_CC",
 		"down": "button2_rounded_CC_down",
@@ -213,8 +219,8 @@
 },
 "com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
 	"default": {
-		"background": "default-window",
-		"titleFont": "default-font",
+		"background": "bigTitle-window",
+		"titleFont": "MiSans-Bold",
 		"titleFontColor": "white"
 	},
 	"dialog": {

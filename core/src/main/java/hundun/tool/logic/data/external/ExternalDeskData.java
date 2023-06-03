@@ -58,7 +58,8 @@ public class ExternalDeskData {
                         externalDeskData.getImageFileHandles().add(it);
                     }
                 });
-            } else {
+            }
+            if (externalDeskData.getCoverFileHandle() == null) {
                 externalDeskData.setCoverFileHandle(defaultCover);
             }
             return externalDeskData;
