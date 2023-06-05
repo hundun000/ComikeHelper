@@ -3,6 +3,7 @@ package hundun.tool.libgdx.screen.market;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -12,24 +13,26 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+import hundun.tool.libgdx.other.MyWindow;
 import hundun.tool.libgdx.screen.MarketScreen;
 import hundun.tool.libgdx.screen.market.MainBoardVM.MainBoardState;
 import hundun.tool.logic.data.DeskRuntimeData;
 
-public class DeskExtraVM extends Table {
+public class DeskExtraVM extends MyWindow {
     
-    public static int WINDOW_PAD_TOP = 0;
+    public static int WINDOW_PAD_TOP = 80;
     public static int WINDOW_PAD_OTHER = 10;
     
     MarketScreen screen;
     Table childrenTable;
-    Table extraTextTable;
+    MyWindow extraTextTable;
     TextButton backButton;
     
     public DeskExtraVM(MarketScreen screen) {
-        super();
+        super("title", screen.getGame().getMainSkin());
+        this.setTouchable(Touchable.childrenOnly);
         this.setFillParent(true);
-        //this.pad(WINDOW_PAD_TOP, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER);
+        this.pad(WINDOW_PAD_TOP, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER);
         //this.getTitleTable().center();
         //this.getTitleTable().setHeight(200);
         this.screen = screen;
@@ -42,32 +45,41 @@ public class DeskExtraVM extends Table {
                 screen.getMainBoardVM().back();
             }
         });
-        this.add(backButton).growX().row();
-        
-        
+        this.add(backButton)
+                .pad(WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER)
+                .growX()
+                .row()
+                ;
+
+        MyWindow childrenTableContainer = new MyWindow("images", screen.getGame().getMainSkin());
         this.childrenTable = new Table();
-        //childrenTable.pad(WINDOW_PAD_TOP, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER);
         //childrenTable.getTitleTable().setHeight(200);
         ScrollPane scrollPane = new ScrollPane(childrenTable, screen.getGame().getMainSkin());
         scrollPane.setScrollingDisabled(false, true);
-        this.add(scrollPane)
-                .height(screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_IMAGE_SIZE * 1.0f)
+        childrenTableContainer.add(scrollPane);
+        this.add(childrenTableContainer)
+                .pad(WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER)
+                .height(screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_IMAGE_SIZE * 1.1f + 100)
                 .growX()
                 .row()
                 ;
         
-        this.extraTextTable = new Table();
+        this.extraTextTable = new MyWindow("extra", screen.getGame().getMainSkin());
         extraTextTable.add(new Label("test", screen.getGame().getMainSkin()));
-        //extraTextTable.pad(WINDOW_PAD_TOP, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER);
         this.add(extraTextTable)
-                //.grow()
+                .pad(WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER)
+                .growX()
+                .height(200)
+                .grow()
                 ;
         
     }
 
 
     public void updateData(String title, DeskRuntimeData detailingDeskData) {
-        
+
+        this.getTitleLabel().setText(title);
+
         childrenTable.clear();
         detailingDeskData.getDetailFileHandles().forEach(it -> {
             Texture texture = new Texture(it);

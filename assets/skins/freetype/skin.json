@@ -219,9 +219,10 @@
 },
 "com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
 	"default": {
-		"background": "bigTitle-window",
+		"background": "mywindow_titleTable_background",
 		"titleFont": "MiSans-Bold",
-		"titleFontColor": "white"
+		"titleFontColor": "white",
+		"stageBackground": "mywindow_mainTable_background"
 	},
 	"dialog": {
 		"background": "default-window",

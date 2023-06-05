@@ -9,7 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
@@ -19,6 +21,7 @@ import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.gdxgame.corelib.starter.StarterMenuScreen;
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.tool.ComikeHelperGame;
+import hundun.tool.libgdx.other.MyWindow;
 import hundun.tool.logic.data.save.RootSaveData;
 
 /**
@@ -100,6 +103,31 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
                 .fillY()
                 .padTop(10)
                 .row();
+
+        MyWindow window = new MyWindow("title", game.getMainSkin());
+        Button testButton = new TextButton("clicke me", game.getMainSkin());
+        testButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                game.getFrontend().log("test", "clicked 1");
+            }
+        });
+        window.getMainTable().add(testButton).pad(10, 10, 10, 10).row();
+
+        MyWindow innerwindow = new MyWindow("inner title", game.getMainSkin());
+        Button testButton2 = new TextButton("clicke me", game.getMainSkin());
+        testButton2.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                game.getFrontend().log("test", "clicked 2");
+            }
+        });
+        innerwindow.getMainTable().add(testButton2);
+
+        window.getMainTable().add(innerwindow).pad(10, 10, 10, 10);
+        uiRootTable.add(window);
 
     }
 
