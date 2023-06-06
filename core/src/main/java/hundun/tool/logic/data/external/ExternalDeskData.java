@@ -30,13 +30,7 @@ public class ExternalDeskData {
     
     
     public static class Factory {
-        public static ExternalDeskData forDefault(FileHandle defaultCover, DeskSaveData deskSaveData) {
-            ExternalDeskData result = new ExternalDeskData();
-            result.setDeskSaveData(deskSaveData);
-            result.setCoverFileHandle(defaultCover);
-            result.setImageFileHandles(new ArrayList<>());
-            return result;
-        }
+
         
         public static ExternalDeskData fromBasic(DeskSaveData deskSaveData, FileHandle coverFileHandle) {
             ExternalDeskData result = ExternalDeskData.builder()

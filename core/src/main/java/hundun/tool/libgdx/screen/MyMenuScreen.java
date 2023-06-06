@@ -22,6 +22,7 @@ import hundun.gdxgame.corelib.starter.StarterMenuScreen;
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.tool.ComikeHelperGame;
 import hundun.tool.libgdx.screen.shared.MyWindow;
+import hundun.tool.logic.ExternalResourceManager.MergeWorkInProgressModel;
 import hundun.tool.logic.data.save.RootSaveData;
 
 /**
@@ -56,7 +57,8 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 game.getLogicContext().loadEmpty();
-                game.getLogicContext().appendSaveDataOrDefaultData();
+                MergeWorkInProgressModel model = game.getLogicContext().appendSaveData();
+                model.apply();
                 game.getLogicContext().updateCrossScreenDataPackage();
                 game.getScreenManager().pushScreen(MarketScreen.class.getSimpleName(), BlendingTransition.class.getSimpleName());
             }

@@ -30,6 +30,9 @@ import lombok.NoArgsConstructor;
 public class ExternalComikeData {
 
     ExternalMainData externalMainData;
+    /**
+     * name key
+     */
     Map<String, ExternalDeskData> deskExternalRuntimeDataMap;
 
     public static class Factory {

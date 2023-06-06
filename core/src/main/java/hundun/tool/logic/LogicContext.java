@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import hundun.gdxgame.gamelib.starter.save.PairChildrenSaveHandler.ISubSystemSettingSaveHandler;
 import hundun.gdxgame.gamelib.starter.save.PairChildrenSaveHandler.ISubGameplaySaveHandler;
 import hundun.tool.ComikeHelperGame;
+import hundun.tool.logic.ExternalResourceManager.MergeWorkInProgressModel;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.RoomRuntimeData;
@@ -79,10 +80,10 @@ public class LogicContext {
         this.externalResourceManager = new ExternalResourceManager(game);
     }
 
-    public boolean appendExcelData() {
+    public MergeWorkInProgressModel appendExcelData() {
 
-        boolean success = externalResourceManager.providerExcelGameplayData(tempComikeData, tempUserPrivateData);
-        return success;
+        MergeWorkInProgressModel model = externalResourceManager.providerExcelGameplayData(tempComikeData, tempUserPrivateData);
+        return model;
     }
     
     public void loadEmpty() {
@@ -110,27 +111,29 @@ public class LogicContext {
         }
         modifyGoodTagListeners.forEach(it -> it.onModifyGoodTag(thiz, tag, setToOn));
     }
+    
+    public MergeWorkInProgressModel appendSaveData() {
 
-    public void appendSaveDataOrDefaultData() {
+        MergeWorkInProgressModel model = externalResourceManager.providerExternalGameplayData(tempComikeData, tempUserPrivateData);
+        return model;
+    }
+    
+    public MergeWorkInProgressModel appendDefaultData() {
 
-        externalResourceManager.providerExternalGameplayData(tempComikeData, tempUserPrivateData);
+        MyGameplaySaveData gameplaySave = RootSaveData.Extension.genereateStarterGameplaySaveData();
+        Map<String, ExternalDeskData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
+            it -> it.getKey(),
+            it -> ExternalDeskData.Factory.fromBasic(it.getValue(), externalResourceManager.getDefaultCoverFileHandle())
+        ));
         
-        boolean useDefault = tempComikeData.getExternalMainData().getRoomSaveDataMap().size() == 0;
-        if (useDefault) {
-            MyGameplaySaveData gameplaySave = RootSaveData.Extension.genereateStarterGameplaySaveData();
-            tempComikeData.setExternalMainData(gameplaySave.getDefaultExternalMainData());
-            Map<String, ExternalDeskData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
-                it -> it.getKey(),
-                it -> ExternalDeskData.Factory.forDefault(externalResourceManager.getDefaultCoverFileHandle(), it.getValue())
-            ));
-            tempComikeData.setDeskExternalRuntimeDataMap(defaultDeskSaveDatas);
-            tempUserPrivateData.setCartGoodIds(gameplaySave.getDefaultCartGoodIds());
-            
-            saveCurrentSharedData();
-            calculateAndSaveCurrentUserData();
-        }
-        
-        
+        MergeWorkInProgressModel model = new MergeWorkInProgressModel(
+                tempComikeData, 
+                tempUserPrivateData,
+                gameplaySave.getDefaultExternalMainData(), 
+                defaultDeskSaveDatas,
+                gameplaySave.getDefaultUserPrivateData()
+                );
+        return model;
     }
     
     
@@ -181,12 +184,13 @@ public class LogicContext {
             .roomMap(roomMap)
             .goodMap(goodMap)
             .cartGoods(tempUserPrivateData.getCartGoodIds().stream()
-                .map(it -> {
-                    GoodRuntimeData result = goodMap.get(it);
-                    result.lazyInit(tempUserPrivateData);
-                    return result;
-                })
-                .collect(Collectors.toList())
+                    .filter(it -> goodMap.containsKey(it))
+                    .map(it -> {
+                        GoodRuntimeData result = goodMap.get(it);
+                        result.lazyInit(tempUserPrivateData);
+                        return result;
+                    })
+                    .collect(Collectors.toList())
             )
             .build();
 

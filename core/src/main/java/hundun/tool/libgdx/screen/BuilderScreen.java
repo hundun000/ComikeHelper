@@ -7,6 +7,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -16,6 +17,7 @@ import hundun.tool.ComikeHelperGame;
 import hundun.tool.libgdx.screen.shared.DeskAreaVM;
 import hundun.tool.libgdx.screen.shared.DeskVM;
 import hundun.tool.libgdx.screen.shared.RoomSwitchBoardVM;
+import hundun.tool.logic.ExternalResourceManager.MergeWorkInProgressModel;
 import hundun.tool.logic.LogicContext.CrossScreenDataPackage;
 import hundun.tool.logic.data.RoomRuntimeData;
 
@@ -74,21 +76,50 @@ public class BuilderScreen extends AbstractComikeScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                game.getLogicContext().appendExcelData();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                       // do something important here, asynchronously to the rendering thread
+                       MergeWorkInProgressModel model = game.getLogicContext().appendExcelData();
+                       final Dialog dialog = new Dialog("excel merge WIP", game.getMainSkin(), "dialog") {
+                           public void result(Object obj) {
+                               boolean action = (boolean) obj;
+                               if (action) {
+                                   model.apply();
+                                   game.getLogicContext().updateCrossScreenDataPackage();
+                                   updateUIAfterRoomChanged();
+                               }
+                           }
+                       };
+                       dialog.text(model.toDiaglogMessage());
+                       dialog.button("Yes", true);
+                       dialog.button("No", false);
+                       Gdx.app.postRunnable(new Runnable() {
+                          @Override
+                          public void run() {
+                              dialog.show(popupUiStage);
+                          }
+                       });
+                    }
+                 }).start();
+                
+                
+                
+                
             }
         });
         allButtonTable.add(loadExcelButton).row();
         
-        TextButton handleFinalDataButton = new TextButton("handle current", game.getMainSkin());
-        handleFinalDataButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                game.getLogicContext().updateCrossScreenDataPackage();
-                updateUIAfterRoomChanged();
-            }
-        });
-        allButtonTable.add(handleFinalDataButton).row();
+//        TextButton handleFinalDataButton = new TextButton("handle current", game.getMainSkin());
+//        handleFinalDataButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                super.clicked(event, x, y);
+//                game.getLogicContext().updateCrossScreenDataPackage();
+//                updateUIAfterRoomChanged();
+//            }
+//        });
+//        allButtonTable.add(handleFinalDataButton).row();
         
         TextButton saveButton = new TextButton("save", game.getMainSkin());
         saveButton.addListener(new ClickListener() {
@@ -96,6 +127,7 @@ public class BuilderScreen extends AbstractComikeScreen {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 game.getLogicContext().saveCurrentSharedData();
+                game.getLogicContext().calculateAndSaveCurrentUserData();
             }
         });
         allButtonTable.add(saveButton);

@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.gamelib.starter.save.IRootSaveExtension;
 import hundun.tool.logic.data.external.ExternalMainData;
+import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.save.RootSaveData.MyGameplaySaveData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,7 +34,7 @@ public class RootSaveData {
     public static class MyGameplaySaveData {
         ExternalMainData defaultExternalMainData;
         Map<String, DeskSaveData> defaultDeskSaveDatas;
-        List<String> defaultCartGoodIds;
+        ExternalUserPrivateData defaultUserPrivateData;
     }
 
     public static final class Extension implements IRootSaveExtension<RootSaveData, MySystemSettingSaveData, MyGameplaySaveData> {
@@ -96,14 +97,17 @@ public class RootSaveData {
                     .build());
 
             MyGameplaySaveData saveData = new MyGameplaySaveData();
-            saveData.setDefaultCartGoodIds(JavaFeatureForGwt.listOf(
-                    "A_1_本子1",
-                    "A_2_本子1",
-                    "A_1_本子2",
-                    "A_2_本子2",
-                    "砍口垒本子1",
-                    "少女前线本子1"
-                    ));
+            saveData.setDefaultUserPrivateData(ExternalUserPrivateData.builder()
+                    .cartGoodIds(JavaFeatureForGwt.listOf(
+                            "A_1_本子1",
+                            "A_2_本子1",
+                            "A_1_本子2",
+                            "A_2_本子2",
+                            "砍口垒本子1",
+                            "少女前线本子1"
+                            ))
+                    .build()
+                    );
             saveData.setDefaultDeskSaveDatas(deskSaveDatas);
             saveData.setDefaultExternalMainData(
                     ExternalMainData.builder()
