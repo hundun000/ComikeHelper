@@ -21,7 +21,7 @@ import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.gdxgame.corelib.starter.StarterMenuScreen;
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.tool.ComikeHelperGame;
-import hundun.tool.libgdx.other.MyWindow;
+import hundun.tool.libgdx.screen.shared.MyWindow;
 import hundun.tool.logic.data.save.RootSaveData;
 
 /**

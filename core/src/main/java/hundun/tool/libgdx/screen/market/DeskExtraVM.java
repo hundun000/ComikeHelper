@@ -12,10 +12,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-import hundun.tool.libgdx.other.MyWindow;
 import hundun.tool.libgdx.screen.MarketScreen;
 import hundun.tool.libgdx.screen.market.MainBoardVM.MainBoardState;
+import hundun.tool.libgdx.screen.shared.ImageBoxVM;
+import hundun.tool.libgdx.screen.shared.MyWindow;
 import hundun.tool.logic.data.DeskRuntimeData;
 
 public class DeskExtraVM extends MyWindow {
@@ -56,10 +58,13 @@ public class DeskExtraVM extends MyWindow {
         //childrenTable.getTitleTable().setHeight(200);
         ScrollPane scrollPane = new ScrollPane(childrenTable, screen.getGame().getMainSkin());
         scrollPane.setScrollingDisabled(false, true);
+        scrollPane.setFadeScrollBars(false);
         childrenTableContainer.add(scrollPane);
         this.add(childrenTableContainer)
                 .pad(WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER)
-                .height(screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_IMAGE_SIZE * 1.1f + 100)
+                .height(screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_IMAGE_SIZE * 1.1f
+                        + childrenTableContainer.getTitleHeight()
+                        + WINDOW_PAD_OTHER * 3)
                 .growX()
                 .row()
                 ;
@@ -68,8 +73,7 @@ public class DeskExtraVM extends MyWindow {
         extraTextTable.add(new Label("test", screen.getGame().getMainSkin()));
         this.add(extraTextTable)
                 .pad(WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER)
-                .growX()
-                .height(200)
+                .minHeight(200)
                 .grow()
                 ;
         
@@ -83,7 +87,11 @@ public class DeskExtraVM extends MyWindow {
         childrenTable.clear();
         detailingDeskData.getDetailFileHandles().forEach(it -> {
             Texture texture = new Texture(it);
-            Image image = new Image(texture);
+            
+            ImageBoxVM image = new ImageBoxVM(
+                    screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_IMAGE_SIZE, 
+                    screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_IMAGE_SIZE);
+            image.getImage().setDrawable(new TextureRegionDrawable(texture));
             image.addListener(new ClickListener(){
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
@@ -95,8 +103,6 @@ public class DeskExtraVM extends MyWindow {
                 }
             });
             childrenTable.add(image)
-                    .width(screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_IMAGE_SIZE)
-                    .height(screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_IMAGE_SIZE)
                     .pad(10)
                     //.row()
                     ;

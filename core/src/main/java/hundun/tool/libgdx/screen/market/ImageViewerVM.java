@@ -2,6 +2,8 @@ package hundun.tool.libgdx.screen.market;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -46,9 +48,12 @@ public class ImageViewerVM extends Table {
     public void updateImageAndShow(Texture texture) {
 
 
-        int backgroundWidth = Math.max(Gdx.graphics.getWidth(), texture.getWidth());
-        int backgroundHeight = Math.max(Gdx.graphics.getHeight(), texture.getHeight());
-        Texture backgroundTexture = TextureFactory.getSimpleBoardBackground(backgroundWidth, backgroundHeight);
+        int backgroundWidth = (int) (1.5 * Math.max(Gdx.graphics.getWidth(), texture.getWidth()));
+        int backgroundHeight = (int) (1.5 * Math.max(Gdx.graphics.getHeight(), texture.getHeight()));
+        Texture backgroundUnit = new Texture(Gdx.files.internal("imagePreviewBackground.png"));
+        backgroundUnit.setWrap(TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+        TextureRegion backgroundTexture = new TextureRegion(backgroundUnit);
+        backgroundTexture.setRegion(0, 0, backgroundWidth, backgroundHeight);
         background.setDrawable(new TextureRegionDrawable(backgroundTexture));
         background.setBounds(0, 0, backgroundWidth, backgroundHeight);
 

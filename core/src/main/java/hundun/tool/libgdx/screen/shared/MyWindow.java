@@ -1,4 +1,4 @@
-package hundun.tool.libgdx.other;
+package hundun.tool.libgdx.screen.shared;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -21,6 +21,8 @@ public class MyWindow extends Table {
     Table titleTable;
     @Getter
     Table mainTable;
+    @Getter
+    int titleHeight = 80;
 
     public MyWindow (String title, Skin skin) {
         this(title, skin.get(WindowStyle.class));
@@ -34,7 +36,7 @@ public class MyWindow extends Table {
         titleTable = new Table();
         titleTable.setBackground(style.background);
         titleTable.add(titleLabel).grow();
-        super.add(titleTable).height(80)
+        super.add(titleTable).height(titleHeight)
                 .growX()
                 .row();
 
