@@ -23,7 +23,6 @@ public class ScreenContext {
     BuilderScreen builderScreen;
     LayoutConst layoutConst;
     
-    Map<GoodRuntimeTag, Texture> tagImageMap = new HashMap<>();
     
     public static class LayoutConst {
         public final int DESK_SMALL_COL_PADDING = 30;
@@ -64,6 +63,6 @@ public class ScreenContext {
         BlendingTransition blendingTransition = new BlendingTransition(game.getBatch(), 1F);
         game.getScreenManager().addScreenTransition(BlendingTransition.class.getSimpleName(), blendingTransition);
     
-        tagImageMap.put(GoodRuntimeTag.IN_CART, new Texture(Gdx.files.internal("star.png")));
+        
     }
 }

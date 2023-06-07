@@ -48,7 +48,27 @@ public class BuilderScreen extends AbstractComikeScreen {
 
     }
 
-
+    private void startDialog(MergeWorkInProgressModel model, String title) {
+        final Dialog dialog = new Dialog(title, game.getMainSkin(), "dialog") {
+            public void result(Object obj) {
+                boolean action = (boolean) obj;
+                if (action) {
+                    model.apply();
+                    game.getLogicContext().updateCrossScreenDataPackage();
+                    updateUIAfterRoomChanged();
+                }
+            }
+        };
+        dialog.text(model.toDiaglogMessage());
+        dialog.button("Yes", true);
+        dialog.button("No", false);
+        Gdx.app.postRunnable(new Runnable() {
+           @Override
+           public void run() {
+               dialog.show(popupUiStage);
+           }
+        });
+    }
 
     @Override
     protected void create() {
@@ -79,47 +99,35 @@ public class BuilderScreen extends AbstractComikeScreen {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                       // do something important here, asynchronously to the rendering thread
                        MergeWorkInProgressModel model = game.getLogicContext().appendExcelData();
-                       final Dialog dialog = new Dialog("excel merge WIP", game.getMainSkin(), "dialog") {
-                           public void result(Object obj) {
-                               boolean action = (boolean) obj;
-                               if (action) {
-                                   model.apply();
-                                   game.getLogicContext().updateCrossScreenDataPackage();
-                                   updateUIAfterRoomChanged();
-                               }
-                           }
-                       };
-                       dialog.text(model.toDiaglogMessage());
-                       dialog.button("Yes", true);
-                       dialog.button("No", false);
-                       Gdx.app.postRunnable(new Runnable() {
-                          @Override
-                          public void run() {
-                              dialog.show(popupUiStage);
-                          }
-                       });
+                       startDialog(model, "excel merge WIP");
                     }
                  }).start();
-                
-                
-                
-                
             }
         });
         allButtonTable.add(loadExcelButton).row();
         
-//        TextButton handleFinalDataButton = new TextButton("handle current", game.getMainSkin());
-//        handleFinalDataButton.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                super.clicked(event, x, y);
-//                game.getLogicContext().updateCrossScreenDataPackage();
-//                updateUIAfterRoomChanged();
-//            }
-//        });
-//        allButtonTable.add(handleFinalDataButton).row();
+        TextButton appendDefaultButton = new TextButton("append default", game.getMainSkin());
+        appendDefaultButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                MergeWorkInProgressModel model = game.getLogicContext().appendDefaultData();
+                startDialog(model, "default merge WIP");
+            }
+        });
+        allButtonTable.add(appendDefaultButton).row();
+        
+        TextButton appendSaveButton = new TextButton("append save", game.getMainSkin());
+        appendSaveButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                MergeWorkInProgressModel model = game.getLogicContext().appendSaveData();
+                startDialog(model, "default save WIP");
+            }
+        });
+        allButtonTable.add(appendSaveButton).row();
         
         TextButton saveButton = new TextButton("save", game.getMainSkin());
         saveButton.addListener(new ClickListener() {

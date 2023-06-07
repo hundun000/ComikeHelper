@@ -190,20 +190,20 @@ public class ExternalResourceManager {
             });
             
             previewCartSizeCompare = new Pair<Integer, Integer>(
-                    oldUserPrivateData.getCartGoodIds().size(), 
-                    otherUserPrivateData.getCartGoodIds().size());
+                    oldUserPrivateData.getGoodPrivateDataMap().size(), 
+                    otherUserPrivateData.getGoodPrivateDataMap().size());
         }
         
         
         public String toDiaglogMessage() {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("NoChange Room: " + this.getPreviewNoChangeRoomDataMap().size() + "; ");
-            stringBuilder.append("Add Room: " + this.getPreviewAddRoomDataMap().size() + "; ");
-            stringBuilder.append("Conflict Room: " + this.getPreviewConflictRoomDataMap().size() + "; ");
+            stringBuilder.append("NoChange Room: " + this.getPreviewNoChangeRoomDataMap().size() + "; \n");
+            stringBuilder.append("Add Room: " + this.getPreviewAddRoomDataMap().size() + "; \n");
+            stringBuilder.append("Conflict Room: " + this.getPreviewConflictRoomDataMap().size() + "; \n");
             stringBuilder.append("\n");
-            stringBuilder.append("NoChange Desk: " + this.getPreviewNoChangeDeskDataMap().size() + "; ");
-            stringBuilder.append("Add Desk: " + this.getPreviewAddDeskDataMap().size() + "; ");
-            stringBuilder.append("Conflict Desk: " + this.getPreviewConflictDeskDataMap().size() + "; ");
+            stringBuilder.append("NoChange Desk: " + this.getPreviewNoChangeDeskDataMap().size() + "; \n");
+            stringBuilder.append("Add Desk: " + this.getPreviewAddDeskDataMap().size() + "; \n");
+            stringBuilder.append("Conflict Desk: " + this.getPreviewConflictDeskDataMap().size() + "; \n");
             stringBuilder.append("\n");
             stringBuilder.append("CartSize: " + this.getPreviewCartSizeCompare().x + " -> " + this.getPreviewCartSizeCompare().y + ";");
             return stringBuilder.toString();
@@ -223,7 +223,7 @@ public class ExternalResourceManager {
                     });
             oldComikeData.getExternalMainData().getRoomSaveDataMap().putAll(previewAddRoomDataMap);
    
-            oldUserPrivateData.setCartGoodIds(otherUserPrivateData.getCartGoodIds());
+            oldUserPrivateData.setGoodPrivateDataMap(otherUserPrivateData.getGoodPrivateDataMap());
         }
     }
 

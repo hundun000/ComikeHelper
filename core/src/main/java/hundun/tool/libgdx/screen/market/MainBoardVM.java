@@ -6,6 +6,7 @@ package hundun.tool.libgdx.screen.market;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
@@ -116,12 +117,12 @@ public class MainBoardVM extends Table {
     }
     
 
-    private void updateAsCart(List<GoodRuntimeData> cartGoods) {
+    private void updateAsCart(Set<GoodRuntimeData> tagedGood) {
         List<GoodRuntimeData> needShowList = new ArrayList<>();
         Table newExtra;
 
         //title.setText("心愿单");
-        needShowList.addAll(cartGoods);
+        needShowList.addAll(tagedGood);
         newExtra = null;
 
         updateCore(needShowList, newExtra);
@@ -131,7 +132,7 @@ public class MainBoardVM extends Table {
         CrossScreenDataPackage crossScreenDataPackage = screen.getGame().getLogicContext().getCrossScreenDataPackage();
         switch (state) {
             case CART:
-                updateAsCart(crossScreenDataPackage.getCartGoods());
+                updateAsCart(crossScreenDataPackage.getTagedGoods());
                 break;
             case DESK:
                 updateAsDetailingDesk(detailingDeskData);

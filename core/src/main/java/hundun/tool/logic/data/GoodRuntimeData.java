@@ -2,12 +2,15 @@ package hundun.tool.logic.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import hundun.tool.ComikeHelperGame;
 import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
+import hundun.tool.logic.data.external.ExternalUserPrivateData.GoodPrivateData;
 import hundun.tool.logic.data.save.GoodSaveData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,28 +32,36 @@ public class GoodRuntimeData {
 
     DeskRuntimeData ownerRef;
     String name;
-    List<GoodRuntimeTag> tags;
+    Map<GoodRuntimeTag, Boolean> tagStateMap;
     
     public enum GoodRuntimeTag {
         IN_CART,
+        STAR,
+        WAITING,
+        HEART,
+        DONE,
         ;
     }
     
     public static class Factory {
         public static GoodRuntimeData fromSaveData(DeskRuntimeData ownerRef, GoodSaveData saveData) {
+            Map<GoodRuntimeTag, Boolean> tagStateMap = Stream.of(GoodRuntimeTag.values()).collect(Collectors.toMap(
+                    it -> it,
+                    it -> false
+            ));
             return GoodRuntimeData.builder()
                     .ownerRef(ownerRef)
                     .name(saveData.getName())
-                    .tags(new ArrayList<>())
+                    .tagStateMap(tagStateMap)
                     .build();
         }
     }
 
 
     public void lazyInit(ExternalUserPrivateData userPrivateData) {
-
-        if (userPrivateData.getCartGoodIds().contains(name)) {
-            this.getTags().add(GoodRuntimeTag.IN_CART);
+        GoodPrivateData goodPrivateData = userPrivateData.getGoodPrivateDataMap().get(name);
+        if (goodPrivateData != null) {
+            goodPrivateData.getTags().forEach(it -> this.getTagStateMap().put(it, true));
         }
     }
     

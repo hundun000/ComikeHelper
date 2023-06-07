@@ -11,6 +11,7 @@ import hundun.gdxgame.gamelib.base.save.ISaveTool;
 import hundun.tool.libgdx.screen.MyMenuScreen;
 import hundun.tool.libgdx.screen.ScreenContext;
 import hundun.tool.logic.LogicContext;
+import hundun.tool.logic.TextureManager;
 import hundun.tool.logic.data.save.RootSaveData;
 import lombok.Getter;
 
@@ -26,7 +27,9 @@ public class ComikeHelperGame extends BaseHundunGame<RootSaveData> {
 
     @Getter
     private Viewport sharedViewport;
-
+    @Getter
+    private TextureManager textureManager;
+    
     public ComikeHelperGame(ISaveTool<RootSaveData> saveTool) {
         super(640, 480);
         //this.skinFilePath = "skins/orange/skin/uiskin.json";
@@ -38,6 +41,7 @@ public class ComikeHelperGame extends BaseHundunGame<RootSaveData> {
         this.mainSkinFilePath = null;
         this.screenContext = new ScreenContext(this);
         this.logicContext = new LogicContext(this);
+        this.textureManager = new TextureManager(this);
     }
 
 
@@ -46,6 +50,7 @@ public class ComikeHelperGame extends BaseHundunGame<RootSaveData> {
         super.createStage1();
         this.mainSkin = new FreeTypeSkin(Gdx.files.internal("skins/freetype/skin.json"));
         this.logicContext.lazyInitOnCreateStage1();
+        this.textureManager.lazyInitOnCreateStage1();
     }
 
     /**

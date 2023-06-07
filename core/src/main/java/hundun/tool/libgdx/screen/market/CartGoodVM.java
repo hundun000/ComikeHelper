@@ -71,9 +71,9 @@ public class CartGoodVM extends Table {
 
     public void update(GoodRuntimeData goodRuntimeData) {
         tagImageTable.clear();
-        goodRuntimeData.getTags().forEach(it -> {
-            Texture texture = screen.getGame().getScreenContext().getTagImageMap().get(it);
-            if (texture != null) {
+        goodRuntimeData.getTagStateMap().forEach((tag, state) -> {
+            if (state) {
+                Texture texture = screen.getGame().getTextureManager().getTagImageMap().get(tag);
                 tagImageTable.add(new Image(texture));
             }
         });

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import hundun.gdxgame.gamelib.starter.save.PairChildrenSaveHandler.ISubSystemSettingSaveHandler;
@@ -18,6 +19,7 @@ import hundun.tool.logic.data.RoomRuntimeData.Factory;
 import hundun.tool.logic.data.external.ExternalDeskData;
 import hundun.tool.logic.data.external.ExternalComikeData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
+import hundun.tool.logic.data.external.ExternalUserPrivateData.GoodPrivateData;
 import hundun.tool.logic.data.save.RootSaveData;
 import hundun.tool.logic.data.save.RootSaveData.MyGameplaySaveData;
 import lombok.AccessLevel;
@@ -70,7 +72,7 @@ public class LogicContext {
         Map<String, GoodRuntimeData> goodMap;
 
 
-        List<GoodRuntimeData> cartGoods;
+        Set<GoodRuntimeData> tagedGoods;
 
 
     }
@@ -98,17 +100,10 @@ public class LogicContext {
     public void modifyGoodTag(GoodRuntimeData thiz, GoodRuntimeTag tag, boolean setToOn) {
         
         game.getFrontend().log(this.getClass().getSimpleName(), "tag {0} setToOn = {1}", tag, setToOn);
-        if (setToOn) {
-            if (!thiz.getTags().contains(GoodRuntimeTag.IN_CART)) {
-                thiz.getTags().add(GoodRuntimeTag.IN_CART);
-                crossScreenDataPackage.getCartGoods().add(thiz);
-            }
-        } else {
-            if (thiz.getTags().contains(GoodRuntimeTag.IN_CART)) {
-                thiz.getTags().remove(GoodRuntimeTag.IN_CART);
-                crossScreenDataPackage.getCartGoods().remove(thiz);
-            }
-        }
+        
+        thiz.getTagStateMap().put(tag, setToOn);
+        crossScreenDataPackage.getTagedGoods().add(thiz);
+
         modifyGoodTagListeners.forEach(it -> it.onModifyGoodTag(thiz, tag, setToOn));
     }
     
@@ -143,8 +138,20 @@ public class LogicContext {
     }
 
     public void calculateAndSaveCurrentUserData() {
+        Map<String, GoodPrivateData> goodPrivateDataMap = crossScreenDataPackage.getTagedGoods().stream()
+                .collect(Collectors.toMap(
+                        it -> it.getName(), 
+                        it -> GoodPrivateData.builder()
+                                .tags(it.getTagStateMap().entrySet().stream()
+                                        .filter(entry -> entry.getValue())
+                                        .map(entry -> entry.getKey())
+                                        .collect(Collectors.toList())
+                                        )
+                                .build()
+                        ));
+        
         tempUserPrivateData = ExternalUserPrivateData.builder()
-                .cartGoodIds(crossScreenDataPackage.getCartGoods().stream().map(it -> it.getName()).collect(Collectors.toList()))
+                .goodPrivateDataMap(goodPrivateDataMap)
                 .build();
         externalResourceManager.saveAsUserData(tempUserPrivateData);
     }
@@ -183,14 +190,14 @@ public class LogicContext {
             .game(game)
             .roomMap(roomMap)
             .goodMap(goodMap)
-            .cartGoods(tempUserPrivateData.getCartGoodIds().stream()
-                    .filter(it -> goodMap.containsKey(it))
+            .tagedGoods(tempUserPrivateData.getGoodPrivateDataMap().entrySet().stream()
+                    .filter(it -> goodMap.containsKey(it.getKey()))
                     .map(it -> {
-                        GoodRuntimeData result = goodMap.get(it);
+                        GoodRuntimeData result = goodMap.get(it.getKey());
                         result.lazyInit(tempUserPrivateData);
                         return result;
                     })
-                    .collect(Collectors.toList())
+                    .collect(Collectors.toSet())
             )
             .build();
 

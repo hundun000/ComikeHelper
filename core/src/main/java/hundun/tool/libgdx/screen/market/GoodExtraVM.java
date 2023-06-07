@@ -22,23 +22,32 @@ public class GoodExtraVM extends Table {
         this.screen = screen;
 
         this.childrenTable = new Table();
-        ScrollPane scrollPane = new ScrollPane(childrenTable, screen.getGame().getMainSkin());
+/*        ScrollPane scrollPane = new ScrollPane(childrenTable, screen.getGame().getMainSkin());
         scrollPane.setScrollingDisabled(true, false);
 
         this.add(scrollPane)
                 .maxHeight(screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_IMAGE_SIZE * 2.5f)
-                ;
-        this.debugTable();
+                ;*/
+
+        this.add(childrenTable);
+        //this.debugTable();
     }
 
 
     public void updateData(GoodRuntimeData detailingGood) {
-
+        screen.getGame().getFrontend().log(this.getClass().getSimpleName(), 
+                "updateData called");
         childrenTable.clear();
-        Stream.of(GoodRuntimeTag.values()).forEach(it -> {
-            GoodTagEditorVM node = new GoodTagEditorVM(screen, detailingGood, it);
-            childrenTable.add(node).row();
-        });
+        
+        GoodTagEditorNodeVM node = new GoodTagEditorNodeVM(screen, detailingGood, GoodRuntimeTag.IN_CART, GoodRuntimeTag.DONE);
+        childrenTable.add(node).row();
+        
+        Stream.of(GoodRuntimeTag.values())
+                .filter(it -> it != GoodRuntimeTag.IN_CART && it != GoodRuntimeTag.DONE)
+                .forEach(it -> {
+                    GoodTagEditorNodeVM itnode = new GoodTagEditorNodeVM(screen, detailingGood, it);
+                    childrenTable.add(itnode).row();
+                });
 
     }
 }

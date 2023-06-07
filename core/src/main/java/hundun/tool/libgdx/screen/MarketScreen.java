@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import hundun.gdxgame.corelib.base.util.TextureFactory;
@@ -23,7 +24,6 @@ import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.RoomRuntimeData;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author hundun
@@ -155,13 +155,13 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
         );
         roomSwitchBoardVM.intoFullMode();
         // for newest cart
-        onCartTagChanged();
+        onAnyTagChanged(null);
     }
 
-    private void onCartTagChanged() {
+    private void onAnyTagChanged(@Null GoodRuntimeData changed) {
         CrossScreenDataPackage crossScreenDataPackage = game.getLogicContext().getCrossScreenDataPackage();
         mainBoardVM.updateByState();
-        deskAreaVM.updateCartData(crossScreenDataPackage.getCartGoods());
+        deskAreaVM.updateCartData(changed);
     }
 
 
@@ -207,8 +207,6 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
 
     @Override
     public void onModifyGoodTag(GoodRuntimeData thiz, GoodRuntimeTag tag, boolean setToOn) {
-        if (tag == GoodRuntimeTag.IN_CART) {
-            onCartTagChanged();
-        }
+        onAnyTagChanged(thiz);
     }
 }

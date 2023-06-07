@@ -7,8 +7,10 @@ import java.util.stream.IntStream;
 
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.gamelib.starter.save.IRootSaveExtension;
+import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
+import hundun.tool.logic.data.external.ExternalUserPrivateData.GoodPrivateData;
 import hundun.tool.logic.data.save.RootSaveData.MyGameplaySaveData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -66,7 +68,9 @@ public class RootSaveData {
 
             });
 
-            String specialRoom = "2号馆";
+            final String specialRoom = "2号馆";
+            final String specialGood1 = "砍口垒本子1";
+            final String specialGood2 = "少女前线本子1";
             deskSaveDatas.put(
                 "砍口垒同好组",
                 DeskSaveData.builder()
@@ -77,7 +81,7 @@ public class RootSaveData {
                     .x(100)
                     .y(100)
                     .goodSaveDatas(JavaFeatureForGwt.listOf(
-                        GoodSaveData.builder().name("砍口垒本子1").build(),
+                        GoodSaveData.builder().name(specialGood1).build(),
                         GoodSaveData.builder().name("砍口垒本子2").build()
                     ))
                     .build());
@@ -91,21 +95,25 @@ public class RootSaveData {
                     .x(100)
                     .y(300)
                     .goodSaveDatas(JavaFeatureForGwt.listOf(
-                        GoodSaveData.builder().name("少女前线本子1").build(),
+                        GoodSaveData.builder().name(specialGood2).build(),
                         GoodSaveData.builder().name("少女前线本子2").build()
                     ))
                     .build());
 
             MyGameplaySaveData saveData = new MyGameplaySaveData();
+            
+            Map<String, GoodPrivateData> goodPrivateDataMap = new HashMap<>();
+            goodPrivateDataMap.put(specialGood1, 
+                    GoodPrivateData.builder()
+                            .tags(JavaFeatureForGwt.listOf(GoodRuntimeTag.IN_CART))
+                            .build());
+            goodPrivateDataMap.put(specialGood2, 
+                    GoodPrivateData.builder()
+                            .tags(JavaFeatureForGwt.listOf(GoodRuntimeTag.STAR))
+                            .build());
+            
             saveData.setDefaultUserPrivateData(ExternalUserPrivateData.builder()
-                    .cartGoodIds(JavaFeatureForGwt.listOf(
-                            "A_1_本子1",
-                            "A_2_本子1",
-                            "A_1_本子2",
-                            "A_2_本子2",
-                            "砍口垒本子1",
-                            "少女前线本子1"
-                            ))
+                    .goodPrivateDataMap(goodPrivateDataMap)
                     .build()
                     );
             saveData.setDefaultDeskSaveDatas(deskSaveDatas);
