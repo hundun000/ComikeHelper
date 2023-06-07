@@ -160,7 +160,7 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
 
     private void onAnyTagChanged(@Null GoodRuntimeData changed) {
         CrossScreenDataPackage crossScreenDataPackage = game.getLogicContext().getCrossScreenDataPackage();
-        mainBoardVM.updateByState();
+        mainBoardVM.updateByState(false);
         deskAreaVM.updateCartData(changed);
     }
 
@@ -200,7 +200,7 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
     public void onDeskClicked(DeskVM vm) {
         mainBoardVM.setState(MainBoardState.DESK);
         mainBoardVM.setDetailingDeskData(vm.getDeskData());
-        mainBoardVM.updateByState();
+        mainBoardVM.updateByState(true);
     }
 
 

@@ -106,30 +106,6 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
                 .padTop(10)
                 .row();
 
-        MyWindow window = new MyWindow("title", game.getMainSkin());
-        Button testButton = new TextButton("clicke me", game.getMainSkin());
-        testButton.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                game.getFrontend().log("test", "clicked 1");
-            }
-        });
-        window.getMainTable().add(testButton).pad(10, 10, 10, 10).row();
-
-        MyWindow innerwindow = new MyWindow("inner title", game.getMainSkin());
-        Button testButton2 = new TextButton("clicke me", game.getMainSkin());
-        testButton2.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                game.getFrontend().log("test", "clicked 2");
-            }
-        });
-        innerwindow.getMainTable().add(testButton2);
-
-        window.getMainTable().add(innerwindow).pad(10, 10, 10, 10);
-        uiRootTable.add(window);
 
     }
 

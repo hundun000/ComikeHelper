@@ -55,13 +55,13 @@ public class MainBoardVM extends Table {
 
 
         this.extraArea = new Container<>();
-
-
+        extraArea.fill();
+        extraArea.pad(25);
         
         this.add(extraArea)
                 .growY()
-        ;
-        this.setBackground(DrawableFactory.getSimpleBoardBackground());
+                ;
+        this.setBackground(screen.getGame().getTextureManager().getMcStyleTable());
 
         // ----- candidates ------
         this.deskExtraVM = new DeskExtraVM(screen);
@@ -72,15 +72,18 @@ public class MainBoardVM extends Table {
         
     }
     
-    private void updateAsDetailingDesk(DeskRuntimeData detailingDeskData) {
-        List<GoodRuntimeData> needShowList = new ArrayList<>();
+    private void updateAsDetailingDesk(DeskRuntimeData detailingDeskData, boolean justChanged) {
 
-        //title.setText(detailingDeskData.getName());
+        List<GoodRuntimeData> needShowList = new ArrayList<>();
         needShowList.addAll(detailingDeskData.getGoodSaveDatas());
-        deskExtraVM.updateData(detailingDeskData.getName(), detailingDeskData);
-        deskExtraVM.updateCore(needShowList);
         
-        extraArea.setActor(deskExtraVM);
+        if (justChanged) {
+            deskExtraVM.updateData(detailingDeskData.getName(), detailingDeskData);
+            deskExtraVM.updateCore(needShowList);
+            extraArea.setActor(deskExtraVM);
+        } else {
+            deskExtraVM.updateCore(needShowList);
+        }
     }
     
     private void updateAsDetailingGood(GoodRuntimeData detailingGood) {
@@ -106,14 +109,14 @@ public class MainBoardVM extends Table {
         extraArea.setActor(null);
     }
 
-    public void updateByState() {
+    public void updateByState(boolean justChanged) {
         CrossScreenDataPackage crossScreenDataPackage = screen.getGame().getLogicContext().getCrossScreenDataPackage();
         switch (state) {
             case CART:
                 updateAsCart(crossScreenDataPackage.getTagedGoods());
                 break;
             case DESK:
-                updateAsDetailingDesk(detailingDeskData);
+                updateAsDetailingDesk(detailingDeskData, justChanged);
                 break;
             case GOOD:
                 updateAsDetailingGood(detailingGoodData);
@@ -128,7 +131,7 @@ public class MainBoardVM extends Table {
         switch (state) {
             case DESK:
                 setState(MainBoardState.CART);
-                updateByState();
+                updateByState(true);
                 break;
             case GOOD:
                 if (detailingDeskData != null) {
@@ -136,7 +139,7 @@ public class MainBoardVM extends Table {
                 } else {
                     setState(MainBoardState.CART);
                 }
-                updateByState();
+                updateByState(true);
                 break;
             default:
                 break;

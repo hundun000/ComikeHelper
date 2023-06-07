@@ -63,7 +63,7 @@ public class CartGoodVM extends Table {
                 super.clicked(event, x, y);
                 screen.getMainBoardVM().setState(MainBoardState.GOOD);
                 screen.getMainBoardVM().setDetailingGoodData(goodRuntimeData);
-                screen.getMainBoardVM().updateByState();
+                screen.getMainBoardVM().updateByState(true);
             }
         });
 

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
+import hundun.tool.ComikeHelperGame;
 import lombok.Getter;
 
 public class MyWindow extends Table {
@@ -23,35 +25,49 @@ public class MyWindow extends Table {
     Table mainTable;
     @Getter
     int titleHeight = 80;
-
-    public MyWindow (String title, Skin skin) {
-        this(title, skin.get(WindowStyle.class));
+    
+    public MyWindow() {
+    }
+    
+    public MyWindow(String title, ComikeHelperGame game) {
+        init(title, game, null);
+    }
+    
+    public void init(String title, ComikeHelperGame game) {
+        init(title, game, null);
     }
 
-    public MyWindow (String title, WindowStyle style) {
-
-        titleLabel = newLabel(title, new LabelStyle(style.titleFont, style.titleFontColor));
+    public void init(String title, ComikeHelperGame game, Button titleButton) {
+        titleLabel = newLabel(title, game.getMainSkin());
         titleLabel.setEllipsis(true);
 
         titleTable = new Table();
-        titleTable.setBackground(style.background);
+        titleTable.setBackground(game.getTextureManager().getMcStyleTableTop());
         titleTable.add(titleLabel).grow();
+        
+        if (titleButton!= null) {
+            titleTable.add(titleButton);
+        }
+        
         super.add(titleTable).height(titleHeight)
                 .growX()
                 .row();
 
         mainTable = new Table();
-        mainTable.setBackground(style.stageBackground);
+        mainTable.setBackground(game.getTextureManager().getMcStyleTableBottom());
         super.add(mainTable)
                 .grow();
     }
 
-    protected Label newLabel (String text, LabelStyle style) {
-        return new Label(text, style);
+    protected Label newLabel (String text, Skin skin) {
+        return new Label(text, skin);
     }
 
-    @Override
-    public <T extends Actor> Cell<T> add(T actor) {
+    public <T extends Actor> Cell<T> addToMain(T actor) {
         return mainTable.add(actor);
+    }
+
+    public Cell<?> rowToMain() {
+        return mainTable.row();
     }
 }
