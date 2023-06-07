@@ -1,5 +1,7 @@
 package hundun.tool.libgdx.screen.market;
 
+import java.util.List;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -19,6 +21,7 @@ import hundun.tool.libgdx.screen.market.MainBoardVM.MainBoardState;
 import hundun.tool.libgdx.screen.shared.ImageBoxVM;
 import hundun.tool.libgdx.screen.shared.MyWindow;
 import hundun.tool.logic.data.DeskRuntimeData;
+import hundun.tool.logic.data.GoodRuntimeData;
 
 public class DeskExtraVM extends MyWindow {
     
@@ -27,6 +30,7 @@ public class DeskExtraVM extends MyWindow {
     
     MarketScreen screen;
     Table childrenTable;
+    Table imagesTable;
     MyWindow extraTextTable;
     TextButton backButton;
     
@@ -39,6 +43,20 @@ public class DeskExtraVM extends MyWindow {
         //this.getTitleTable().setHeight(200);
         this.screen = screen;
 
+        this.childrenTable = new Table();
+        ScrollPane scrollPane = new ScrollPane(childrenTable, screen.getGame().getMainSkin());
+        scrollPane.setScrollingDisabled(true, false);
+        this.add(scrollPane)
+                .width(screen.getGame().getScreenContext().getLayoutConst().DESK_EXTRA_AREA_LEFT_PART_WIDTH)
+                .growY()
+                ;
+        
+        Table rightPart = new Table();
+        this.add(rightPart)
+                .width(screen.getGame().getScreenContext().getLayoutConst().DESK_EXTRA_AREA_RIGHT_PART_WIDTH)
+                .growY()
+                ;
+        
         this.backButton = new TextButton("返回", screen.getGame().getMainSkin());
         backButton.addListener(new ClickListener() {
             @Override
@@ -47,23 +65,23 @@ public class DeskExtraVM extends MyWindow {
                 screen.getMainBoardVM().back();
             }
         });
-        this.add(backButton)
+        rightPart.add(backButton)
                 .pad(WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER)
                 .growX()
                 .row()
                 ;
 
-        MyWindow childrenTableContainer = new MyWindow("images", screen.getGame().getMainSkin());
-        this.childrenTable = new Table();
+        MyWindow imagesTableContainer = new MyWindow("images", screen.getGame().getMainSkin());
+        this.imagesTable = new Table();
         //childrenTable.getTitleTable().setHeight(200);
-        ScrollPane scrollPane = new ScrollPane(childrenTable, screen.getGame().getMainSkin());
-        scrollPane.setScrollingDisabled(false, true);
-        scrollPane.setFadeScrollBars(false);
-        childrenTableContainer.add(scrollPane);
-        this.add(childrenTableContainer)
+        ScrollPane imagesScrollPane = new ScrollPane(imagesTable, screen.getGame().getMainSkin());
+        imagesScrollPane.setScrollingDisabled(false, true);
+        imagesScrollPane.setFadeScrollBars(false);
+        imagesTableContainer.add(imagesScrollPane);
+        rightPart.add(imagesTableContainer)
                 .pad(WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER)
                 .height(screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_IMAGE_SIZE * 1.1f
-                        + childrenTableContainer.getTitleHeight()
+                        + imagesTableContainer.getTitleHeight()
                         + WINDOW_PAD_OTHER * 3)
                 .growX()
                 .row()
@@ -71,12 +89,13 @@ public class DeskExtraVM extends MyWindow {
         
         this.extraTextTable = new MyWindow("extra", screen.getGame().getMainSkin());
         extraTextTable.add(new Label("test", screen.getGame().getMainSkin()));
-        this.add(extraTextTable)
+        rightPart.add(extraTextTable)
                 .pad(WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER)
                 .minHeight(200)
                 .grow()
                 ;
         
+        this.debugAll();
     }
 
 
@@ -84,7 +103,7 @@ public class DeskExtraVM extends MyWindow {
 
         this.getTitleLabel().setText(title);
 
-        childrenTable.clear();
+        imagesTable.clear();
         detailingDeskData.getDetailFileHandles().forEach(it -> {
             Texture texture = new Texture(it);
             
@@ -102,7 +121,7 @@ public class DeskExtraVM extends MyWindow {
                     });
                 }
             });
-            childrenTable.add(image)
+            imagesTable.add(image)
                     .pad(10)
                     //.row()
                     ;
@@ -110,5 +129,17 @@ public class DeskExtraVM extends MyWindow {
 
     }
     
+    public void updateCore(List<GoodRuntimeData> needShowList) {
+        childrenTable.clear();
+        needShowList.forEach(it -> {
+            CartGoodVM node = new CartGoodVM(screen, it);
+            childrenTable.add(node)
+                    .width(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_WIDTH)
+                    .height(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_HEIGHT)
+                    .padBottom(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_PAD)
+                    .row();
+        });
 
+        
+    }
 }

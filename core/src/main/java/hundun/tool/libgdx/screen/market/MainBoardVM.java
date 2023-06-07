@@ -28,7 +28,7 @@ public class MainBoardVM extends Table {
     MarketScreen screen;
     //List<CartGoodVM> nodes = new ArrayList<>();
 
-    Table childrenTable;
+    
 
     Container<Table> extraArea;
 
@@ -51,20 +51,14 @@ public class MainBoardVM extends Table {
     public MainBoardVM(MarketScreen screen) {
         this.screen = screen;
         
-        this.childrenTable = new Table();
-        ScrollPane scrollPane = new ScrollPane(childrenTable, screen.getGame().getMainSkin());
-        scrollPane.setScrollingDisabled(true, false);
+       
 
 
         this.extraArea = new Container<>();
 
 
-        this.add(scrollPane)
-                //.height(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_HEIGHT * 3)
-                .growY()
-                ;
+        
         this.add(extraArea)
-                .width(screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_AREA_WIDTH)
                 .growY()
         ;
         this.setBackground(DrawableFactory.getSimpleBoardBackground());
@@ -80,52 +74,36 @@ public class MainBoardVM extends Table {
     
     private void updateAsDetailingDesk(DeskRuntimeData detailingDeskData) {
         List<GoodRuntimeData> needShowList = new ArrayList<>();
-        Table newExtra;
 
         //title.setText(detailingDeskData.getName());
         needShowList.addAll(detailingDeskData.getGoodSaveDatas());
-        newExtra = deskExtraVM;
         deskExtraVM.updateData(detailingDeskData.getName(), detailingDeskData);
-
-        updateCore(needShowList, newExtra);
+        deskExtraVM.updateCore(needShowList);
+        
+        extraArea.setActor(deskExtraVM);
     }
     
     private void updateAsDetailingGood(GoodRuntimeData detailingGood) {
         List<GoodRuntimeData> needShowList = new ArrayList<>();
-        Table newExtra;
+
 
         //title.setText(detailingGood.getName());
         needShowList.add(detailingGood);
-        newExtra = goodExtraVM;
         goodExtraVM.updateData(detailingGood);
 
-        updateCore(needShowList, newExtra);
+        extraArea.setActor(goodExtraVM);
     }
     
-    private void updateCore(List<GoodRuntimeData> needShowList, Table newExtra) {
-        childrenTable.clear();
-        needShowList.forEach(it -> {
-            CartGoodVM node = new CartGoodVM(screen, it);
-            childrenTable.add(node)
-                    .width(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_WIDTH)
-                    .height(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_HEIGHT)
-                    .padBottom(screen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_PAD)
-                    .row();
-        });
-
-        extraArea.setActor(newExtra);
-    }
+    
     
 
     private void updateAsCart(Set<GoodRuntimeData> tagedGood) {
         List<GoodRuntimeData> needShowList = new ArrayList<>();
-        Table newExtra;
 
         //title.setText("心愿单");
         needShowList.addAll(tagedGood);
-        newExtra = null;
 
-        updateCore(needShowList, newExtra);
+        extraArea.setActor(null);
     }
 
     public void updateByState() {

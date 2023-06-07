@@ -36,7 +36,8 @@ public class ScreenContext {
         public final int GOOD_NODE_WIDTH = 400;
         public final int GOOD_NODE_PAD = 10;
 
-        public final int CART_BOARD_EXTRA_AREA_WIDTH = 500;
+        public final int DESK_EXTRA_AREA_LEFT_PART_WIDTH = 300;
+        public final int DESK_EXTRA_AREA_RIGHT_PART_WIDTH = 300;
         public final int CART_BOARD_EXTRA_IMAGE_SIZE = 300;
 
         public final int CART_BOARD_WIDTH = 600;
