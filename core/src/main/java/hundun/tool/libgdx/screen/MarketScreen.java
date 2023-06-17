@@ -159,7 +159,6 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
     }
 
     private void onAnyTagChanged(@Null GoodRuntimeData changed) {
-        CrossScreenDataPackage crossScreenDataPackage = game.getLogicContext().getCrossScreenDataPackage();
         mainBoardVM.updateByState(false);
         deskAreaVM.updateCartData(changed);
     }

@@ -34,6 +34,7 @@ public class MainBoardVM extends Table {
 
     DeskExtraVM deskExtraVM;
     GoodExtraVM goodExtraVM;
+    CartExtraVM cartExtraVM;
     @Setter
     MainBoardState state;
     @Setter
@@ -66,6 +67,7 @@ public class MainBoardVM extends Table {
         // ----- candidates ------
         this.deskExtraVM = new DeskExtraVM(screen);
         this.goodExtraVM = new GoodExtraVM(screen);
+        this.cartExtraVM = new CartExtraVM(screen);
     }
 
     public void name() {
@@ -78,15 +80,15 @@ public class MainBoardVM extends Table {
         needShowList.addAll(detailingDeskData.getGoodSaveDatas());
         
         if (justChanged) {
-            deskExtraVM.updateData(detailingDeskData.getName(), detailingDeskData);
-            deskExtraVM.updateCore(needShowList);
+            deskExtraVM.updateForShow(detailingDeskData.getName(), detailingDeskData);
+            deskExtraVM.updateGoods(needShowList);
             extraArea.setActor(deskExtraVM);
         } else {
-            deskExtraVM.updateCore(needShowList);
+            deskExtraVM.updateGoods(needShowList);
         }
     }
     
-    private void updateAsDetailingGood(GoodRuntimeData detailingGood) {
+    private void updateAsDetailingGood(GoodRuntimeData detailingGood, boolean justChanged) {
         List<GoodRuntimeData> needShowList = new ArrayList<>();
 
 
@@ -100,26 +102,33 @@ public class MainBoardVM extends Table {
     
     
 
-    private void updateAsCart(Set<GoodRuntimeData> tagedGood) {
+    private void updateAsCart(Set<GoodRuntimeData> tagedGood, boolean justChanged) {
         List<GoodRuntimeData> needShowList = new ArrayList<>();
 
         //title.setText("心愿单");
         needShowList.addAll(tagedGood);
-
-        extraArea.setActor(null);
+        cartExtraVM.updateGoods(needShowList);
+        
+        if (justChanged) {
+            cartExtraVM.updateForShow(detailingDeskData.getName(), detailingDeskData);
+            cartExtraVM.updateGoods(needShowList);
+            extraArea.setActor(cartExtraVM);
+        } else {
+            cartExtraVM.updateGoods(needShowList);
+        }
     }
 
     public void updateByState(boolean justChanged) {
         CrossScreenDataPackage crossScreenDataPackage = screen.getGame().getLogicContext().getCrossScreenDataPackage();
         switch (state) {
             case CART:
-                updateAsCart(crossScreenDataPackage.getTagedGoods());
+                updateAsCart(crossScreenDataPackage.getTagedGoods(), justChanged);
                 break;
             case DESK:
                 updateAsDetailingDesk(detailingDeskData, justChanged);
                 break;
             case GOOD:
-                updateAsDetailingGood(detailingGoodData);
+                updateAsDetailingGood(detailingGoodData, justChanged);
                 break;
             default:
                 break;
