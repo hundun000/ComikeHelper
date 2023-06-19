@@ -2,23 +2,33 @@ package hundun.tool.libgdx.screen.market;
 
 import java.util.stream.Stream;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import hundun.tool.libgdx.screen.MarketScreen;
-import hundun.tool.logic.data.DeskRuntimeData;
+import hundun.tool.libgdx.screen.shared.MyWindow;
 import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 
-public class GoodExtraVM extends Table {
+public class GoodMainBoardExtraVM extends MyWindow {
     MarketScreen screen;
     Table childrenTable;
 
-    public GoodExtraVM(MarketScreen screen) {
+    TextButton backButton;
+
+    public GoodMainBoardExtraVM(MarketScreen screen) {
+
+        this.backButton = new TextButton("返回", screen.getGame().getMainSkin());
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                screen.getMainBoardVM().back();
+            }
+        });
+        init("DeskExtra", screen.getGame(), backButton);
         this.screen = screen;
 
         this.childrenTable = new Table();
@@ -29,7 +39,7 @@ public class GoodExtraVM extends Table {
                 .maxHeight(screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_IMAGE_SIZE * 2.5f)
                 ;*/
 
-        this.add(childrenTable);
+        this.addToMain(childrenTable);
         //this.debugTable();
     }
 

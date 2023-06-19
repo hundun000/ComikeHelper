@@ -35,7 +35,6 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
     // ------ UI layer ------
     @Getter
     private MainBoardVM mainBoardVM;
-    private RoomSwitchBoardVM roomSwitchBoardVM;
 
     // ------ image previewer layer ------
     private final OrthographicCamera imagePreviewerCamera;
@@ -70,17 +69,10 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
         deskStage.setScrollFocus(deskAreaVM);
         
         // ------ UI layer ------
-        roomSwitchBoardVM = new RoomSwitchBoardVM(this);
-        uiRootTable.add(roomSwitchBoardVM)
-                .expand()
-                //.grow()
-                .left()
-                .top()
-                ;
 
         mainBoardVM = new MainBoardVM(this);
         uiRootTable.add(mainBoardVM)
-                //.expand()
+                .expandX()
                 .growY()
                 .right()
                 ;
@@ -133,11 +125,11 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
     private void updateUIForShow() {
         popupCloseButton.hide();
         imageViewerVM.hide();
-        roomSwitchBoardVM.intoSmallMode();
 
         deskAreaVM.getCameraDataPackage().forceSet(null, null, 0);
         mainBoardVM.setState(MainBoardState.CART);
-        
+        mainBoardVM.updateByState(true);
+
         updateUIAfterRoomChanged();
     }
 
@@ -153,7 +145,6 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
                 currentRoomData.getRoomHeight(),
                 currentRoomData.getDeskDatas()
         );
-        roomSwitchBoardVM.intoFullMode();
         // for newest cart
         onAnyTagChanged(null);
     }

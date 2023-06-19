@@ -5,31 +5,25 @@ import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import hundun.tool.libgdx.screen.MarketScreen;
-import hundun.tool.libgdx.screen.market.MainBoardVM.MainBoardState;
 import hundun.tool.libgdx.screen.shared.ImageBoxVM;
 import hundun.tool.libgdx.screen.shared.MyWindow;
-import hundun.tool.logic.LogicContext.CrossScreenDataPackage;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
 
-public class DeskExtraVM extends MyWindow {
+public class DeskMainBoardExtraVM extends MyWindow {
     
     public static int WINDOW_PAD_TOP = 80;
     public static int WINDOW_PAD_OTHER = 10;
@@ -42,7 +36,7 @@ public class DeskExtraVM extends MyWindow {
     //Table page1RootTable;
     Table goodsTable;
     //Table page2RootTable;
-    Table imagesTable;
+    HorizontalGroup imagesTable;
     
     MyWindow extraTextTable;
     TextButton backButton;
@@ -53,7 +47,7 @@ public class DeskExtraVM extends MyWindow {
         ;
     }
     
-    public DeskExtraVM(MarketScreen screen) {
+    public DeskMainBoardExtraVM(MarketScreen screen) {
         this.backButton = new TextButton("返回", screen.getGame().getMainSkin());
         backButton.addListener(new ClickListener() {
             @Override
@@ -109,45 +103,46 @@ public class DeskExtraVM extends MyWindow {
                 ;
         
         // ----- candidates ------
-        Table page1RootTable = new Table();
-        pageRootTableMap.put(DeskExtraState.PAGE1, page1RootTable);
-        //page1Table.setBackground(screen.getGame().getTextureManager().getMcStyleTable());
-        MyWindow goodsTableContainer = new MyWindow("goods", screen.getGame());
-        this.goodsTable = new Table();
-        ScrollPane goodsScrollPane = new ScrollPane(goodsTable, screen.getGame().getMainSkin());
-        goodsScrollPane.setScrollingDisabled(true, false);
-        goodsScrollPane.setFadeScrollBars(false);
-        goodsScrollPane.setForceScroll(true, false);
-        goodsTableContainer.addToMain(goodsScrollPane);
-        page1RootTable.add(goodsTableContainer)
-                .grow();
+        {
+            Table pageRootTable = new Table();
+            pageRootTableMap.put(DeskExtraState.PAGE1, pageRootTable);
+            MyWindow container = new MyWindow("goods", screen.getGame());
+            this.goodsTable = new Table();
+            ScrollPane scrollPane = new ScrollPane(goodsTable, screen.getGame().getMainSkin());
+            scrollPane.setScrollingDisabled(true, false);
+            scrollPane.setFadeScrollBars(false);
+            scrollPane.setForceScroll(false, true);
+            container.addToMain(scrollPane);
+            pageRootTable.add(container)
+                    .grow();
+        }
 
-        Table page2RootTable = new Table();
-        pageRootTableMap.put(DeskExtraState.PAGE2, page2RootTable);
-        //page2Table.setBackground(screen.getGame().getTextureManager().getMcStyleTable());
-        MyWindow imagesTableContainer = new MyWindow("images", screen.getGame());
-        this.imagesTable = new Table();
-        //childrenTable.getTitleTable().setHeight(200);
-        ScrollPane imagesScrollPane = new ScrollPane(imagesTable, screen.getGame().getMainSkin());
-        imagesScrollPane.setScrollingDisabled(false, true);
-        imagesScrollPane.setFadeScrollBars(false);
-        goodsScrollPane.setForceScroll(false, true);
-        imagesTableContainer.addToMain(imagesScrollPane);
-        page2RootTable.add(imagesTableContainer)
-                .height(screen.getGame().getScreenContext().getLayoutConst().DESK_EXTRA_IMAGE_SIZE * 1.1f
-                        + imagesTableContainer.getTitleHeight()
-                        + WINDOW_PAD_OTHER * 3)
-                .growX()
-                .row()
-                ;
-        
-        this.extraTextTable = new MyWindow("extra", screen.getGame());
-        extraTextTable.addToMain(new Label("test", screen.getGame().getMainSkin()));
-        page2RootTable.add(extraTextTable)
-                .padBottom(WINDOW_PAD_OTHER)
-                .grow()
-                ;
-        
+        {
+            Table pageRootTable = new Table();
+            pageRootTableMap.put(DeskExtraState.PAGE2, pageRootTable);
+            MyWindow container = new MyWindow("images", screen.getGame());
+            this.imagesTable = new HorizontalGroup();
+            imagesTable.padRight(screen.getGame().getScreenContext().getLayoutConst().DESK_EXTRA_IMAGE_SIZE * 0.1f);
+            ScrollPane imagesScrollPane = new ScrollPane(imagesTable, screen.getGame().getMainSkin());
+            imagesScrollPane.setScrollingDisabled(false, true);
+            imagesScrollPane.setFadeScrollBars(false);
+            imagesScrollPane.setForceScroll(true, false);
+            container.addToMain(imagesScrollPane);
+            pageRootTable.add(container)
+                    .height(screen.getGame().getScreenContext().getLayoutConst().DESK_EXTRA_IMAGE_SIZE * 1.1f
+                            + container.getTitleHeight()
+                            + WINDOW_PAD_OTHER * 3)
+                    .growX()
+                    .row()
+            ;
+
+            this.extraTextTable = new MyWindow("extra", screen.getGame());
+            extraTextTable.addToMain(new Label("test", screen.getGame().getMainSkin()));
+            pageRootTable.add(extraTextTable)
+                    .padBottom(WINDOW_PAD_OTHER)
+                    .grow()
+            ;
+        }
     }
 
 
@@ -177,10 +172,7 @@ public class DeskExtraVM extends MyWindow {
                     });
                 }
             });
-            imagesTable.add(image)
-                    .pad(10)
-                    //.row()
-                    ;
+            imagesTable.addActor(image);
         });
 
         updateByState(DeskExtraState.PAGE1);
