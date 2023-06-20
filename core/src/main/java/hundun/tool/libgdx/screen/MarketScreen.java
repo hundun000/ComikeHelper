@@ -12,12 +12,11 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.tool.ComikeHelperGame;
 import hundun.tool.libgdx.screen.shared.DeskVM;
-import hundun.tool.libgdx.screen.market.MainBoardVM;
-import hundun.tool.libgdx.screen.market.MainBoardVM.MainBoardState;
+import hundun.tool.libgdx.screen.market.mainboard.MarketMainBoardVM;
+import hundun.tool.libgdx.screen.market.mainboard.MarketMainBoardVM.MainBoardState;
 import hundun.tool.libgdx.screen.shared.DeskAreaVM;
 import hundun.tool.libgdx.screen.market.PopupCloseButton;
 import hundun.tool.libgdx.screen.market.ImageViewerVM;
-import hundun.tool.libgdx.screen.shared.RoomSwitchBoardVM;
 import hundun.tool.logic.LogicContext.CrossScreenDataPackage;
 import hundun.tool.logic.LogicContext.IModifyGoodTagListener;
 import hundun.tool.logic.data.GoodRuntimeData;
@@ -34,7 +33,7 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
 
     // ------ UI layer ------
     @Getter
-    private MainBoardVM mainBoardVM;
+    private MarketMainBoardVM mainBoardVM;
 
     // ------ image previewer layer ------
     private final OrthographicCamera imagePreviewerCamera;
@@ -70,7 +69,7 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
         
         // ------ UI layer ------
 
-        mainBoardVM = new MainBoardVM(this);
+        mainBoardVM = new MarketMainBoardVM(this);
         uiRootTable.add(mainBoardVM)
                 .expandX()
                 .growY()

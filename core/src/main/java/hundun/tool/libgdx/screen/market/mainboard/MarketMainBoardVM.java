@@ -1,4 +1,4 @@
-package hundun.tool.libgdx.screen.market;
+package hundun.tool.libgdx.screen.market.mainboard;
 /**
  * @author hundun
  * Created on 2023/05/10
@@ -17,7 +17,7 @@ import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
 import lombok.Setter;
 
-public class MainBoardVM extends Table {
+public class MarketMainBoardVM extends Table {
 
     MarketScreen screen;
     //List<CartGoodVM> nodes = new ArrayList<>();
@@ -26,9 +26,9 @@ public class MainBoardVM extends Table {
 
     Container<Table> extraArea;
 
-    DeskMainBoardExtraVM deskMainBoardExtraVM;
-    GoodMainBoardExtraVM goodMainBoardExtraVM;
-    CartExtraMainBoardVM cartExtraMainBoardVM;
+    DeskExtraVM deskExtraVM;
+    GoodExtraVM goodExtraVM;
+    CartExtraVM cartExtraVM;
     @Setter
     MainBoardState state;
     @Setter
@@ -43,7 +43,7 @@ public class MainBoardVM extends Table {
         ;
     }
     
-    public MainBoardVM(MarketScreen screen) {
+    public MarketMainBoardVM(MarketScreen screen) {
         this.screen = screen;
         
        
@@ -59,38 +59,30 @@ public class MainBoardVM extends Table {
         this.setBackground(screen.getGame().getTextureManager().getMcStyleTable());
 
         // ----- candidates ------
-        this.deskMainBoardExtraVM = new DeskMainBoardExtraVM(screen);
-        this.goodMainBoardExtraVM = new GoodMainBoardExtraVM(screen);
-        this.cartExtraMainBoardVM = new CartExtraMainBoardVM(screen);
+        this.deskExtraVM = new DeskExtraVM(screen);
+        this.goodExtraVM = new GoodExtraVM(screen);
+        this.cartExtraVM = new CartExtraVM(screen);
     }
 
-    public void name() {
-        
-    }
     
     private void updateAsDetailingDesk(DeskRuntimeData detailingDeskData, boolean justChanged) {
 
-        List<GoodRuntimeData> needShowList = new ArrayList<>();
-        needShowList.addAll(detailingDeskData.getGoodSaveDatas());
+        List<GoodRuntimeData> needShowList = new ArrayList<>(detailingDeskData.getGoodSaveDatas());
         
         if (justChanged) {
-            deskMainBoardExtraVM.updateForShow(detailingDeskData.getName(), detailingDeskData);
-            deskMainBoardExtraVM.updateGoods(needShowList);
-            extraArea.setActor(deskMainBoardExtraVM);
+            deskExtraVM.updateForShow(detailingDeskData.getName(), detailingDeskData);
+            deskExtraVM.getGoodListPageVM().updateGoods(needShowList);
+            extraArea.setActor(deskExtraVM);
         } else {
-            deskMainBoardExtraVM.updateGoods(needShowList);
+            deskExtraVM.getGoodListPageVM().updateGoods(needShowList);
         }
     }
     
     private void updateAsDetailingGood(GoodRuntimeData detailingGood, boolean justChanged) {
-        List<GoodRuntimeData> needShowList = new ArrayList<>();
 
+        goodExtraVM.updateData(detailingGood);
 
-        //title.setText(detailingGood.getName());
-        needShowList.add(detailingGood);
-        goodMainBoardExtraVM.updateData(detailingGood);
-
-        extraArea.setActor(goodMainBoardExtraVM);
+        extraArea.setActor(goodExtraVM);
     }
     
     
@@ -100,11 +92,11 @@ public class MainBoardVM extends Table {
         List<GoodRuntimeData> needShowList = new ArrayList<>(tagedGood);
 
         if (justChanged) {
-            cartExtraMainBoardVM.updateForShow();
-            cartExtraMainBoardVM.updateGoods(needShowList);
-            extraArea.setActor(cartExtraMainBoardVM);
+            cartExtraVM.updateForShow();
+            cartExtraVM.getGoodListPageVM().updateGoods(needShowList);
+            extraArea.setActor(cartExtraVM);
         } else {
-            cartExtraMainBoardVM.updateGoods(needShowList);
+            cartExtraVM.getGoodListPageVM().updateGoods(needShowList);
         }
     }
 

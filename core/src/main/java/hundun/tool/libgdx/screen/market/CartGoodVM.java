@@ -1,7 +1,6 @@
 package hundun.tool.libgdx.screen.market;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -9,14 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.libgdx.screen.MarketScreen;
-import hundun.tool.libgdx.screen.market.MainBoardVM.MainBoardState;
+import hundun.tool.libgdx.screen.market.mainboard.MarketMainBoardVM.MainBoardState;
 import hundun.tool.logic.data.GoodRuntimeData;
-import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 
 /**
  * @author hundun

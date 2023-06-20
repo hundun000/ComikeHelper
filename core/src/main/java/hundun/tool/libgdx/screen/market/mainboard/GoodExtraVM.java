@@ -1,4 +1,4 @@
-package hundun.tool.libgdx.screen.market;
+package hundun.tool.libgdx.screen.market.mainboard;
 
 import java.util.stream.Stream;
 
@@ -8,17 +8,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import hundun.tool.libgdx.screen.MarketScreen;
+import hundun.tool.libgdx.screen.market.GoodTagEditorNodeVM;
 import hundun.tool.libgdx.screen.shared.MyWindow;
 import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 
-public class GoodMainBoardExtraVM extends MyWindow {
+public class GoodExtraVM extends MyWindow {
     MarketScreen screen;
     Table childrenTable;
 
     TextButton backButton;
 
-    public GoodMainBoardExtraVM(MarketScreen screen) {
+    public GoodExtraVM(MarketScreen screen) {
 
         this.backButton = new TextButton("返回", screen.getGame().getMainSkin());
         backButton.addListener(new ClickListener() {
