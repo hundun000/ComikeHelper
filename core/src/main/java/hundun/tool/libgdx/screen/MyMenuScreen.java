@@ -116,7 +116,7 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
         Gdx.input.setInputProcessor(uiStage);
         game.getBatch().setProjectionMatrix(uiStage.getViewport().getCamera().combined);
 
-        initScene2d();
+
     }
 
     @Override
@@ -127,6 +127,6 @@ public class MyMenuScreen extends BaseHundunScreen<ComikeHelperGame, RootSaveDat
 
     @Override
     protected void create() {
-
+        initScene2d();
     }
 }

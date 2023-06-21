@@ -29,7 +29,7 @@ public class GoodExtraVM extends MyWindow {
                 screen.getMainBoardVM().back();
             }
         });
-        init("DeskExtra", screen.getGame(), backButton);
+        init("", screen.getGame(), backButton);
         this.screen = screen;
 
         this.childrenTable = new Table();
@@ -40,7 +40,9 @@ public class GoodExtraVM extends MyWindow {
                 .maxHeight(screen.getGame().getScreenContext().getLayoutConst().CART_BOARD_EXTRA_IMAGE_SIZE * 2.5f)
                 ;*/
 
-        this.addToMain(childrenTable);
+        this.addToMain(childrenTable)
+                .width(screen.getGame().getScreenContext().getLayoutConst().ANY_EXTRA_TOTAL_WIDTH)
+                .growY();
         //this.debugTable();
     }
 

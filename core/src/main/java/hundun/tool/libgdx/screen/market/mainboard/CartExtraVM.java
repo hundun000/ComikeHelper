@@ -38,7 +38,7 @@ public class CartExtraVM extends BasePageableTable {
     
     public CartExtraVM(MarketScreen screen) {
         super(screen);
-        init("CartExtra", screen.getGame());
+        init("", screen.getGame());
         //this.setFillParent(true);
         //this.pad(WINDOW_PAD_TOP, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER);
         //this.getTitleTable().center();

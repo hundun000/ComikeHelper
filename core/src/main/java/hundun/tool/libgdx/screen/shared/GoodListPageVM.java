@@ -19,7 +19,7 @@ public class GoodListPageVM extends Table {
     public GoodListPageVM(MarketScreen screen) {
         this.marketScreen = screen;
 
-        MyWindow container = new MyWindow("goods", screen.getGame());
+        MyWindow container = new MyWindow("作品列表", screen.getGame());
         this.goodsTable = new Table();
         ScrollPane scrollPane = new ScrollPane(goodsTable, screen.getGame().getMainSkin());
         scrollPane.setScrollingDisabled(true, false);

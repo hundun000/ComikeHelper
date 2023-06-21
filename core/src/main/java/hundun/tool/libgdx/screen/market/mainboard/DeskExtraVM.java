@@ -58,7 +58,7 @@ public class DeskExtraVM extends BasePageableTable {
                 screen.getMainBoardVM().back();
             }
         });
-        init("DeskExtra", screen.getGame(), backButton);
+        init("", screen.getGame(), backButton);
         //this.setFillParent(true);
         //this.pad(WINDOW_PAD_TOP, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER, WINDOW_PAD_OTHER);
         //this.getTitleTable().center();
@@ -78,7 +78,7 @@ public class DeskExtraVM extends BasePageableTable {
         }
         {
             Table pageRootTable = new Table();
-            MyWindow container = new MyWindow("images", screen.getGame());
+            MyWindow container = new MyWindow("图片列表", screen.getGame());
             this.imagesTable = new HorizontalGroup();
             imagesTable.padRight(screen.getGame().getScreenContext().getLayoutConst().DESK_EXTRA_IMAGE_SIZE * 0.1f);
             ScrollPane imagesScrollPane = new ScrollPane(imagesTable, screen.getGame().getMainSkin());
@@ -94,7 +94,7 @@ public class DeskExtraVM extends BasePageableTable {
                     .row()
             ;
 
-            this.extraTextTable = new MyWindow("extra", screen.getGame());
+            this.extraTextTable = new MyWindow("备注文本", screen.getGame());
             extraTextTable.addToMain(new Label("test", screen.getGame().getMainSkin()));
             pageRootTable.add(extraTextTable)
                     .padBottom(WINDOW_PAD_OTHER)

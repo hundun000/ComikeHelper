@@ -11,7 +11,7 @@ public class BuilderMainBoardVM extends BasePageableTable {
     AllButtonPageVM allButtonPageVM;
     RoomSwitchPageVM roomSwitchPageVM;
 
-    public enum BuilderMainBoardState {
+    private enum BuilderMainBoardState {
         PAGE1,
         PAGE2
         ;
