@@ -1,10 +1,15 @@
 package hundun.tool.libgdx.screen.builder;
 
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
+import hundun.tool.cpp.Converter;
+import hundun.tool.cpp.JsonRootBean;
 import hundun.tool.libgdx.screen.BuilderScreen;
 import hundun.tool.logic.ExternalResourceManager.MergeWorkInProgressModel;
 
@@ -15,18 +20,35 @@ public class AllButtonPageVM extends Table {
     public AllButtonPageVM(BuilderScreen screen) {
         this.screen = screen;
 
+        TextButton loadCppButton = new TextButton("append cpp", screen.getGame().getMainSkin());
+        loadCppButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                screen.startInputBox("cpp", str -> {
+                    JsonRootBean cppBean = null;
+                    try {
+                        cppBean = Converter.cppDataConvert(str);
+                        MergeWorkInProgressModel model = screen.getGame().getLogicContext().appendCppBean(cppBean);
+                        screen.startDialog(model, "cpp merge WIP");
+                        return null;
+                    } catch (JsonProcessingException e) {
+                        return e.getMessage();
+                    }
+
+
+                });
+            }
+        });
+        this.add(loadCppButton).row();
+
         TextButton loadExcelButton = new TextButton("append excel", screen.getGame().getMainSkin());
         loadExcelButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        MergeWorkInProgressModel model = screen.getGame().getLogicContext().appendExcelData();
-                        screen.startDialog(model, "excel merge WIP");
-                    }
-                }).start();
+                MergeWorkInProgressModel model = screen.getGame().getLogicContext().appendExcelData();
+                screen.startDialog(model, "excel merge WIP");
             }
         });
         this.add(loadExcelButton).row();
@@ -48,7 +70,7 @@ public class AllButtonPageVM extends Table {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 MergeWorkInProgressModel model = screen.getGame().getLogicContext().appendSaveData();
-                screen.startDialog(model, "default save WIP");
+                screen.startDialog(model, "save merge WIP");
             }
         });
         this.add(appendSaveButton).row();

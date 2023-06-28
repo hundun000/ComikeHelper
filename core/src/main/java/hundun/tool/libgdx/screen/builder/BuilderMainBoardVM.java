@@ -27,7 +27,7 @@ public class BuilderMainBoardVM extends BasePageableTable {
         this.roomSwitchPageVM = new RoomSwitchPageVM(screen);
 
         addPage(BuilderMainBoardState.PAGE1.name(),
-                "allButton",
+                "读写数据",
                 allButtonPageVM
         );
         addPage(BuilderMainBoardState.PAGE2.name(),

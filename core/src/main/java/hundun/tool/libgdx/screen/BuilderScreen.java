@@ -1,15 +1,30 @@
 package hundun.tool.libgdx.screen;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
+import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.ComikeHelperGame;
+import hundun.tool.cpp.Converter;
+import hundun.tool.cpp.JsonRootBean;
 import hundun.tool.libgdx.screen.builder.BuilderMainBoardVM;
 import hundun.tool.libgdx.screen.shared.DeskAreaVM;
 import hundun.tool.libgdx.screen.shared.DeskVM;
@@ -63,6 +78,35 @@ public class BuilderScreen extends AbstractComikeScreen {
                dialog.show(popupUiStage);
            }
         });
+    }
+
+    public void startInputBox(String title, Function<String, String> callback) {
+
+        Table inputTable = new Table();
+        inputTable.setBackground(DrawableFactory.createAlphaBoard(1, 1, Color.WHITE, 1f));
+
+        TextField textField = new TextField("test", game.getMainSkin());
+        Button okButton = new TextButton("ok", game.getMainSkin());
+        Label hintLabel = new Label("hint", game.getMainSkin());
+        okButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                String failMessage = callback.apply(textField.getText());
+                if (failMessage == null) {
+                    popupRootTable.clear();
+                } else {
+                    hintLabel.setText("callback返回处理错误：" + failMessage);
+                }
+            }
+        });
+
+
+        inputTable.add(textField).pad(50).grow();
+        inputTable.row();
+        inputTable.add(okButton);
+        inputTable.add(hintLabel).padLeft(20);
+        popupRootTable.add(inputTable).grow();
     }
 
     @Override

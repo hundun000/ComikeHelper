@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import hundun.gdxgame.gamelib.starter.save.PairChildrenSaveHandler.ISubSystemSettingSaveHandler;
-import hundun.gdxgame.gamelib.starter.save.PairChildrenSaveHandler.ISubGameplaySaveHandler;
+import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.tool.ComikeHelperGame;
+import hundun.tool.cpp.JsonRootBean;
 import hundun.tool.logic.ExternalResourceManager.MergeWorkInProgressModel;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
@@ -18,8 +18,10 @@ import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.RoomRuntimeData.Factory;
 import hundun.tool.logic.data.external.ExternalDeskData;
 import hundun.tool.logic.data.external.ExternalComikeData;
+import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData.GoodPrivateData;
+import hundun.tool.logic.data.save.RoomSaveData;
 import hundun.tool.logic.data.save.RootSaveData;
 import hundun.tool.logic.data.save.RootSaveData.MyGameplaySaveData;
 import lombok.AccessLevel;
@@ -203,6 +205,11 @@ public class LogicContext {
 
         crossScreenDataPackage.currentRoomData = crossScreenDataPackage.getRoomMap().values().stream().findFirst().orElse(null);
 
+    }
+
+    public MergeWorkInProgressModel appendCppBean(JsonRootBean cppBean) {
+        // TODO Auto-generated method stub
+        return appendDefaultData();
     }
 
 }
