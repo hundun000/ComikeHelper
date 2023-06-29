@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -14,7 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Null;
 
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
-import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.tool.libgdx.other.CameraDataPackage;
 import hundun.tool.libgdx.other.CameraGestureListener;
 import hundun.tool.libgdx.other.CameraMouseListener;
@@ -57,7 +54,7 @@ public class DeskAreaVM extends Table {
 
         deskDatas.forEach(deskData -> {
             DeskVM actor = new DeskVM(this, deskData);
-            nodes.put(deskData.getName(), actor);
+            nodes.put(deskData.getIdName(), actor);
 
             Vector2 roomPos = deskData.getLocation().getPos();
             actor.setBounds(roomPos.x, roomPos.y, screen.getGame().getScreenContext().getLayoutConst().DESK_WIDTH, screen.getGame().getScreenContext().getLayoutConst().DESK_HEIGHT);
@@ -72,7 +69,7 @@ public class DeskAreaVM extends Table {
         Collection<DeskVM> needUpdateNodes;
         if (changed != null) {
             needUpdateNodes = new HashSet<>(1);
-            needUpdateNodes.add(nodes.get(changed.getOwnerRef().getName()));
+            needUpdateNodes.add(nodes.get(changed.getOwnerRef().getIdName()));
         } else {
             needUpdateNodes = nodes.values();
         }

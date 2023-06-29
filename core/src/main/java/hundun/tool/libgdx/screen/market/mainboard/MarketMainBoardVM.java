@@ -70,7 +70,7 @@ public class MarketMainBoardVM extends Table {
         List<GoodRuntimeData> needShowList = new ArrayList<>(detailingDeskData.getGoodSaveDatas());
         
         if (justChanged) {
-            deskExtraVM.updateForShow(detailingDeskData.getName(), detailingDeskData);
+            deskExtraVM.updateForShow(detailingDeskData.getIdName(), detailingDeskData);
             deskExtraVM.getGoodListPageVM().updateGoods(needShowList);
             extraArea.setActor(deskExtraVM);
         } else {

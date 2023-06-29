@@ -1,6 +1,7 @@
 package hundun.tool.libgdx.screen;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -18,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -77,6 +79,30 @@ public class BuilderScreen extends AbstractComikeScreen {
            public void run() {
                dialog.show(popupUiStage);
            }
+        });
+    }
+
+    public void startDialog(String message, String title, @Null Runnable callback) {
+        final Dialog dialog = new Dialog(title, game.getMainSkin(), "dialog") {
+            public void result(Object obj) {
+                boolean action = (boolean) obj;
+                if (action) {
+                    callback.run();
+                }
+            }
+        };
+        dialog.text(message);
+        if (callback != null) {
+            dialog.button("Yes", true);
+            dialog.button("No", false);
+        } else {
+            dialog.button("OK", false);
+        }
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                dialog.show(popupUiStage);
+            }
         });
     }
 

@@ -80,17 +80,21 @@ public class ExternalComikeData {
                     DeskExcelTempData deskExcelTempData = deskExcelTempDataMap.get(comikePos);
                     
                     String deskName;
+                    String deskRealName;
                     List<GoodSaveData> goods;
                     if (deskExcelTempData != null) {
                         deskName = deskExcelTempData.getDeskName();
+                        deskRealName = deskExcelTempData.getDeskName();
                         goods = deskExcelTempData.getGoods();
                     } else {
                         deskName = comikePos + "的店";
+                        deskRealName = null;
                         goods = new ArrayList<>();
                     }
                     
                     DeskSaveData deskSaveData = DeskSaveData.builder()
-                                .name(deskName)
+                                .idName(deskName)
+                                .realName(deskRealName)
                                 .room(roomName)
                                 .area(area)
                                 .areaIndex(areaIndex)

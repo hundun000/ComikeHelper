@@ -1,6 +1,5 @@
 package hundun.tool.libgdx.screen.shared;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -13,9 +12,7 @@ import java.util.Set;
 
 import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.tool.ComikeHelperGame;
-import hundun.tool.libgdx.screen.shared.DeskAreaVM;
 import hundun.tool.logic.data.DeskRuntimeData;
-import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import lombok.Getter;
 
@@ -45,7 +42,7 @@ public class DeskVM extends Table {
         
         this.setBackground(new TextureRegionDrawable(new TextureRegion(TextureFactory.getSimpleBoardBackground(game.getScreenContext().getLayoutConst().DESK_WIDTH, game.getScreenContext().getLayoutConst().DESK_HEIGHT))));
         this.add(new Label(
-                deskData.getName() + " " + deskData.getLocation().getArea() + deskData.getLocation().getAreaIndex(), 
+                deskData.getShowName() + " " + deskData.getLocation().getArea() + deskData.getLocation().getAreaIndex(),
                 game.getMainSkin()));
         this.add(tagImageTable)
                 ;

@@ -2,7 +2,6 @@ package hundun.tool.logic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
 
 import de.damios.guacamole.tuple.Pair;
 
@@ -10,16 +9,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.tool.ComikeHelperGame;
+import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
 import hundun.tool.logic.data.external.ExternalDeskData;
 import hundun.tool.logic.data.external.ExternalComikeData;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
-import hundun.tool.logic.data.save.DeskSaveData;
 import hundun.tool.logic.data.save.GoodSaveData;
 import hundun.tool.logic.data.save.RoomSaveData;
 import hundun.tool.logic.util.ComplexExternalJsonSaveTool;
@@ -146,7 +144,9 @@ public class ExternalResourceManager {
         @Getter
         Map<String, ExternalDeskData> previewAddDeskDataMap = new HashMap<>();
         @Getter
-        Map<String, ExternalDeskData> previewConflictDeskDataMap = new HashMap<>();
+        Map<String, ExternalDeskData> previewConflictByIdDeskDataMap = new HashMap<>();
+        @Getter
+        List<Pair<ExternalDeskData, ExternalDeskData>> previewConflictByPosDeskDataMap = new ArrayList<>();
         @Getter
         Pair<Integer, Integer> previewCartSizeCompare;
         
@@ -162,18 +162,30 @@ public class ExternalResourceManager {
             this.otherMainData = otherMainData;
             this.otherDeskDataMap = otherDeskDataMap;
             this.otherUserPrivateData = otherUserPrivateData;
-            
+
+
+            Map<String, ExternalDeskData> oldDeskPosMap = oldComikeData.getDeskExternalRuntimeDataMap().values().stream()
+                            .collect(Collectors.toMap(
+                                    it -> DeskLocation.Companion.toLine(it.getDeskSaveData()),
+                                    it -> it
+                            ));
+
             otherDeskDataMap.forEach((k, v) -> {
+                ExternalDeskData oldSamePosDeskData = oldDeskPosMap.get(DeskLocation.Companion.toLine(v.getDeskSaveData()));
+                if (oldSamePosDeskData != null) {
+                    previewConflictByPosDeskDataMap.add(new Pair<>(oldSamePosDeskData, v));
+                    return;
+                }
                 ExternalDeskData oldDeskData = oldComikeData.getDeskExternalRuntimeDataMap().get(k);
                 if (oldDeskData != null) {
                     if (oldDeskData.getDeskSaveData().equals(v.getDeskSaveData())) {
                         previewNoChangeDeskDataMap.put(k, v);
                     } else {
-                        previewConflictDeskDataMap.put(k, v);
+                        previewConflictByIdDeskDataMap.put(k, v);
                     }
-                } else {
-                    previewAddDeskDataMap.put(k, v);
+                    return;
                 }
+                previewAddDeskDataMap.put(k, v);
             });
             
             otherMainData.getRoomSaveDataMap().forEach((k, v) -> {
@@ -189,8 +201,8 @@ public class ExternalResourceManager {
                 }
             });
             
-            previewCartSizeCompare = new Pair<Integer, Integer>(
-                    oldUserPrivateData.getGoodPrivateDataMap().size(), 
+            previewCartSizeCompare = new Pair<>(
+                    oldUserPrivateData.getGoodPrivateDataMap().size(),
                     otherUserPrivateData.getGoodPrivateDataMap().size());
         }
         
@@ -203,7 +215,8 @@ public class ExternalResourceManager {
             stringBuilder.append("\n");
             stringBuilder.append("NoChange Desk: " + this.getPreviewNoChangeDeskDataMap().size() + "; \n");
             stringBuilder.append("Add Desk: " + this.getPreviewAddDeskDataMap().size() + "; \n");
-            stringBuilder.append("Conflict Desk: " + this.getPreviewConflictDeskDataMap().size() + "; \n");
+            stringBuilder.append("ConflictById Desk: " + this.getPreviewConflictByIdDeskDataMap().size() + "; \n");
+            stringBuilder.append("ConflictByPos Desk: " + this.getPreviewConflictByPosDeskDataMap().size() + "; \n");
             stringBuilder.append("\n");
             stringBuilder.append("CartSize: " + this.getPreviewCartSizeCompare().x + " -> " + this.getPreviewCartSizeCompare().y + ";");
             return stringBuilder.toString();
@@ -211,9 +224,18 @@ public class ExternalResourceManager {
         
         
         public void apply() {
-            previewConflictDeskDataMap.entrySet().stream()
+            previewConflictByIdDeskDataMap.entrySet().stream()
                     .forEach(it -> {
                         oldComikeData.getDeskExternalRuntimeDataMap().get(it.getKey()).setDeskSaveData(it.getValue().getDeskSaveData());
+                    });
+            previewConflictByPosDeskDataMap.stream()
+                    .forEach(it -> {
+                        ExternalDeskData oldData = it.x;
+                        ExternalDeskData newData = it.y;
+                        assert oldData != null;
+                        assert newData != null;
+                        oldComikeData.getDeskExternalRuntimeDataMap().put(newData.getDeskSaveData().getIdName(), newData);
+                        oldComikeData.getDeskExternalRuntimeDataMap().remove(oldData.getDeskSaveData().getIdName());
                     });
             oldComikeData.getDeskExternalRuntimeDataMap().putAll(previewAddDeskDataMap);
             
@@ -244,6 +266,13 @@ public class ExternalResourceManager {
         sharedComplexSaveTool.writeAllSubFolderData(deskDatas);
     }
 
+    public List<String> previewAllUnknownSubFolder(Set<String> names) {
+        return sharedComplexSaveTool.previewAllUnknownSubFolder(names);
+    }
+
+    public void deleteAllUnknownSubFolder(Set<String> names) {
+        sharedComplexSaveTool.deleteAllUnknownSubFolder(names);
+    }
 
     public void lazyInitOnCreateStage1() {
         this.defaultCoverFileHandle = Gdx.files.internal("defaultCover.png");

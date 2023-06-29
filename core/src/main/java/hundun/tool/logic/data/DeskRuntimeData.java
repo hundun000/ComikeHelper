@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 
-import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.tool.libgdx.screen.LayoutConst;
 import hundun.tool.logic.data.external.ExternalDeskData;
 import hundun.tool.logic.data.save.DeskSaveData;
@@ -25,12 +24,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DeskRuntimeData {
 
-    private static List<String> AREA_LIST = JavaFeatureForGwt.arraysAsList("A","");
-
-
-
-
-    String name;
+    String idName;
+    String showName;
     DeskLocation location;
     List<GoodRuntimeData> goodSaveDatas;
     List<FileHandle> detailFileHandles;
@@ -53,7 +48,9 @@ public class DeskRuntimeData {
                 return room + SPLIT + area + SPLIT + areaIndex;
             }
 
-            
+            public static String toLine(DeskSaveData deskSaveData) {
+                return deskSaveData.getRoom() + SPLIT + deskSaveData.getArea() + SPLIT + deskSaveData.getAreaIndex();
+            }
         }
 
         public static class Factory {
@@ -67,13 +64,7 @@ public class DeskRuntimeData {
                         .pos(new Vector2(deskSaveData.getX(), deskSaveData.getY()))
                         .build();
             }
-            
-            public static Vector2 calculatePos(LayoutConst layoutConst, String area, int areaIndex) {
-                int col = AREA_LIST.indexOf(area);
-                int x = (col / 2) * (layoutConst.DESK_WIDTH + layoutConst.DESK_SMALL_COL_PADDING + layoutConst.DESK_WIDTH + layoutConst.DESK_BIG_COL_PADDING) + (col % 2 == 0 ? (layoutConst.DESK_BIG_COL_PADDING) : (layoutConst.DESK_SMALL_COL_PADDING + layoutConst.DESK_WIDTH + layoutConst.DESK_BIG_COL_PADDING));
-                int y = areaIndex * (layoutConst.DESK_HEIGHT + 10);
-                return new Vector2(x, y);
-            }
+
 
             
         }
@@ -83,7 +74,8 @@ public class DeskRuntimeData {
         public static DeskRuntimeData fromExternalRuntimeData(LayoutConst layoutConst, ExternalDeskData externalDeskData) {
             DeskSaveData deskSaveData = externalDeskData.getDeskSaveData();
             DeskRuntimeData result = DeskRuntimeData.builder()
-                    .name(deskSaveData.getName())
+                    .idName(deskSaveData.getIdName())
+                    .showName(deskSaveData.getRealName() != null ? deskSaveData.getRealName() : "未知")
                     .location(DeskLocation.Factory.fromLine(layoutConst, deskSaveData))
                     .coverFileHandle(externalDeskData.getCoverFileHandle())
                     .detailFileHandles(externalDeskData.getImageFileHandles())

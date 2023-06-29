@@ -11,7 +11,6 @@ import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData.GoodPrivateData;
-import hundun.tool.logic.data.save.RootSaveData.MyGameplaySaveData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -55,7 +54,7 @@ public class RootSaveData {
                     deskSaveDatas.put(
                         name,
                         DeskSaveData.builder()
-                            .name(name)
+                            .idName(name)
                             .room(room)
                             .area(area)
                             .areaIndex(it)
@@ -74,7 +73,7 @@ public class RootSaveData {
             deskSaveDatas.put(
                 "砍口垒同好组",
                 DeskSaveData.builder()
-                    .name("砍口垒同好组")
+                    .idName("砍口垒同好组")
                     .room(specialRoom)
                     .area("特")
                     .areaIndex(0)
@@ -88,7 +87,7 @@ public class RootSaveData {
             deskSaveDatas.put(
                 "少女前线同好组",
                 DeskSaveData.builder()
-                    .name("少女前线同好组")
+                    .idName("少女前线同好组")
                     .room(specialRoom)
                     .area("特")
                     .areaIndex(1)

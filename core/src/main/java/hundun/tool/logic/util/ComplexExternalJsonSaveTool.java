@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -122,5 +124,18 @@ public class ComplexExternalJsonSaveTool implements IComplexExternalHandler<Exte
     @Override
     public void writeAllSubFolderData(Map<String, ExternalDeskData> saveDataMap) {
         saveDataMap.forEach((k, v) -> writeSubFolderData(k, v));
+    }
+
+    public List<String> previewAllUnknownSubFolder(Collection<String> names) {
+        return Arrays.stream(baseFolderFileHandle.list())
+                .filter(it -> it.isDirectory() && !names.contains(it.name()))
+                .map(FileHandle::name)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteAllUnknownSubFolder(Collection<String> names) {
+        Arrays.stream(baseFolderFileHandle.list())
+                .filter(it -> it.isDirectory() && !names.contains(it.name()))
+                .forEach(FileHandle::deleteDirectory);
     }
 }

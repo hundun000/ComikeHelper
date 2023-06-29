@@ -16,7 +16,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class DeskSaveData {
-    String name;
+    String idName;
+    String realName;
     String room;
     String area;
     int areaIndex;

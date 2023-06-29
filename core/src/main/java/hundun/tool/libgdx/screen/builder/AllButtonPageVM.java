@@ -1,7 +1,5 @@
 package hundun.tool.libgdx.screen.builder;
 
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -82,8 +80,27 @@ public class AllButtonPageVM extends Table {
                 super.clicked(event, x, y);
                 screen.getGame().getLogicContext().saveCurrentSharedData();
                 screen.getGame().getLogicContext().calculateAndSaveCurrentUserData();
+                screen.startDialog(
+                        "保存完成",
+                        "save done",
+                        null
+                );
             }
         });
-        this.add(saveButton);
+        this.add(saveButton).row();
+
+        TextButton previewAndDeleteUnknownDesksButton = new TextButton("清理", screen.getGame().getMainSkin());
+        previewAndDeleteUnknownDesksButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                screen.startDialog(
+                        "以下数据将被删除：" + screen.getGame().getLogicContext().previewAllUnknownDesks().toString(),
+                        "delete WIP",
+                        () -> screen.getGame().getLogicContext().deleteAllUnknownDesks()
+                        );
+            }
+        });
+        this.add(previewAndDeleteUnknownDesksButton).row();
     }
 }
