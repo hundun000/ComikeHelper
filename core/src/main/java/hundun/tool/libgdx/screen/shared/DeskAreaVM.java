@@ -21,6 +21,7 @@ import hundun.tool.libgdx.other.CameraMouseListener;
 import hundun.tool.libgdx.screen.AbstractComikeScreen;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
+import hundun.tool.logic.data.save.RoomSaveData.DeskAreaInfo;
 import lombok.Getter;
 
 /**
@@ -43,8 +44,10 @@ public class DeskAreaVM extends Table {
         }
     }
 
-    public void updateDeskDatas(int roomWidth, int roomHeight, List<DeskRuntimeData> deskDatas,
-                                @Null FileHandle roomImage) {
+    public void updateDeskDatas(
+            DeskAreaInfo deskAreaInfo,
+            List<DeskRuntimeData> deskDatas,
+            @Null FileHandle roomImage) {
         this.clear();
         nodes.clear();
 
@@ -54,8 +57,11 @@ public class DeskAreaVM extends Table {
         } else {
             background.setDrawable(DrawableFactory.getSimpleBoardBackground());
         }
-
+        int roomWidth = deskAreaInfo.getDeskAreaWidth() + deskAreaInfo.getDeskAreaPadLeft() + deskAreaInfo.getDeskAreaPadRight();
+        int roomHeight = deskAreaInfo.getDeskAreaHeight() + deskAreaInfo.getDeskAreaPadTop() + deskAreaInfo.getDeskAreaPadBottom();
+        
         background.setBounds(0, 0, roomWidth, roomHeight);
+        
         this.addActor(background);
         this.addListener(new CameraGestureListener(cameraDataPackage));
         this.addListener(new CameraMouseListener(cameraDataPackage));
@@ -66,7 +72,12 @@ public class DeskAreaVM extends Table {
             nodes.put(deskData.getIdName(), actor);
 
             Vector2 roomPos = deskData.getLocation().getPos();
-            actor.setBounds(roomPos.x, roomPos.y, screen.getGame().getScreenContext().getLayoutConst().DESK_WIDTH, screen.getGame().getScreenContext().getLayoutConst().DESK_HEIGHT);
+            actor.setBounds(
+                    deskAreaInfo.getDeskAreaPadLeft() + roomPos.x, 
+                    deskAreaInfo.getDeskAreaPadBottom() + roomPos.y, 
+                    screen.getGame().getScreenContext().getLayoutConst().DESK_WIDTH, 
+                    screen.getGame().getScreenContext().getLayoutConst().DESK_HEIGHT
+                    );
             actor.addListener(new DeskClickListener(screen, actor));
             this.addActor(actor);
 

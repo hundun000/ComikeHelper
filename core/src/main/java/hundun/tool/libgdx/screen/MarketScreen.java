@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.tool.ComikeHelperGame;
+import hundun.tool.libgdx.other.CameraDataPackage;
 import hundun.tool.libgdx.screen.shared.DeskVM;
 import hundun.tool.libgdx.screen.market.mainboard.MarketMainBoardVM;
 import hundun.tool.libgdx.screen.market.mainboard.MarketMainBoardVM.MainBoardState;
@@ -125,7 +126,7 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
         popupCloseButton.hide();
         imageViewerVM.hide();
 
-        deskAreaVM.getCameraDataPackage().forceSet(null, null, 0);
+        deskAreaVM.getCameraDataPackage().forceSet(null, null, CameraDataPackage.DEFAULT_CAMERA_ZOOM_WEIGHT);
         mainBoardVM.setState(MainBoardState.CART);
         mainBoardVM.updateByState(true);
 
@@ -140,8 +141,7 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
         // for newest DeskDatas
         RoomRuntimeData currentRoomData = crossScreenDataPackage.getCurrentRoomData();
         deskAreaVM.updateDeskDatas(
-                currentRoomData.getRoomWidth(),
-                currentRoomData.getRoomHeight(),
+                currentRoomData.getDeskAreaInfo(),
                 currentRoomData.getDeskDatas(),
                 currentRoomData.getRoomImage());
         // for newest cart

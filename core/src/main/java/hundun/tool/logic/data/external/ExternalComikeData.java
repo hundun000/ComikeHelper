@@ -13,6 +13,7 @@ import hundun.tool.logic.ExternalResourceManager.DeskExcelTempData;
 import hundun.tool.logic.data.save.DeskSaveData;
 import hundun.tool.logic.data.save.GoodSaveData;
 import hundun.tool.logic.data.save.RoomSaveData;
+import hundun.tool.logic.data.save.RoomSaveData.DeskAreaInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -115,8 +116,11 @@ public class ExternalComikeData {
             int roomHeight = (lines.size() + 1) * layoutConst.DESK_HEIGHT;
             RoomSaveData roomSaveData = RoomSaveData.builder()
                     .name(roomName)
-                    .roomWidth(roomWidth)
-                    .roomHeight(roomHeight)
+                    .deskAreaInfo(DeskAreaInfo.builder()
+                            .deskAreaWidth(roomWidth)
+                            .deskAreaHeight(roomHeight)
+                            // TODO pad from excel
+                            .build())
                     .build();
             return roomSaveData;
         }
@@ -145,6 +149,7 @@ public class ExternalComikeData {
             return ExternalComikeData.builder()
                     .externalMainData(ExternalMainData.builder()
                             .roomSaveDataMap(roomSaveDataMap)
+                            .roomImageMap(new HashMap<>())
                             .build())
                     .deskExternalRuntimeDataMap(deskExternalRuntimeDataMap)
                     .build();

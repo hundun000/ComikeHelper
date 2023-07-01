@@ -3,7 +3,7 @@ package hundun.tool.libgdx.other;
 import lombok.Getter;
 
 public class CameraDataPackage {
-
+    public static Integer DEFAULT_CAMERA_ZOOM_WEIGHT = 10;
     @Getter
     private float currentCameraX;
     @Getter

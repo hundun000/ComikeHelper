@@ -11,6 +11,7 @@ import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData.GoodPrivateData;
+import hundun.tool.logic.data.save.RoomSaveData.DeskAreaInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -122,15 +123,19 @@ public class RootSaveData {
                             room,
                             RoomSaveData.builder()
                                 .name(room)
-                                .roomWidth(5000)
-                                .roomHeight(3000)
+                                .deskAreaInfo(DeskAreaInfo.builder()
+                                        .deskAreaWidth(5000)
+                                        .deskAreaHeight(3000)
+                                        .build())
                                 .build()
                             ,
                             specialRoom,
                             RoomSaveData.builder()
                                     .name(specialRoom)
-                                    .roomWidth(5000)
-                                    .roomHeight(3000)
+                                    .deskAreaInfo(DeskAreaInfo.builder()
+                                            .deskAreaWidth(5000)
+                                            .deskAreaHeight(3000)
+                                            .build())
                                     .build()
                             )
                         )

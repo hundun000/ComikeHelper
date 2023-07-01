@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.ComikeHelperGame;
+import hundun.tool.libgdx.other.CameraDataPackage;
 import hundun.tool.libgdx.screen.builder.BuilderMainBoardVM;
 import hundun.tool.libgdx.screen.shared.DeskAreaVM;
 import hundun.tool.libgdx.screen.shared.DeskVM;
@@ -27,6 +28,7 @@ import hundun.tool.libgdx.screen.shared.ScrollDialog;
 import hundun.tool.logic.ExternalResourceManager.MergeWorkInProgressModel;
 import hundun.tool.logic.LogicContext.CrossScreenDataPackage;
 import hundun.tool.logic.data.RoomRuntimeData;
+import hundun.tool.logic.data.save.RoomSaveData.DeskAreaInfo;
 
 /**
  * @author hundun
@@ -87,7 +89,9 @@ public class BuilderScreen extends AbstractComikeScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                callback.run();
+                if (callback != null) {
+                    callback.run();
+                }
                 popupRootTable.clear();
             }
         });
@@ -177,7 +181,7 @@ public class BuilderScreen extends AbstractComikeScreen {
     private void updateUIForShow() {
 
 
-        deskAreaVM.getCameraDataPackage().forceSet(null, null, 0);
+        deskAreaVM.getCameraDataPackage().forceSet(null, null, CameraDataPackage.DEFAULT_CAMERA_ZOOM_WEIGHT);
 
         updateUIAfterRoomChanged();
     }
@@ -189,15 +193,16 @@ public class BuilderScreen extends AbstractComikeScreen {
         RoomRuntimeData currentRoomData = crossScreenDataPackage.getCurrentRoomData();
         if (currentRoomData != null) {
             deskAreaVM.updateDeskDatas(
-                    currentRoomData.getRoomWidth(),
-                    currentRoomData.getRoomHeight(),
+                    currentRoomData.getDeskAreaInfo(),
                     currentRoomData.getDeskDatas(),
                     currentRoomData.getRoomImage()
             );
         } else {
             deskAreaVM.updateDeskDatas(
-                    100,
-                    100,
+                    DeskAreaInfo.builder()
+                            .deskAreaWidth(100)
+                            .deskAreaHeight(100)
+                            .build(),
                     new ArrayList<>(0),
                     null);
         }

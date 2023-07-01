@@ -15,6 +15,18 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RoomSaveData {
     String name;
-    int roomWidth;
-    int roomHeight;
+    DeskAreaInfo deskAreaInfo;
+    
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class DeskAreaInfo {
+        int deskAreaWidth;
+        int deskAreaHeight;
+        int deskAreaPadLeft;
+        int deskAreaPadRight;
+        int deskAreaPadTop;
+        int deskAreaPadBottom;
+    }
 }

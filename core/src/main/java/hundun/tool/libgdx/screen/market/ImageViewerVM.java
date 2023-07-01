@@ -60,7 +60,7 @@ public class ImageViewerVM extends Table {
         content.setDrawable(new TextureRegionDrawable(texture));
         content.setBounds((backgroundWidth - texture.getWidth()) / 2.0f, (backgroundHeight - texture.getHeight()) / 2.0f, texture.getWidth(), texture.getHeight());
 
-        cameraDataPackage.forceSet(backgroundWidth / 2.0f, backgroundHeight / 2.0f, 0);
+        cameraDataPackage.forceSet(backgroundWidth / 2.0f, backgroundHeight / 2.0f, CameraDataPackage.DEFAULT_CAMERA_ZOOM_WEIGHT);
 
         this.setVisible(true);
     }
