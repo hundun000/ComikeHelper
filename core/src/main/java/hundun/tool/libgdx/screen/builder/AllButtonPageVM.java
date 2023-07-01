@@ -6,10 +6,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.tool.cpp.Converter;
 import hundun.tool.cpp.JsonRootBean;
 import hundun.tool.libgdx.screen.BuilderScreen;
 import hundun.tool.logic.ExternalResourceManager.MergeWorkInProgressModel;
+import hundun.tool.logic.LogicContext.CleanUpWorkInProgressModel;
 
 public class AllButtonPageVM extends Table {
 
@@ -94,11 +96,15 @@ public class AllButtonPageVM extends Table {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
+                CleanUpWorkInProgressModel model = screen.getGame().getLogicContext().previewCleanUp();
                 screen.startDialog(
-                        "以下数据将被删除：" + screen.getGame().getLogicContext().previewAllUnknownDesks().toString(),
+                        JavaFeatureForGwt.stringFormat("以下desks将被删除：{0}\n以下rooms将被删除：{1}", model.getDeskNames(), model.getRoomNames()),
                         "delete WIP",
-                        () -> screen.getGame().getLogicContext().deleteAllUnknownDesks()
-                        );
+                        () -> {
+                            screen.getGame().getLogicContext().applyCleanUp();
+                            screen.getGame().getLogicContext().updateCrossScreenDataPackage();
+                            screen.updateUIAfterRoomChanged();
+                        });
             }
         });
         this.add(previewAndDeleteUnknownDesksButton).row();

@@ -135,13 +135,32 @@ public class LogicContext {
         externalResourceManager.saveAsSharedData(tempComikeData.getExternalMainData());
         externalResourceManager.saveAsSharedData(tempComikeData.getDeskExternalRuntimeDataMap());
     }
+    
+    @Getter
+    @AllArgsConstructor
+    public static class CleanUpWorkInProgressModel {
+        List<String> deskNames;
+        List<String> roomNames;
+    }
 
-    public List<String> previewAllUnknownDesks() {
-        return externalResourceManager.previewAllUnknownSubFolder(tempComikeData.getDeskExternalRuntimeDataMap().keySet());
+    public CleanUpWorkInProgressModel previewCleanUp() {
+        List<String> deskNames = externalResourceManager.previewAllUnknownSubFolder(tempComikeData.getDeskExternalRuntimeDataMap().keySet());
+        List<String> roomNames = tempComikeData.getExternalMainData().getRoomSaveDataMap().keySet().stream()
+                .filter(roomIt -> !tempComikeData.getDeskExternalRuntimeDataMap().values().stream()
+                            .anyMatch(deskIt -> deskIt.getDeskSaveData().getRoom().equals(roomIt))
+                            )
+                .collect(Collectors.toList());
+        return new CleanUpWorkInProgressModel(deskNames, roomNames);
     }
 
 
-    public void deleteAllUnknownDesks() {
+    public void applyCleanUp() {
+        tempComikeData.getExternalMainData().getRoomSaveDataMap().keySet()
+                .removeIf(roomIt -> !tempComikeData.getDeskExternalRuntimeDataMap().values().stream()
+                            .anyMatch(deskIt -> deskIt.getDeskSaveData().getRoom().equals(roomIt))
+                            )
+                ;
+        externalResourceManager.saveAsSharedData(tempComikeData.getExternalMainData());
         externalResourceManager.deleteAllUnknownSubFolder(tempComikeData.getDeskExternalRuntimeDataMap().keySet());
     }
 

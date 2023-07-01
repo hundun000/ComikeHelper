@@ -30,6 +30,7 @@ import hundun.tool.cpp.JsonRootBean;
 import hundun.tool.libgdx.screen.builder.BuilderMainBoardVM;
 import hundun.tool.libgdx.screen.shared.DeskAreaVM;
 import hundun.tool.libgdx.screen.shared.DeskVM;
+import hundun.tool.libgdx.screen.shared.ScrollDialog;
 import hundun.tool.logic.ExternalResourceManager.MergeWorkInProgressModel;
 import hundun.tool.logic.LogicContext.CrossScreenDataPackage;
 import hundun.tool.logic.data.RoomRuntimeData;
@@ -61,50 +62,46 @@ public class BuilderScreen extends AbstractComikeScreen {
     }
 
     public void startDialog(MergeWorkInProgressModel model, String title) {
-        final Dialog dialog = new Dialog(title, game.getMainSkin(), "dialog") {
-            public void result(Object obj) {
-                boolean action = (boolean) obj;
-                if (action) {
-                    model.apply();
-                    game.getLogicContext().updateCrossScreenDataPackage();
-                    updateUIAfterRoomChanged();
-                }
+
+        ScrollDialog scrollDialog = new ScrollDialog(game);
+        scrollDialog.getContent().setText(title + "\n\n" + model.toDiaglogMessage());
+        scrollDialog.addButton("Yes", new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                model.apply();
+                game.getLogicContext().updateCrossScreenDataPackage();
+                updateUIAfterRoomChanged();
+                popupRootTable.clear();
             }
-        };
-        dialog.text(model.toDiaglogMessage());
-        dialog.button("Yes", true);
-        dialog.button("No", false);
-        Gdx.app.postRunnable(new Runnable() {
-           @Override
-           public void run() {
-               dialog.show(popupUiStage);
-           }
         });
+        scrollDialog.addButton("No", new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                popupRootTable.clear();
+            }
+        });
+        popupRootTable.add(scrollDialog).grow();
     }
 
+    
     public void startDialog(String message, String title, @Null Runnable callback) {
-        final Dialog dialog = new Dialog(title, game.getMainSkin(), "dialog") {
-            public void result(Object obj) {
-                boolean action = (boolean) obj;
-                if (action) {
-                    callback.run();
-                }
-            }
-        };
-        dialog.text(message);
-        if (callback != null) {
-            dialog.button("Yes", true);
-            dialog.button("No", false);
-        } else {
-            dialog.button("OK", false);
-        }
-        Gdx.app.postRunnable(new Runnable() {
+
+        ScrollDialog scrollDialog = new ScrollDialog(game);
+        scrollDialog.getContent().setText(title + "\n\n" + message);
+        scrollDialog.addButton("OK", new ClickListener(){
             @Override
-            public void run() {
-                dialog.show(popupUiStage);
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                callback.run();
+                popupRootTable.clear();
             }
         });
+
+        popupRootTable.add(scrollDialog).grow();
     }
+    
 
     public void startInputBox(String title, Function<String, String> callback) {
 
@@ -193,7 +190,7 @@ public class BuilderScreen extends AbstractComikeScreen {
     }
 
     @Override
-    protected void updateUIAfterRoomChanged() {
+    public void updateUIAfterRoomChanged() {
         CrossScreenDataPackage crossScreenDataPackage = game.getLogicContext().getCrossScreenDataPackage();
         // for newest DeskDatas
         RoomRuntimeData currentRoomData = crossScreenDataPackage.getCurrentRoomData();
