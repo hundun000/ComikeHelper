@@ -1,5 +1,7 @@
 package hundun.tool.logic;
 
+import com.badlogic.gdx.files.FileHandle;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +21,7 @@ import hundun.tool.logic.data.external.ExternalDeskData;
 import hundun.tool.logic.data.external.ExternalComikeData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData.GoodPrivateData;
+import hundun.tool.logic.data.save.RoomSaveData;
 import hundun.tool.logic.data.save.RootSaveData;
 import hundun.tool.logic.data.save.RootSaveData.MyGameplaySaveData;
 import lombok.AccessLevel;
@@ -184,8 +187,10 @@ public class LogicContext {
     }
     
     public void updateCrossScreenDataPackage() {
-        Map<String, RoomRuntimeData> roomMap = tempComikeData.getExternalMainData().getRoomSaveDataMap().values().stream()
-            .map(roomSaveData -> {
+        Map<String, RoomRuntimeData> roomMap = tempComikeData.getExternalMainData().getRoomSaveDataMap().entrySet().stream()
+            .map(entry -> {
+                String roomName = entry.getKey();
+                RoomSaveData roomSaveData = entry.getValue();
                 List<DeskRuntimeData> deskRuntimeDatas = tempComikeData.getDeskExternalRuntimeDataMap().values().stream()
                     .map(deskExternalRuntimeData -> DeskRuntimeData.Factory.fromExternalRuntimeData(
                                 game.getScreenContext().getLayoutConst(),
@@ -195,7 +200,8 @@ public class LogicContext {
                     .filter(deskRuntimeData -> deskRuntimeData.getLocation().getRoom().equals(roomSaveData.getName()))
                     .collect(Collectors.toList())
                     ;
-                return Factory.fromSaveData(game.getScreenContext().getLayoutConst(), roomSaveData, deskRuntimeDatas);
+                FileHandle image = tempComikeData.getExternalMainData().getRoomImageMap().get(roomName);
+                return Factory.fromSaveData(game.getScreenContext().getLayoutConst(), roomSaveData, deskRuntimeDatas, image);
             })
             .collect(Collectors.toMap(
                 it -> it.getName(),

@@ -1,19 +1,15 @@
 package hundun.tool.libgdx.screen;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -21,12 +17,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.tool.ComikeHelperGame;
-import hundun.tool.cpp.Converter;
-import hundun.tool.cpp.JsonRootBean;
 import hundun.tool.libgdx.screen.builder.BuilderMainBoardVM;
 import hundun.tool.libgdx.screen.shared.DeskAreaVM;
 import hundun.tool.libgdx.screen.shared.DeskVM;
@@ -198,14 +191,15 @@ public class BuilderScreen extends AbstractComikeScreen {
             deskAreaVM.updateDeskDatas(
                     currentRoomData.getRoomWidth(),
                     currentRoomData.getRoomHeight(),
-                    currentRoomData.getDeskDatas()
+                    currentRoomData.getDeskDatas(),
+                    currentRoomData.getRoomImage()
             );
         } else {
             deskAreaVM.updateDeskDatas(
                     100,
                     100,
-                    new ArrayList<>(0)
-            );
+                    new ArrayList<>(0),
+                    null);
         }
 
         mainBoardVM.updateForShow();

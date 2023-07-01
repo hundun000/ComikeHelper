@@ -46,6 +46,7 @@ public class ExternalComikeData {
             return  ExternalComikeData.builder()
                     .externalMainData(ExternalMainData.builder()
                             .roomSaveDataMap(new HashMap<>())
+                            .roomImageMap(new HashMap<>())
                             .build())
                     .deskExternalRuntimeDataMap(new HashMap<>())
                     .build();

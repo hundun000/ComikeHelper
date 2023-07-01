@@ -6,9 +6,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Null;
 
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
@@ -40,12 +43,18 @@ public class DeskAreaVM extends Table {
         }
     }
 
-    public void updateDeskDatas(int roomWidth, int roomHeight, List<DeskRuntimeData> deskDatas) {
+    public void updateDeskDatas(int roomWidth, int roomHeight, List<DeskRuntimeData> deskDatas,
+                                @Null FileHandle roomImage) {
         this.clear();
         nodes.clear();
 
         Image background = new Image();
-        background.setDrawable(DrawableFactory.getSimpleBoardBackground());
+        if (roomImage != null) {
+            background.setDrawable(new TextureRegionDrawable(new Texture(roomImage)));
+        } else {
+            background.setDrawable(DrawableFactory.getSimpleBoardBackground());
+        }
+
         background.setBounds(0, 0, roomWidth, roomHeight);
         this.addActor(background);
         this.addListener(new CameraGestureListener(cameraDataPackage));

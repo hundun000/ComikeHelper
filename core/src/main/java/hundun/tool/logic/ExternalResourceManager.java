@@ -149,6 +149,8 @@ public class ExternalResourceManager {
         List<Pair<ExternalDeskData, ExternalDeskData>> previewConflictByPosDeskDataMap = new ArrayList<>();
         @Getter
         Pair<Integer, Integer> previewCartSizeCompare;
+        @Getter
+        Map<String, FileHandle> previewAddRoomImageMap = new HashMap<>();
         
         public MergeWorkInProgressModel(
                 ExternalComikeData oldComikeData,
@@ -200,6 +202,8 @@ public class ExternalResourceManager {
                     previewAddRoomDataMap.put(k, v);
                 }
             });
+            previewAddRoomImageMap.putAll(otherMainData.getRoomImageMap());
+            
             
             previewCartSizeCompare = new Pair<>(
                     oldUserPrivateData.getGoodPrivateDataMap().size(),
@@ -212,6 +216,7 @@ public class ExternalResourceManager {
             stringBuilder.append("NoChange Room: " + this.getPreviewNoChangeRoomDataMap().size() + "; \n");
             stringBuilder.append("Add Room: " + this.getPreviewAddRoomDataMap().size() + "; \n");
             stringBuilder.append("Conflict Room: " + this.getPreviewConflictRoomDataMap().size() + "; \n");
+            stringBuilder.append("Add Room Image: " + this.getPreviewAddRoomImageMap().size() + "; \n");
             stringBuilder.append("\n");
             stringBuilder.append("NoChange Desk: " + this.getPreviewNoChangeDeskDataMap().size() + "; \n");
             stringBuilder.append("Add Desk: " + this.getPreviewAddDeskDataMap().size() + "; \n");
@@ -244,7 +249,8 @@ public class ExternalResourceManager {
                         oldComikeData.getExternalMainData().getRoomSaveDataMap().put(it.getKey(), it.getValue());
                     });
             oldComikeData.getExternalMainData().getRoomSaveDataMap().putAll(previewAddRoomDataMap);
-   
+            oldComikeData.getExternalMainData().getRoomImageMap().putAll(previewAddRoomImageMap);
+            
             oldUserPrivateData.setGoodPrivateDataMap(otherUserPrivateData.getGoodPrivateDataMap());
         }
     }
