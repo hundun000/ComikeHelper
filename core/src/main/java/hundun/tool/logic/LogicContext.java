@@ -197,7 +197,7 @@ public class LogicContext {
                                 deskExternalRuntimeData
                                 )
                     )
-                    .filter(deskRuntimeData -> deskRuntimeData.getLocation().getRoom().equals(roomSaveData.getName()))
+                    .filter(deskRuntimeData -> deskRuntimeData.getMainLocation().getRoom().equals(roomSaveData.getName()))
                     .collect(Collectors.toList())
                     ;
                 FileHandle image = tempComikeData.getExternalMainData().getRoomImageMap().get(roomName);

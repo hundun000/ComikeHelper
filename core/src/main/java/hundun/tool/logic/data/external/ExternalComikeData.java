@@ -36,7 +36,7 @@ public class ExternalComikeData {
 
     public static class Factory {
         
-        private static String extractInteger(String str) {
+        public static String extractInteger(String str) {
             String integer = "";
             int i = str.length() - 1;
             while (i >= 0 && Character.isDigit(str.charAt(i))) {
@@ -58,7 +58,7 @@ public class ExternalComikeData {
 
 
 
-        private static Pair<RoomSaveData, Map<String, ExternalDeskData>>  handleOneRoom(
+        private static Pair<RoomSaveData, Map<String, ExternalDeskData>> handleOneRoom(
                 LayoutConst layoutConst,
                 String roomName,
                 List<Map<Integer, String>> lines,
@@ -96,24 +96,29 @@ public class ExternalComikeData {
                     }
                     int x = layoutConst.DESK_WIDTH * col;
                     
-                    final String areaIndexText = extractInteger(cellComikePos);
-                    final int areaIndex = Integer.parseInt(areaIndexText);
-                    final String area = cellComikePos.substring(0, cellComikePos.length() - areaIndexText.length());
+                    final String cellAreaIndexText = extractInteger(cellComikePos);
+                    final int cellAreaIndex = Integer.parseInt(cellAreaIndexText);
+                    final String cellArea = cellComikePos.substring(0, cellComikePos.length() - cellAreaIndexText.length());
 
                     final DeskExcelTempData targetDeskExcelTempData = deskExcelTempDataMap.values().stream()
-                            .filter(it -> it.getPos().equals(cellComikePos)
-                                    || it.getCompanionPosList().stream().anyMatch(companionPos -> companionPos.equals(cellComikePos)))
+                            .filter(it -> it.getArea().equals(cellArea)
+                                        && it.getMainAreaIndex() <= cellAreaIndex
+                                        && cellAreaIndex <= it.getEndAreaIndex()
+                            )
                             .findAny()
                             .orElse(null)
                             ;
+                    final int mainAreaIndex;
                     final String deskIdName;
                     final String deskRealName;
                     final List<GoodSaveData> goods;
                     if (targetDeskExcelTempData == null) {
+                        mainAreaIndex = cellAreaIndex;
                         deskIdName = cellComikePos + "的店";
                         deskRealName = null;
                         goods = new ArrayList<>();
                     } else {
+                        mainAreaIndex = targetDeskExcelTempData.getMainAreaIndex();
                         deskIdName = targetDeskExcelTempData.getDeskName();
                         deskRealName = targetDeskExcelTempData.getDeskName();
                         goods = targetDeskExcelTempData.getGoods();
@@ -126,7 +131,7 @@ public class ExternalComikeData {
                                 .idName(deskIdName)
                                 .realName(deskRealName)
                                 .room(roomName)
-                                .area(area)
+                                .area(cellArea)
                                 .pos(null)
                                 .companionPosList(new ArrayList<>())
                                 .goodSaveDatas(goods)
@@ -135,15 +140,16 @@ public class ExternalComikeData {
                         deskResultMap.put(deskIdName, targetDeskSaveData);
                     }
 
-                    PosSaveData cellPosSaveData = PosSaveData.builder()
-                            .areaIndex(areaIndex)
+                    PosSaveData currentPos = PosSaveData.builder()
+                            .areaIndex(cellAreaIndex)
                             .x(x)
                             .y(y)
                             .build();
-                    if (targetDeskSaveData.getDeskSaveData().getPos() == null) {
-                        targetDeskSaveData.getDeskSaveData().setPos(cellPosSaveData);
+                    if (cellAreaIndex == mainAreaIndex) {
+                        targetDeskSaveData.getDeskSaveData().setPos(currentPos);
                     } else {
-                        targetDeskSaveData.getDeskSaveData().getCompanionPosList().add(cellPosSaveData);
+                        
+                        targetDeskSaveData.getDeskSaveData().getCompanionPosList().add(currentPos);
                     }
                 });
                 

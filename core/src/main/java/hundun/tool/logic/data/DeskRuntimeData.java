@@ -24,9 +24,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DeskRuntimeData {
 
-    String idName;
-    String showName;
-    DeskLocation location;
+    String uiName;
+    DeskLocation mainLocation;
+    List<DeskLocation> companionLocationList;
     List<GoodRuntimeData> goodSaveDatas;
     List<FileHandle> detailFileHandles;
     FileHandle coverFileHandle;
@@ -56,7 +56,7 @@ public class DeskRuntimeData {
         public static class Factory {
 
             
-            public static DeskLocation fromLine(LayoutConst layoutConst, DeskSaveData deskSaveData) {
+            public static DeskLocation locationAsMain(LayoutConst layoutConst, DeskSaveData deskSaveData) {
                 return DeskLocation.builder()
                         .room(deskSaveData.getRoom())
                         .area(deskSaveData.getArea())
@@ -65,7 +65,17 @@ public class DeskRuntimeData {
                         .build();
             }
 
-
+            public static List<DeskLocation> locationAsCompanion(LayoutConst layoutConst, DeskSaveData deskSaveData) {
+                return deskSaveData.getCompanionPosList().stream()
+                        .map(companionPos -> DeskLocation.builder()
+                                .room(deskSaveData.getRoom())
+                                .area(deskSaveData.getArea())
+                                .areaIndex(companionPos.getAreaIndex())
+                                .pos(new Vector2(companionPos.getX(), companionPos.getY()))
+                                .build())
+                        .collect(Collectors.toList())
+                        ;
+            }
             
         }
     }
@@ -73,15 +83,20 @@ public class DeskRuntimeData {
     public static class Factory {
         public static DeskRuntimeData fromExternalData(LayoutConst layoutConst, ExternalDeskData externalDeskData) {
             DeskSaveData deskSaveData = externalDeskData.getDeskSaveData();
-            DeskRuntimeData result = DeskRuntimeData.builder()
-                    .idName(deskSaveData.getIdName())
-                    .showName(deskSaveData.getRealName() != null ? deskSaveData.getRealName() : "未知")
-                    .location(DeskLocation.Factory.fromLine(layoutConst, deskSaveData))
+
+            DeskRuntimeData mainResult = DeskRuntimeData.builder()
+                    .uiName(deskSaveData.getRealName() != null ? deskSaveData.getRealName() : deskSaveData.getIdName())
+                    .mainLocation(DeskLocation.Factory.locationAsMain(layoutConst, deskSaveData))
+                    .companionLocationList(DeskLocation.Factory.locationAsCompanion(layoutConst, deskSaveData))
                     .coverFileHandle(externalDeskData.getCoverFileHandle())
                     .detailFileHandles(externalDeskData.getImageFileHandles())
                     .build();
-            result.setGoodSaveDatas(deskSaveData.getGoodSaveDatas().stream().map(it -> GoodRuntimeData.Factory.fromSaveData(result, it)).collect(Collectors.toList()));
-            return result;
+            mainResult.setGoodSaveDatas(deskSaveData.getGoodSaveDatas().stream().map(it ->
+                    GoodRuntimeData.Factory.fromSaveData(mainResult, it)).collect(Collectors.toList())
+            );
+
+
+            return mainResult;
         }
         
     }

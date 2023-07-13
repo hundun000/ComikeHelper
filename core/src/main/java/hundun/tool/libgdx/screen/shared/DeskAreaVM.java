@@ -31,7 +31,7 @@ import lombok.Getter;
 public class DeskAreaVM extends Table {
     public AbstractComikeScreen screen;
     @Getter
-    Map<String, DeskVM> nodes = new LinkedHashMap<>();
+    Map<DeskRuntimeData, DeskVM> nodes = new LinkedHashMap<>();
     @Getter
     CameraDataPackage cameraDataPackage;
 
@@ -68,10 +68,11 @@ public class DeskAreaVM extends Table {
         this.getCameraDataPackage().forceSet(roomWidth / 2.0f, roomHeight/ 2.0f, null);
 
         deskDatas.forEach(deskData -> {
-            DeskVM actor = new DeskVM(this, deskData);
-            nodes.put(deskData.getIdName(), actor);
 
-            Vector2 roomPos = deskData.getLocation().getPos();
+            DeskVM actor = DeskVM.typeMain(this, deskData, deskData.getMainLocation());
+            nodes.put(deskData, actor);
+
+            Vector2 roomPos = deskData.getMainLocation().getPos();
             actor.setBounds(
                     deskAreaInfo.getDeskAreaPadLeft() + roomPos.x, 
                     deskAreaInfo.getDeskAreaPadBottom() + roomPos.y, 
@@ -81,6 +82,18 @@ public class DeskAreaVM extends Table {
             actor.addListener(new DeskClickListener(screen, actor));
             this.addActor(actor);
 
+            deskData.getCompanionLocationList().forEach(companionLocation -> {
+                DeskVM companionActor = DeskVM.typeCompanion(this, deskData, companionLocation);
+                Vector2 pos = companionLocation.getPos();
+                companionActor.setBounds(
+                        deskAreaInfo.getDeskAreaPadLeft() + pos.x,
+                        deskAreaInfo.getDeskAreaPadBottom() + pos.y,
+                        screen.getGame().getScreenContext().getLayoutConst().DESK_WIDTH,
+                        screen.getGame().getScreenContext().getLayoutConst().DESK_HEIGHT
+                );
+                companionActor.addListener(new DeskClickListener(screen, companionActor));
+                this.addActor(companionActor);
+            });
         });
     }
 
@@ -89,7 +102,7 @@ public class DeskAreaVM extends Table {
         Collection<DeskVM> needUpdateNodes;
         if (changed != null) {
             needUpdateNodes = new HashSet<>(1);
-            needUpdateNodes.add(nodes.get(changed.getOwnerRef().getIdName()));
+            needUpdateNodes.add(nodes.get(changed.getOwnerRef()));
         } else {
             needUpdateNodes = nodes.values();
         }

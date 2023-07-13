@@ -20,7 +20,6 @@ import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.save.GoodSaveData;
 import hundun.tool.logic.data.save.RoomSaveData;
-import hundun.tool.logic.data.save.DeskSaveData.PosSaveData;
 import hundun.tool.logic.util.ComplexExternalJsonSaveTool;
 import hundun.tool.logic.util.ExternalExcelSaveTool;
 import hundun.tool.logic.util.SimpleExternalJsonSaveTool;
@@ -67,8 +66,9 @@ public class ExternalResourceManager {
     @Getter
     @Builder
     public static class DeskExcelTempData {
-        String pos;
-        List<String> companionPosList;
+        String area;
+        int mainAreaIndex;
+        int endAreaIndex;
         String deskName;
         List<GoodSaveData> goods;
     }
@@ -95,18 +95,28 @@ public class ExternalResourceManager {
         List<Map<Integer, String>> deskGoodsRawExcelData = sharedExcelSaveTool.readRootSaveData();
         Map<String, DeskExcelTempData> deskGoodsMap = new HashMap<>();
         deskGoodsRawExcelData.forEach(line -> {
-            String deskPos = line.get(0);
+            String[] deskPosParts = line.get(0).split("-");
             String deskName = line.get(1);
             String goodName = line.get(2);
-            if (!deskGoodsMap.containsKey(deskPos)) {
-                deskGoodsMap.put(deskPos, DeskExcelTempData.builder()
+            String mainPos = deskPosParts[0];
+            String endPos = deskPosParts.length > 1 ? deskPosParts[1] : deskPosParts[0];
+
+            final String areaIndexText = ExternalComikeData.Factory.extractInteger(mainPos);
+            final int mainAreaIndex = Integer.parseInt(ExternalComikeData.Factory.extractInteger(mainPos));
+            final String area = mainPos.substring(0, mainPos.length() - areaIndexText.length());
+
+            final int endAreaIndex = Integer.parseInt(ExternalComikeData.Factory.extractInteger(endPos));
+
+            if (!deskGoodsMap.containsKey(mainPos)) {
+                deskGoodsMap.put(mainPos, DeskExcelTempData.builder()
                                 .deskName(deskName)
-                                .pos(deskPos)
-                                .companionPosList(new ArrayList<>())
+                                .area(area)
+                                .mainAreaIndex(mainAreaIndex)
+                                .endAreaIndex(endAreaIndex)
                                 .goods(new ArrayList<>())
                                 .build());
             }
-            deskGoodsMap.get(deskPos).getGoods().add(GoodSaveData.builder()
+            deskGoodsMap.get(mainPos).getGoods().add(GoodSaveData.builder()
                     .name(goodName)
                     .build());
         });

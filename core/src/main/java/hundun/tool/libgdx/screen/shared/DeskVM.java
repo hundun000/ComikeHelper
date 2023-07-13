@@ -13,6 +13,7 @@ import java.util.Set;
 import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.tool.ComikeHelperGame;
 import hundun.tool.logic.data.DeskRuntimeData;
+import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import lombok.Getter;
 
@@ -28,26 +29,45 @@ public class DeskVM extends Table {
     @Getter
     DeskRuntimeData deskData;
 
-    Table tagImageTable;;
+    Table tagImageTable;
 
-
-
-    public DeskVM(DeskAreaVM deskAreaVM, DeskRuntimeData deskData) {
+    private DeskVM(DeskAreaVM deskAreaVM, DeskRuntimeData deskData) {
         this.game = deskAreaVM.screen.getGame();
         this.deskAreaVM = deskAreaVM;
         this.deskData = deskData;
 
 
-        tagImageTable = new Table();
-        
-        this.setBackground(new TextureRegionDrawable(new TextureRegion(TextureFactory.getSimpleBoardBackground(game.getScreenContext().getLayoutConst().DESK_WIDTH, game.getScreenContext().getLayoutConst().DESK_HEIGHT))));
-        this.add(new Label(
-                deskData.getShowName() + " " + deskData.getLocation().getArea() + deskData.getLocation().getAreaIndex(),
-                game.getMainSkin()));
-        this.add(tagImageTable)
+
+
+        this.setBackground(new TextureRegionDrawable(new TextureRegion(TextureFactory.getSimpleBoardBackground(
+                this.game.getScreenContext().getLayoutConst().DESK_WIDTH,
+                this.game.getScreenContext().getLayoutConst().DESK_HEIGHT
+        ))));
+    }
+
+
+    public static DeskVM typeMain(DeskAreaVM deskAreaVM, DeskRuntimeData deskData, DeskLocation location) {
+        DeskVM thiz = new DeskVM(deskAreaVM, deskData);
+
+        thiz.tagImageTable = new Table();
+        thiz.add(new Label(
+                deskData.getUiName() + " " + location.getArea() + location.getAreaIndex(),
+                thiz.game.getMainSkin()));
+        thiz.add(thiz.tagImageTable)
                 ;
        
+        return thiz;
+    }
 
+    public static DeskVM typeCompanion(DeskAreaVM deskAreaVM, DeskRuntimeData deskData, DeskLocation location) {
+        DeskVM thiz = new DeskVM(deskAreaVM, deskData);
+
+        thiz.add(new Label(
+                "SUB " + location.getArea() + location.getAreaIndex(),
+                thiz.game.getMainSkin()));
+        ;
+
+        return thiz;
     }
     
     public void updateTagTable() {
