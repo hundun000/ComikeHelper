@@ -20,8 +20,17 @@ public class DeskSaveData {
     String realName;
     String room;
     String area;
-    int areaIndex;
-    int x;
-    int y;
+    PosSaveData pos;
+    List<PosSaveData> companionPosList;
     List<GoodSaveData> goodSaveDatas;
+    
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class PosSaveData {
+        int areaIndex;
+        int x;
+        int y;
+    }
 }

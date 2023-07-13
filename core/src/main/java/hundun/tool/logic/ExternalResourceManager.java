@@ -20,6 +20,7 @@ import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.save.GoodSaveData;
 import hundun.tool.logic.data.save.RoomSaveData;
+import hundun.tool.logic.data.save.DeskSaveData.PosSaveData;
 import hundun.tool.logic.util.ComplexExternalJsonSaveTool;
 import hundun.tool.logic.util.ExternalExcelSaveTool;
 import hundun.tool.logic.util.SimpleExternalJsonSaveTool;
@@ -66,6 +67,8 @@ public class ExternalResourceManager {
     @Getter
     @Builder
     public static class DeskExcelTempData {
+        String pos;
+        List<String> companionPosList;
         String deskName;
         List<GoodSaveData> goods;
     }
@@ -97,9 +100,11 @@ public class ExternalResourceManager {
             String goodName = line.get(2);
             if (!deskGoodsMap.containsKey(deskPos)) {
                 deskGoodsMap.put(deskPos, DeskExcelTempData.builder()
-                        .deskName(deskName)
-                        .goods(new ArrayList<>())
-                        .build());
+                                .deskName(deskName)
+                                .pos(deskPos)
+                                .companionPosList(new ArrayList<>())
+                                .goods(new ArrayList<>())
+                                .build());
             }
             deskGoodsMap.get(deskPos).getGoods().add(GoodSaveData.builder()
                     .name(goodName)

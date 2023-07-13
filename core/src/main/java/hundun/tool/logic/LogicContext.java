@@ -192,7 +192,7 @@ public class LogicContext {
                 String roomName = entry.getKey();
                 RoomSaveData roomSaveData = entry.getValue();
                 List<DeskRuntimeData> deskRuntimeDatas = tempComikeData.getDeskExternalRuntimeDataMap().values().stream()
-                    .map(deskExternalRuntimeData -> DeskRuntimeData.Factory.fromExternalRuntimeData(
+                    .map(deskExternalRuntimeData -> DeskRuntimeData.Factory.fromExternalData(
                                 game.getScreenContext().getLayoutConst(),
                                 deskExternalRuntimeData
                                 )

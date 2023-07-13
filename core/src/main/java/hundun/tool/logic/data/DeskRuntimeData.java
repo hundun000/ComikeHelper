@@ -49,7 +49,7 @@ public class DeskRuntimeData {
             }
 
             public static String toLine(DeskSaveData deskSaveData) {
-                return deskSaveData.getRoom() + SPLIT + deskSaveData.getArea() + SPLIT + deskSaveData.getAreaIndex();
+                return deskSaveData.getRoom() + SPLIT + deskSaveData.getArea() + SPLIT + deskSaveData.getPos().getAreaIndex();
             }
         }
 
@@ -60,8 +60,8 @@ public class DeskRuntimeData {
                 return DeskLocation.builder()
                         .room(deskSaveData.getRoom())
                         .area(deskSaveData.getArea())
-                        .areaIndex(deskSaveData.getAreaIndex())
-                        .pos(new Vector2(deskSaveData.getX(), deskSaveData.getY()))
+                        .areaIndex(deskSaveData.getPos().getAreaIndex())
+                        .pos(new Vector2(deskSaveData.getPos().getX(), deskSaveData.getPos().getY()))
                         .build();
             }
 
@@ -71,7 +71,7 @@ public class DeskRuntimeData {
     }
 
     public static class Factory {
-        public static DeskRuntimeData fromExternalRuntimeData(LayoutConst layoutConst, ExternalDeskData externalDeskData) {
+        public static DeskRuntimeData fromExternalData(LayoutConst layoutConst, ExternalDeskData externalDeskData) {
             DeskSaveData deskSaveData = externalDeskData.getDeskSaveData();
             DeskRuntimeData result = DeskRuntimeData.builder()
                     .idName(deskSaveData.getIdName())

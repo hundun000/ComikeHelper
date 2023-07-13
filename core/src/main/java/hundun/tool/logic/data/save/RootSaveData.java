@@ -11,6 +11,7 @@ import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData.GoodPrivateData;
+import hundun.tool.logic.data.save.DeskSaveData.PosSaveData;
 import hundun.tool.logic.data.save.RoomSaveData.DeskAreaInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -58,7 +59,11 @@ public class RootSaveData {
                             .idName(name)
                             .room(room)
                             .area(area)
-                            .areaIndex(it)
+                            .pos(PosSaveData.builder()
+                                    .areaIndex(it)
+                                    .x(100)
+                                    .y(100 * it)
+                                    .build())
                             .goodSaveDatas(JavaFeatureForGwt.listOf(
                                 GoodSaveData.builder().name(area + "_" + it + "_" + "本子1").build(),
                                 GoodSaveData.builder().name(area + "_" + it + "_" + "本子2").build()
@@ -77,28 +82,17 @@ public class RootSaveData {
                     .idName("砍口垒同好组")
                     .room(specialRoom)
                     .area("特")
-                    .areaIndex(0)
-                    .x(100)
-                    .y(100)
+                    .pos(PosSaveData.builder()
+                            .areaIndex(0)
+                            .x(100)
+                            .y(100)
+                            .build())
                     .goodSaveDatas(JavaFeatureForGwt.listOf(
                         GoodSaveData.builder().name(specialGood1).build(),
                         GoodSaveData.builder().name("砍口垒本子2").build()
                     ))
                     .build());
-            deskSaveDatas.put(
-                "少女前线同好组",
-                DeskSaveData.builder()
-                    .idName("少女前线同好组")
-                    .room(specialRoom)
-                    .area("特")
-                    .areaIndex(1)
-                    .x(100)
-                    .y(300)
-                    .goodSaveDatas(JavaFeatureForGwt.listOf(
-                        GoodSaveData.builder().name(specialGood2).build(),
-                        GoodSaveData.builder().name("少女前线本子2").build()
-                    ))
-                    .build());
+
 
             MyGameplaySaveData saveData = new MyGameplaySaveData();
             

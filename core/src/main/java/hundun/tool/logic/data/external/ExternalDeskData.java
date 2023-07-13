@@ -33,12 +33,11 @@ public class ExternalDeskData {
 
         
         public static ExternalDeskData fromBasic(DeskSaveData deskSaveData, FileHandle coverFileHandle) {
-            ExternalDeskData result = ExternalDeskData.builder()
+            return ExternalDeskData.builder()
                     .deskSaveData(deskSaveData)
                     .coverFileHandle(coverFileHandle)
                     .imageFileHandles(new ArrayList<>(0))
                     .build();
-            return result;
         }
         
         public static ExternalDeskData fromFolder(FileHandle imageFolder, String key, FileHandle defaultCover) {
