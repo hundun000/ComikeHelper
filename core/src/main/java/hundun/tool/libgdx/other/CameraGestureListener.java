@@ -1,11 +1,13 @@
 package hundun.tool.libgdx.other;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 
 public class CameraGestureListener extends ActorGestureListener {
 
     private final CameraDataPackage cameraDataPackage;
+    float laseZoomValue;
 
     public CameraGestureListener(CameraDataPackage cameraDataPackage) {
         this.cameraDataPackage = cameraDataPackage;
@@ -15,8 +17,8 @@ public class CameraGestureListener extends ActorGestureListener {
     public void zoom(InputEvent event, float initialDistance, float distance) {
         super.zoom(event, initialDistance, distance);
 
-        float deltaValue = (distance - initialDistance) < 0 ? 0.1f : -0.1f;
-        cameraDataPackage.modifyCurrentCameraZoomWeight(deltaValue);
+        float newWeight = (initialDistance / distance) * cameraDataPackage.getCurrentCameraZoomWeight();
+        cameraDataPackage.modifyCurrentCameraZoomWeight(newWeight - cameraDataPackage.getCurrentCameraZoomWeight());
     }
 
     @Override

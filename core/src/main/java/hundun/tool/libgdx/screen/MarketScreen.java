@@ -177,8 +177,7 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
                 0);
         if (imageViewerVM.getCameraDataPackage().getAndClearCameraZoomDirty()) {
             float weight = imageViewerVM.getCameraDataPackage().getCurrentCameraZoomWeight();
-            float value = weight <= 0 ? (float)Math.pow(2, weight) : (float)Math.log(weight + 2);
-            imagePreviewerCamera.zoom = value;
+            imagePreviewerCamera.zoom = CameraDataPackage.cameraZoomWeightToZoomValue(weight);
             game.getFrontend().log(this.getClass().getSimpleName(), "imagePreviewerCamera.zoom = %s", deskCamera.zoom);
         }
         imagePreviewerStage.getViewport().apply();

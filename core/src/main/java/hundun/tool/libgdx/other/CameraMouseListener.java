@@ -14,7 +14,7 @@ public class CameraMouseListener extends InputListener {
     
     @Override
     public boolean scrolled(InputEvent event, float x, float y, float amountX, float amountY) {
-        float deltaValue = (amountX + amountY) > 0 ? 0.1f : -0.1f;
+        float deltaValue = (amountX + amountY) * 0.1f;
         cameraDataPackage.modifyCurrentCameraZoomWeight(deltaValue);
         return super.scrolled(event, x, y, amountX, amountY);
     }

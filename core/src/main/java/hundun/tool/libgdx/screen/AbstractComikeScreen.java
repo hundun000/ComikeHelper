@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import hundun.gdxgame.corelib.base.BaseHundunScreen;
 import hundun.tool.ComikeHelperGame;
+import hundun.tool.libgdx.other.CameraDataPackage;
 import hundun.tool.libgdx.screen.shared.DeskAreaVM;
 import hundun.tool.libgdx.screen.shared.DeskVM;
 import hundun.tool.logic.data.RoomRuntimeData;
@@ -40,8 +41,7 @@ public abstract class AbstractComikeScreen extends BaseHundunScreen<ComikeHelper
                 0);
         if (deskAreaVM.getCameraDataPackage().getAndClearCameraZoomDirty()) {
             float weight = deskAreaVM.getCameraDataPackage().getCurrentCameraZoomWeight();
-            float value = weight <= 0 ? (float)Math.pow(2, weight) : (float)Math.log(weight + 2);
-            deskCamera.zoom = value;
+            deskCamera.zoom = CameraDataPackage.cameraZoomWeightToZoomValue(weight);;
             game.getFrontend().log(this.getClass().getSimpleName(), "deskCamera.zoom = %s", deskCamera.zoom);
         }
         deskStage.getViewport().apply();
