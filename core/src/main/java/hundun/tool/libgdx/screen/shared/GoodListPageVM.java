@@ -25,7 +25,9 @@ public class GoodListPageVM extends Table {
         scrollPane.setScrollingDisabled(true, false);
         scrollPane.setFadeScrollBars(false);
         scrollPane.setForceScroll(false, true);
-        container.addToMain(scrollPane);
+        container.addToMain(scrollPane)
+                .minSize(marketScreen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_WIDTH + 40,
+                        marketScreen.getGame().getScreenContext().getLayoutConst().GOOD_NODE_HEIGHT + 40);
         this.add(container)
                 .grow();
     }

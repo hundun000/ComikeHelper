@@ -104,7 +104,14 @@ public class LogicContext {
         game.getFrontend().log(this.getClass().getSimpleName(), "tag {0} setToOn = {1}", tag, setToOn);
         
         thiz.getTagStateMap().put(tag, setToOn);
-        crossScreenDataPackage.getTagedGoods().add(thiz);
+        if (tag == GoodRuntimeTag.IN_CART) {
+            if (setToOn) {
+                crossScreenDataPackage.getTagedGoods().add(thiz);
+            } else {
+                crossScreenDataPackage.getTagedGoods().remove(thiz);
+            }
+        }
+
 
         modifyGoodTagListeners.forEach(it -> it.onModifyGoodTag(thiz, tag, setToOn));
     }

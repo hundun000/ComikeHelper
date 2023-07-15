@@ -85,7 +85,9 @@ public class DeskExtraVM extends BasePageableTable {
             imagesScrollPane.setScrollingDisabled(false, true);
             imagesScrollPane.setFadeScrollBars(false);
             imagesScrollPane.setForceScroll(true, false);
-            container.addToMain(imagesScrollPane);
+            container.addToMain(imagesScrollPane)
+                    .minSize(screen.getGame().getScreenContext().getLayoutConst().DESK_EXTRA_IMAGE_SIZE * 1.1f,
+                            screen.getGame().getScreenContext().getLayoutConst().DESK_EXTRA_IMAGE_SIZE * 1.1f);
             pageRootTable.add(container)
                     .height(screen.getGame().getScreenContext().getLayoutConst().DESK_EXTRA_IMAGE_SIZE * 1.1f
                             + container.getTitleHeight()
