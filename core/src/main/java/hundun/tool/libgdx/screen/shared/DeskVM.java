@@ -37,12 +37,13 @@ public class DeskVM extends Table {
         this.deskData = deskData;
 
 
-
-
-        this.setBackground(new TextureRegionDrawable(new TextureRegion(TextureFactory.getSimpleBoardBackground(
+        Image image = new Image(game.getTextureManager().getDeskBackground());
+        image.setBounds(0, 0, this.game.getScreenContext().getLayoutConst().DESK_WIDTH, this.game.getScreenContext().getLayoutConst().DESK_HEIGHT);
+        this.addActor(image);
+        /*this.setBackground(new TextureRegionDrawable(new TextureRegion(TextureFactory.getSimpleBoardBackground(
                 this.game.getScreenContext().getLayoutConst().DESK_WIDTH,
                 this.game.getScreenContext().getLayoutConst().DESK_HEIGHT
-        ))));
+        ))));*/
     }
 
 

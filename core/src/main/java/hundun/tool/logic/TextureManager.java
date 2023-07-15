@@ -30,6 +30,8 @@ public class TextureManager {
     Drawable mcStyleTableTop;
     @Getter
     Drawable mcStyleTableBottom;
+    @Getter
+    Drawable deskBackground;
     
     public TextureManager(ComikeHelperGame game) {
         this.game = game;
@@ -59,6 +61,12 @@ public class TextureManager {
                 20, 20, 0, 20
                 ); 
         mcStyleTableBottom = new NinePatchDrawable(tempNinePatch);
+
+        tempNinePatch = new NinePatch(
+                new Texture(Gdx.files.internal("deskBackground.9.png")),
+                20, 20, 20, 20
+        );
+        deskBackground = new NinePatchDrawable(tempNinePatch);
     }
     
     private TextureRegion ignoreFirstLineTexture(String file) {
