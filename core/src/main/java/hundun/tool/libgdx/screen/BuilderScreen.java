@@ -195,6 +195,7 @@ public class BuilderScreen extends AbstractComikeScreen {
             deskAreaVM.updateDeskDatas(
                     currentRoomData.getDeskAreaInfo(),
                     currentRoomData.getDeskDatas(),
+                    currentRoomData.getHints(),
                     currentRoomData.getRoomImage()
             );
         } else {
@@ -203,6 +204,7 @@ public class BuilderScreen extends AbstractComikeScreen {
                             .deskAreaWidth(100)
                             .deskAreaHeight(100)
                             .build(),
+                    new ArrayList<>(0),
                     new ArrayList<>(0),
                     null);
         }

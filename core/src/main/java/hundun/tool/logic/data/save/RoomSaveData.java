@@ -1,5 +1,7 @@
 package hundun.tool.logic.data.save;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +18,8 @@ import lombok.NoArgsConstructor;
 public class RoomSaveData {
     String name;
     DeskAreaInfo deskAreaInfo;
-    
+    List<HintSaveData> hints;
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

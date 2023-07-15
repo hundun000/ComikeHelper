@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.tool.ComikeHelperGame;
 import hundun.tool.logic.data.external.ExternalDeskData;
 import hundun.tool.logic.data.external.ExternalComikeData;
@@ -73,13 +74,18 @@ public class ExternalResourceManager {
         List<GoodSaveData> goods;
     }
 
-    
+    @Getter
+    @AllArgsConstructor
+    public static class ExcelRoomData {
+        List<Map<Integer, String>> lineDataList;
+        List<Integer> deskAreaInfoList;
+    }
     
     
     public MergeWorkInProgressModel providerExcelGameplayData(ExternalComikeData oldComikeData, ExternalUserPrivateData oldUserPrivateData) {
 
         
-        Map<String, List<Map<Integer, String>>> roomTempDataMap = new HashMap<>();
+        Map<String, ExcelRoomData> roomTempDataMap = new HashMap<>();
         for (int i = 0; i < 5; i++) {
             boolean exists = sharedExcelSaveTool.lazyInitOnRuntime("room_" + i + ".xlsx");
             if (!exists) {
@@ -88,8 +94,16 @@ public class ExternalResourceManager {
             List<Map<Integer, String>> roomRawExcelData = sharedExcelSaveTool.readRootSaveData();
             Map<Integer, String> firstLine = roomRawExcelData.remove(0);
             String roomName = firstLine.get(0);
-            roomTempDataMap.put(roomName, roomRawExcelData);
+            List<Integer> padInfoList = JavaFeatureForGwt.listOf(
+                    Integer.parseInt(firstLine.get(3)),
+                    Integer.parseInt(firstLine.get(4)),
+                    Integer.parseInt(firstLine.get(5)),
+                    Integer.parseInt(firstLine.get(6))
+            );
+            roomTempDataMap.put(roomName, new ExcelRoomData(roomRawExcelData, padInfoList));
         }
+
+
         
         sharedExcelSaveTool.lazyInitOnRuntime("desk.xlsx");
         List<Map<Integer, String>> deskGoodsRawExcelData = sharedExcelSaveTool.readRootSaveData();

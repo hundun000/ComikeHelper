@@ -49,7 +49,7 @@ public class DeskVM extends Table {
 
         thiz.tagImageTable = new Table();
         thiz.add(new Label(
-                deskData.getUiName() + " " + location.getArea() + location.getAreaIndex(),
+                deskData.getUiName(),
                 thiz.game.getMainSkin()));
         thiz.add(thiz.tagImageTable)
                 ;
@@ -61,7 +61,7 @@ public class DeskVM extends Table {
         DeskVM thiz = new DeskVM(deskAreaVM, deskData);
 
         thiz.add(new Label(
-                "SUB " + location.getArea() + location.getAreaIndex(),
+                "SUB",
                 thiz.game.getMainSkin()));
         ;
 

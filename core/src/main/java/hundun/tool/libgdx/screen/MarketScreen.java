@@ -143,6 +143,7 @@ public class MarketScreen extends AbstractComikeScreen implements IModifyGoodTag
         deskAreaVM.updateDeskDatas(
                 currentRoomData.getDeskAreaInfo(),
                 currentRoomData.getDeskDatas(),
+                currentRoomData.getHints(),
                 currentRoomData.getRoomImage());
         // for newest cart
         onAnyTagChanged(null);

@@ -21,6 +21,7 @@ import hundun.tool.libgdx.screen.AbstractComikeScreen;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
 import hundun.tool.logic.data.generic.GenericPosData;
+import hundun.tool.logic.data.save.HintSaveData;
 import hundun.tool.logic.data.save.RoomSaveData.DeskAreaInfo;
 import lombok.Getter;
 
@@ -47,6 +48,7 @@ public class DeskAreaVM extends Table {
     public void updateDeskDatas(
             DeskAreaInfo deskAreaInfo,
             List<DeskRuntimeData> deskDatas,
+            List<HintSaveData> hints,
             @Null FileHandle roomImage) {
         this.clear();
         nodes.clear();
@@ -93,6 +95,17 @@ public class DeskAreaVM extends Table {
                 companionActor.addListener(new DeskClickListener(screen, companionActor));
                 this.addActor(companionActor);
             });
+        });
+
+        hints.forEach(hintSaveData -> {
+            HintVM companionActor = HintVM.typeHint(this, hintSaveData);
+            companionActor.setBounds(
+                    deskAreaInfo.getDeskAreaPadLeft() + hintSaveData.getPos().getX(),
+                    deskAreaInfo.getDeskAreaPadBottom() + hintSaveData.getPos().getY(),
+                    screen.getGame().getScreenContext().getLayoutConst().DESK_WIDTH,
+                    screen.getGame().getScreenContext().getLayoutConst().DESK_HEIGHT
+            );
+            this.addActor(companionActor);
         });
     }
 
