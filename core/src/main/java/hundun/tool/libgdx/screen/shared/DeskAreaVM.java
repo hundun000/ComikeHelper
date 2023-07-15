@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -21,6 +20,7 @@ import hundun.tool.libgdx.other.CameraMouseListener;
 import hundun.tool.libgdx.screen.AbstractComikeScreen;
 import hundun.tool.logic.data.DeskRuntimeData;
 import hundun.tool.logic.data.GoodRuntimeData;
+import hundun.tool.logic.data.generic.GenericPosData;
 import hundun.tool.logic.data.save.RoomSaveData.DeskAreaInfo;
 import lombok.Getter;
 
@@ -72,10 +72,10 @@ public class DeskAreaVM extends Table {
             DeskVM actor = DeskVM.typeMain(this, deskData, deskData.getMainLocation());
             nodes.put(deskData, actor);
 
-            Vector2 roomPos = deskData.getMainLocation().getPos();
+            GenericPosData roomPos = deskData.getMainLocation();
             actor.setBounds(
-                    deskAreaInfo.getDeskAreaPadLeft() + roomPos.x, 
-                    deskAreaInfo.getDeskAreaPadBottom() + roomPos.y, 
+                    deskAreaInfo.getDeskAreaPadLeft() + roomPos.getX(),
+                    deskAreaInfo.getDeskAreaPadBottom() + roomPos.getY(),
                     screen.getGame().getScreenContext().getLayoutConst().DESK_WIDTH, 
                     screen.getGame().getScreenContext().getLayoutConst().DESK_HEIGHT
                     );
@@ -84,10 +84,9 @@ public class DeskAreaVM extends Table {
 
             deskData.getCompanionLocationList().forEach(companionLocation -> {
                 DeskVM companionActor = DeskVM.typeCompanion(this, deskData, companionLocation);
-                Vector2 pos = companionLocation.getPos();
                 companionActor.setBounds(
-                        deskAreaInfo.getDeskAreaPadLeft() + pos.x,
-                        deskAreaInfo.getDeskAreaPadBottom() + pos.y,
+                        deskAreaInfo.getDeskAreaPadLeft() + companionLocation.getX(),
+                        deskAreaInfo.getDeskAreaPadBottom() + companionLocation.getY(),
                         screen.getGame().getScreenContext().getLayoutConst().DESK_WIDTH,
                         screen.getGame().getScreenContext().getLayoutConst().DESK_HEIGHT
                 );

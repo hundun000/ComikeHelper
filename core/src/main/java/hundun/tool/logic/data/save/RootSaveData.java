@@ -11,7 +11,7 @@ import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData.GoodPrivateData;
-import hundun.tool.logic.data.save.DeskSaveData.PosSaveData;
+import hundun.tool.logic.data.generic.GenericPosData;
 import hundun.tool.logic.data.save.RoomSaveData.DeskAreaInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -57,9 +57,9 @@ public class RootSaveData {
                         name,
                         DeskSaveData.builder()
                             .idName(name)
-                            .room(room)
-                            .area(area)
-                            .pos(PosSaveData.builder()
+                            .mainPos(GenericPosData.builder()
+                                    .room(room)
+                                    .area(area)
                                     .areaIndex(it)
                                     .x(100)
                                     .y(100 * it)
@@ -80,9 +80,9 @@ public class RootSaveData {
                 "砍口垒同好组",
                 DeskSaveData.builder()
                     .idName("砍口垒同好组")
-                    .room(specialRoom)
-                    .area("特")
-                    .pos(PosSaveData.builder()
+                    .mainPos(GenericPosData.builder()
+                            .room(specialRoom)
+                            .area("特")
                             .areaIndex(0)
                             .x(100)
                             .y(100)

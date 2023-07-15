@@ -157,7 +157,7 @@ public class LogicContext {
         List<String> deskNames = externalResourceManager.previewAllUnknownSubFolder(tempComikeData.getDeskExternalRuntimeDataMap().keySet());
         List<String> roomNames = tempComikeData.getExternalMainData().getRoomSaveDataMap().keySet().stream()
                 .filter(roomIt -> !tempComikeData.getDeskExternalRuntimeDataMap().values().stream()
-                            .anyMatch(deskIt -> deskIt.getDeskSaveData().getRoom().equals(roomIt))
+                            .anyMatch(deskIt -> deskIt.getDeskSaveData().getMainPos().getRoom().equals(roomIt))
                             )
                 .collect(Collectors.toList());
         return new CleanUpWorkInProgressModel(deskNames, roomNames);
@@ -167,7 +167,7 @@ public class LogicContext {
     public void applyCleanUp() {
         tempComikeData.getExternalMainData().getRoomSaveDataMap().keySet()
                 .removeIf(roomIt -> !tempComikeData.getDeskExternalRuntimeDataMap().values().stream()
-                            .anyMatch(deskIt -> deskIt.getDeskSaveData().getRoom().equals(roomIt))
+                            .anyMatch(deskIt -> deskIt.getDeskSaveData().getMainPos().getRoom().equals(roomIt))
                             )
                 ;
         externalResourceManager.saveAsSharedData(tempComikeData.getExternalMainData());

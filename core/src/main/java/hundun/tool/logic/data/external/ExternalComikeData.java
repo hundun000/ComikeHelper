@@ -15,7 +15,7 @@ import hundun.tool.logic.ExternalResourceManager.DeskExcelTempData;
 import hundun.tool.logic.data.save.DeskSaveData;
 import hundun.tool.logic.data.save.GoodSaveData;
 import hundun.tool.logic.data.save.RoomSaveData;
-import hundun.tool.logic.data.save.DeskSaveData.PosSaveData;
+import hundun.tool.logic.data.generic.GenericPosData;
 import hundun.tool.logic.data.save.RoomSaveData.DeskAreaInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -130,9 +130,7 @@ public class ExternalComikeData {
                         DeskSaveData deskSaveData = DeskSaveData.builder()
                                 .idName(deskIdName)
                                 .realName(deskRealName)
-                                .room(roomName)
-                                .area(cellArea)
-                                .pos(null)
+                                .mainPos(null)
                                 .companionPosList(new ArrayList<>())
                                 .goodSaveDatas(goods)
                                 .build();
@@ -140,13 +138,15 @@ public class ExternalComikeData {
                         deskResultMap.put(deskIdName, targetDeskSaveData);
                     }
 
-                    PosSaveData currentPos = PosSaveData.builder()
+                    GenericPosData currentPos = GenericPosData.builder()
+                            .room(roomName)
+                            .area(cellArea)
                             .areaIndex(cellAreaIndex)
                             .x(x)
                             .y(y)
                             .build();
                     if (cellAreaIndex == mainAreaIndex) {
-                        targetDeskSaveData.getDeskSaveData().setPos(currentPos);
+                        targetDeskSaveData.getDeskSaveData().setMainPos(currentPos);
                     } else {
                         
                         targetDeskSaveData.getDeskSaveData().getCompanionPosList().add(currentPos);

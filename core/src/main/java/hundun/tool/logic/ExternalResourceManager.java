@@ -13,12 +13,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import hundun.tool.ComikeHelperGame;
-import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
 import hundun.tool.logic.data.external.ExternalDeskData;
 import hundun.tool.logic.data.external.ExternalComikeData;
 import hundun.tool.logic.data.external.ExternalMainData;
 import hundun.tool.logic.data.external.ExternalUserPrivateData;
 import hundun.tool.logic.data.save.GoodSaveData;
+import hundun.tool.logic.data.generic.GenericPosData;
 import hundun.tool.logic.data.save.RoomSaveData;
 import hundun.tool.logic.util.ComplexExternalJsonSaveTool;
 import hundun.tool.logic.util.ExternalExcelSaveTool;
@@ -183,12 +183,12 @@ public class ExternalResourceManager {
 
             Map<String, ExternalDeskData> oldDeskPosMap = oldComikeData.getDeskExternalRuntimeDataMap().values().stream()
                             .collect(Collectors.toMap(
-                                    it -> DeskLocation.Companion.toLine(it.getDeskSaveData()),
+                                    it -> GenericPosData.Extension.toLine(it.getDeskSaveData().getMainPos()),
                                     it -> it
                             ));
 
             otherDeskDataMap.forEach((k, v) -> {
-                ExternalDeskData oldSamePosDeskData = oldDeskPosMap.get(DeskLocation.Companion.toLine(v.getDeskSaveData()));
+                ExternalDeskData oldSamePosDeskData = oldDeskPosMap.get(GenericPosData.Extension.toLine(v.getDeskSaveData().getMainPos()));
                 if (oldSamePosDeskData != null) {
                     previewConflictByPosDeskDataMap.add(new Pair<>(oldSamePosDeskData, v));
                     return;

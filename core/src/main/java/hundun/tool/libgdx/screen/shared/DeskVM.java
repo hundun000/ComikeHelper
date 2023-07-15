@@ -1,20 +1,17 @@
 package hundun.tool.libgdx.screen.shared;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import hundun.gdxgame.corelib.base.util.TextureFactory;
 import hundun.tool.ComikeHelperGame;
 import hundun.tool.logic.data.DeskRuntimeData;
-import hundun.tool.logic.data.DeskRuntimeData.DeskLocation;
 import hundun.tool.logic.data.GoodRuntimeData.GoodRuntimeTag;
+import hundun.tool.logic.data.generic.GenericPosData;
 import lombok.Getter;
 
 /**
@@ -47,7 +44,7 @@ public class DeskVM extends Table {
     }
 
 
-    public static DeskVM typeMain(DeskAreaVM deskAreaVM, DeskRuntimeData deskData, DeskLocation location) {
+    public static DeskVM typeMain(DeskAreaVM deskAreaVM, DeskRuntimeData deskData, GenericPosData location) {
         DeskVM thiz = new DeskVM(deskAreaVM, deskData);
 
         thiz.tagImageTable = new Table();
@@ -60,7 +57,7 @@ public class DeskVM extends Table {
         return thiz;
     }
 
-    public static DeskVM typeCompanion(DeskAreaVM deskAreaVM, DeskRuntimeData deskData, DeskLocation location) {
+    public static DeskVM typeCompanion(DeskAreaVM deskAreaVM, DeskRuntimeData deskData, GenericPosData location) {
         DeskVM thiz = new DeskVM(deskAreaVM, deskData);
 
         thiz.add(new Label(
