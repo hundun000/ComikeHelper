@@ -44,13 +44,13 @@ public class LogicContext {
     ExternalResourceManager externalResourceManager;
     @Getter
     List<IModifyGoodTagListener> modifyGoodTagListeners = new ArrayList<>();
-    
+
     /*
      * load时拿到temp，然后计算并更新crossScreenDataPackage;
      * 运行时只读写crossScreenDataPackage;
      * save时用crossScreenDataPackage计算出temp，然后存temp;
      */
-    
+
     @Getter
     CrossScreenDataPackage crossScreenDataPackage;
     private ExternalComikeData tempComikeData;
@@ -89,7 +89,7 @@ public class LogicContext {
         MergeWorkInProgressModel model = externalResourceManager.providerExcelGameplayData(tempComikeData, tempUserPrivateData);
         return model;
     }
-    
+
     public void loadEmpty() {
         this.tempComikeData = ExternalComikeData.Factory.empty();
         this.tempUserPrivateData = ExternalUserPrivateData.Factory.empty();
@@ -98,11 +98,11 @@ public class LogicContext {
     public static interface IModifyGoodTagListener {
         void onModifyGoodTag(GoodRuntimeData thiz, GoodRuntimeTag tag, boolean setToOn);
     }
-    
+
     public void modifyGoodTag(GoodRuntimeData thiz, GoodRuntimeTag tag, boolean setToOn) {
-        
+
         game.getFrontend().log(this.getClass().getSimpleName(), "tag {0} setToOn = {1}", tag, setToOn);
-        
+
         thiz.getTagStateMap().put(tag, setToOn);
         if (tag == GoodRuntimeTag.IN_CART) {
             if (setToOn) {
@@ -115,37 +115,37 @@ public class LogicContext {
 
         modifyGoodTagListeners.forEach(it -> it.onModifyGoodTag(thiz, tag, setToOn));
     }
-    
+
     public MergeWorkInProgressModel appendSaveData() {
 
         MergeWorkInProgressModel model = externalResourceManager.providerExternalGameplayData(tempComikeData, tempUserPrivateData);
         return model;
     }
-    
+
     public MergeWorkInProgressModel appendDefaultData() {
 
-        MyGameplaySaveData gameplaySave = RootSaveData.Extension.genereateStarterGameplaySaveData();
+        MyGameplaySaveData gameplaySave = RootSaveData.Extension.generateStarterGameplaySaveData();
         Map<String, ExternalDeskData> defaultDeskSaveDatas = gameplaySave.getDefaultDeskSaveDatas().entrySet().stream().collect(Collectors.toMap(
             it -> it.getKey(),
             it -> ExternalDeskData.Factory.fromBasic(it.getValue(), externalResourceManager.getDefaultCoverFileHandle())
         ));
-        
+
         MergeWorkInProgressModel model = new MergeWorkInProgressModel(
-                tempComikeData, 
+                tempComikeData,
                 tempUserPrivateData,
-                gameplaySave.getDefaultExternalMainData(), 
+                gameplaySave.getDefaultExternalMainData(),
                 defaultDeskSaveDatas,
                 gameplaySave.getDefaultUserPrivateData()
                 );
         return model;
     }
-    
-    
+
+
     public void saveCurrentSharedData() {
         externalResourceManager.saveAsSharedData(tempComikeData.getExternalMainData());
         externalResourceManager.saveAsSharedData(tempComikeData.getDeskExternalRuntimeDataMap());
     }
-    
+
     @Getter
     @AllArgsConstructor
     public static class CleanUpWorkInProgressModel {
@@ -177,7 +177,7 @@ public class LogicContext {
     public void calculateAndSaveCurrentUserData() {
         Map<String, GoodPrivateData> goodPrivateDataMap = crossScreenDataPackage.getTagedGoods().stream()
                 .collect(Collectors.toMap(
-                        it -> it.getName(), 
+                        it -> it.getName(),
                         it -> GoodPrivateData.builder()
                                 .tags(it.getTagStateMap().entrySet().stream()
                                         .filter(entry -> entry.getValue())
@@ -186,13 +186,13 @@ public class LogicContext {
                                         )
                                 .build()
                         ));
-        
+
         tempUserPrivateData = ExternalUserPrivateData.builder()
                 .goodPrivateDataMap(goodPrivateDataMap)
                 .build();
         externalResourceManager.saveAsUserData(tempUserPrivateData);
     }
-    
+
     public void updateCrossScreenDataPackage() {
         Map<String, RoomRuntimeData> roomMap = tempComikeData.getExternalMainData().getRoomSaveDataMap().entrySet().stream()
             .map(entry -> {

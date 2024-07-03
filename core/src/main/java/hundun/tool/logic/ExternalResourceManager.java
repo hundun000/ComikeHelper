@@ -52,17 +52,17 @@ public class ExternalResourceManager {
 
 
     public MergeWorkInProgressModel providerExternalGameplayData(ExternalComikeData oldComikeData, ExternalUserPrivateData oldUserPrivateData) {
-        
+
         MergeWorkInProgressModel model = new MergeWorkInProgressModel(
-                oldComikeData, 
+                oldComikeData,
                 oldUserPrivateData,
-                sharedComplexSaveTool.readMainData(), 
+                sharedComplexSaveTool.readMainData(),
                 sharedComplexSaveTool.readAllSubFolderData(),
                 userPrivateDataSaveTool.readRootSaveData()
                 );
         return model;
     }
-    
+
     @AllArgsConstructor
     @Getter
     @Builder
@@ -80,11 +80,11 @@ public class ExternalResourceManager {
         List<Map<Integer, String>> lineDataList;
         List<Integer> deskAreaInfoList;
     }
-    
-    
+
+
     public MergeWorkInProgressModel providerExcelGameplayData(ExternalComikeData oldComikeData, ExternalUserPrivateData oldUserPrivateData) {
 
-        
+
         Map<String, ExcelRoomData> roomTempDataMap = new HashMap<>();
         for (int i = 0; i < 5; i++) {
             boolean exists = sharedExcelSaveTool.lazyInitOnRuntime("room_" + i + ".xlsx");
@@ -104,7 +104,7 @@ public class ExternalResourceManager {
         }
 
 
-        
+
         sharedExcelSaveTool.lazyInitOnRuntime("desk.xlsx");
         List<Map<Integer, String>> deskGoodsRawExcelData = sharedExcelSaveTool.readRootSaveData();
         Map<String, DeskExcelTempData> deskGoodsMap = new HashMap<>();
@@ -136,26 +136,26 @@ public class ExternalResourceManager {
         });
 
         ExternalComikeData externalAllDataFromExcel = ExternalComikeData.Factory.fromExcelData(
-                game.getScreenContext().getLayoutConst(), 
-                roomTempDataMap, 
+                game.getScreenContext().getLayoutConst(),
+                roomTempDataMap,
                 deskGoodsMap,
                 defaultCoverFileHandle
                 );
-        
+
         ExternalUserPrivateData otherUserPrivateData = ExternalUserPrivateData.Factory.empty();
-        
+
         MergeWorkInProgressModel model = new MergeWorkInProgressModel(
-                oldComikeData, 
+                oldComikeData,
                 oldUserPrivateData,
-                externalAllDataFromExcel.getExternalMainData(), 
+                externalAllDataFromExcel.getExternalMainData(),
                 externalAllDataFromExcel.getDeskExternalRuntimeDataMap(),
                 otherUserPrivateData
                 );
-        
+
         return model;
     }
-    
-    
+
+
     public static class MergeWorkInProgressModel {
         final ExternalComikeData oldComikeData;
         final ExternalUserPrivateData oldUserPrivateData;
@@ -180,7 +180,7 @@ public class ExternalResourceManager {
         Pair<Integer, Integer> previewCartSizeCompare;
         @Getter
         Map<String, FileHandle> previewAddRoomImageMap = new HashMap<>();
-        
+
         public MergeWorkInProgressModel(
                 ExternalComikeData oldComikeData,
                 ExternalUserPrivateData oldUserPrivateData,
@@ -218,28 +218,30 @@ public class ExternalResourceManager {
                 }
                 previewAddDeskDataMap.put(k, v);
             });
-            
-            otherMainData.getRoomSaveDataMap().forEach((k, v) -> {
-                RoomSaveData oldDeskData = oldComikeData.getExternalMainData().getRoomSaveDataMap().get(k);
-                if (oldDeskData != null) {
-                    if (oldDeskData.equals(v)) {
-                        previewNoChangeRoomDataMap.put(k, v);
+
+            if (otherMainData != null) {
+                otherMainData.getRoomSaveDataMap().forEach((k, v) -> {
+                    RoomSaveData oldDeskData = oldComikeData.getExternalMainData().getRoomSaveDataMap().get(k);
+                    if (oldDeskData != null) {
+                        if (oldDeskData.equals(v)) {
+                            previewNoChangeRoomDataMap.put(k, v);
+                        } else {
+                            previewConflictRoomDataMap.put(k, v);
+                        }
                     } else {
-                        previewConflictRoomDataMap.put(k, v);
+                        previewAddRoomDataMap.put(k, v);
                     }
-                } else {
-                    previewAddRoomDataMap.put(k, v);
-                }
-            });
-            previewAddRoomImageMap.putAll(otherMainData.getRoomImageMap());
-            
-            
+                });
+                previewAddRoomImageMap.putAll(otherMainData.getRoomImageMap());
+            }
+
+
             previewCartSizeCompare = new Pair<>(
                     oldUserPrivateData.getGoodPrivateDataMap().size(),
                     otherUserPrivateData.getGoodPrivateDataMap().size());
         }
-        
-        
+
+
         public String toDiaglogMessage() {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("NoChange Room: " + this.getPreviewNoChangeRoomDataMap().size() + "; \n");
@@ -255,8 +257,8 @@ public class ExternalResourceManager {
             stringBuilder.append("CartSize: " + this.getPreviewCartSizeCompare().x + " -> " + this.getPreviewCartSizeCompare().y + ";");
             return stringBuilder.toString();
         }
-        
-        
+
+
         public void apply() {
             previewConflictByIdDeskDataMap.entrySet().stream()
                     .forEach(it -> {
@@ -272,14 +274,14 @@ public class ExternalResourceManager {
                         oldComikeData.getDeskExternalRuntimeDataMap().remove(oldData.getDeskSaveData().getIdName());
                     });
             oldComikeData.getDeskExternalRuntimeDataMap().putAll(previewAddDeskDataMap);
-            
+
             previewConflictRoomDataMap.entrySet().stream()
                     .forEach(it -> {
                         oldComikeData.getExternalMainData().getRoomSaveDataMap().put(it.getKey(), it.getValue());
                     });
             oldComikeData.getExternalMainData().getRoomSaveDataMap().putAll(previewAddRoomDataMap);
             oldComikeData.getExternalMainData().getRoomImageMap().putAll(previewAddRoomImageMap);
-            
+
             oldUserPrivateData.setGoodPrivateDataMap(otherUserPrivateData.getGoodPrivateDataMap());
         }
     }
@@ -318,5 +320,5 @@ public class ExternalResourceManager {
     }
 
 
-    
+
 }
